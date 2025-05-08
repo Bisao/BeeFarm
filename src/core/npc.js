@@ -23,23 +23,29 @@ export class NPC {
     }
 
     setRandomTarget(gridWidth, gridHeight) {
-        // Choose random direction: 0 = right, 1 = up, 2 = left, 3 = down
+        // Choose random diagonal direction: 0 = northeast, 1 = northwest, 2 = southwest, 3 = southeast
         const direction = Math.floor(Math.random() * 4);
         let targetX = this.gridPosition.x;
         let targetY = this.gridPosition.y;
         
+        const steps = Math.floor(Math.random() * 2) + 1; // Move 1 or 2 steps diagonally
+        
         switch(direction) {
-            case 0: // right
-                targetX = Math.min(this.gridPosition.x + Math.floor(Math.random() * 3) + 1, gridWidth - 1);
+            case 0: // northeast
+                targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
+                targetY = Math.max(this.gridPosition.y - steps, 0);
                 break;
-            case 1: // up
-                targetY = Math.max(this.gridPosition.y - Math.floor(Math.random() * 3) - 1, 0);
+            case 1: // northwest
+                targetX = Math.max(this.gridPosition.x - steps, 0);
+                targetY = Math.max(this.gridPosition.y - steps, 0);
                 break;
-            case 2: // left
-                targetX = Math.max(this.gridPosition.x - Math.floor(Math.random() * 3) - 1, 0);
+            case 2: // southwest
+                targetX = Math.max(this.gridPosition.x - steps, 0);
+                targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
                 break;
-            case 3: // down
-                targetY = Math.min(this.gridPosition.y + Math.floor(Math.random() * 3) + 1, gridHeight - 1);
+            case 3: // southeast
+                targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
+                targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
                 break;
         }
         
