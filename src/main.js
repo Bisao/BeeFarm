@@ -3,7 +3,6 @@ import { SceneManager } from './core/sceneManager.js';
 import { StartScene } from './scenes/startScene.js';
 import { SettingsScene } from './scenes/settingsScene.js';
 import { GameScene } from './scenes/gameScene.js';
-import { AreaScene } from './scenes/areaScene.js';
 
 // Dynamic CSS loading based on screen width
 const loadCSS = () => {
@@ -24,7 +23,6 @@ async function init() {
     sceneManager.registerScene('start', new StartScene());
     sceneManager.registerScene('settings', new SettingsScene());
     sceneManager.registerScene('game', new GameScene());
-sceneManager.registerScene('area1', new AreaScene());
     
     // Start with the start scene
     sceneManager.changeScene('start');
