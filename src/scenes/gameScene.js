@@ -13,10 +13,21 @@ export class GameScene extends Scene {
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
-        this.treeManager = new TreeManager();
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
-        this.woodcuttingSystem = new WoodcuttingSystem(this.treeManager);
         this.offset = { x: 0, y: 0 };
+        this.treeManager = new TreeManager();
+        // Aguardar carregamento das imagens
+        Promise.all(Object.values(this.treeManager.treeImages).map(img => {
+            return new Promise((resolve) => {
+                if (img.complete) {
+                    resolve();
+                } else {
+                    img.onload = resolve;
+                }
+            });
+        })).then(() => {
+            this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+            this.woodcuttingSystem = new WoodcuttingSystem(this.treeManager);
+        });
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
         this.scale = 1;
