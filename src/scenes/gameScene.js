@@ -272,11 +272,6 @@ export class GameScene extends Scene {
                 this.ctx.fillStyle = '#90EE90';
                 this.ctx.fill();
                 
-                if (this.showGrid) {
-                    this.ctx.strokeStyle = '#4CAF50';
-                    this.ctx.stroke();
-                }
-                
                 // Removido o código que gerava padrões aleatórios
             }
         }
