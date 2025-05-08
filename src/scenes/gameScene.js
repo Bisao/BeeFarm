@@ -13,6 +13,9 @@ export class GameScene extends Scene {
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
+        this.selectedStructure = null;
+        this.previewStructure = null;
+        this.highlightTile = null;
 
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
@@ -25,17 +28,6 @@ export class GameScene extends Scene {
         this.femaleNPC = new FemaleNPC(0, 0);
         this.maleNPC.updateGridPosition(4, 5);
         this.femaleNPC.updateGridPosition(6, 5);
-    }
-
-    constructor() {
-        super();
-        this.container = document.getElementById('game-container');
-        this.gridSize = 50;
-        this.gridWidth = 50;
-        this.gridHeight = 50;
-        this.selectedStructure = null;
-        this.previewStructure = null;
-        this.highlightTile = null;
 
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
