@@ -213,20 +213,31 @@ export class GameScene extends Scene {
         // Limpar canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
+        // Aplicar transformações da câmera
+        this.ctx.save();
+        this.ctx.translate(this.canvas.width/2 + this.camera.offset.x, this.canvas.height/2 + this.camera.offset.y);
+        this.ctx.scale(this.camera.scale, this.camera.scale);
+        
         // Desenhar grid
-        this.drawIsometricGrid(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        this.drawIsometricGrid(this.ctx, 0, 0, 1);
         
         // Desenhar árvores
         this.treeManager.trees.forEach(tree => {
-            this.drawTree(this.ctx, tree, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+            this.drawTree(this.ctx, tree, 0, 0, 1);
         });
         
         // Desenhar NPCs
-        this.maleNPC.draw(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
-        this.femaleNPC.draw(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        this.maleNPC.draw(this.ctx, 0, 0, 1);
+        this.femaleNPC.draw(this.ctx, 0, 0, 1);
         
         // Desenhar estruturas
-        this.structureManager.draw(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        this.structureManager.draw(this.ctx, 0, 0, 1);
+        
+        // Restaurar contexto
+        this.ctx.restore();
+        
+        // Requisitar próximo frame
+        requestAnimationFrame(() => this.draw());
     }
 
     drawTree(ctx, tree, centerX, centerY, scale) {
