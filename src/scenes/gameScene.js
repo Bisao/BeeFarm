@@ -13,7 +13,17 @@ export class GameScene extends Scene {
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
-        this.offset = { x: 0, y: 0 };
+        this.spawnPoint = {
+            x: Math.floor(this.gridWidth / 2),
+            y: Math.floor(this.gridHeight / 2)
+        };
+        // Calcula o offset inicial para centralizar no spawnpoint
+        const spawnIsoX = (this.spawnPoint.x - this.spawnPoint.y) * this.gridSize / 2;
+        const spawnIsoY = (this.spawnPoint.x + this.spawnPoint.y) * this.gridSize / 4;
+        this.offset = { 
+            x: -spawnIsoX,
+            y: -spawnIsoY
+        };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
         this.scale = 3; // Zoom máximo inicial
@@ -132,8 +142,8 @@ export class GameScene extends Scene {
         
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(4, 5);
-        this.femaleNPC.updateGridPosition(6, 5);
+        this.maleNPC.updateGridPosition(this.spawnPoint.x, this.spawnPoint.y);
+        this.femaleNPC.updateGridPosition(this.spawnPoint.x + 2, this.spawnPoint.y);
     }
 
     enter() {
