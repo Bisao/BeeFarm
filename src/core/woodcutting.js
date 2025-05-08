@@ -45,12 +45,22 @@ export class WoodcuttingSystem {
         this.treesBeingCut.delete(tree);
         this.cuttingProgress.delete(tree);
         npc.addWoodToInventory();
-        npc.stopWoodcutting();
         
         const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
         if (treeIndex !== -1) {
             this.treeManager.trees.splice(treeIndex, 1);
             this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
+        }
+        
+        // Primeiro parar o corte e depois verificar se precisa ir para casa
+        npc.stopWoodcutting();
+        
+        // Se o inventário estiver cheio, vai para casa
+        if (npc.woodInventory >= this.woodcarryingCapacity) {
+            npc.moveToHouse();
+        } else {
+            // Se não, procura nova árvore
+            npc.state = 'idle';
         }
     }
 
