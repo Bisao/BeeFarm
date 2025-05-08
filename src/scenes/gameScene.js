@@ -1,5 +1,6 @@
 import { Scene } from '../core/baseScene.js';
-import { NPC } from '../core/npc.js';
+import { MaleNPC } from '../core/maleNPC.js';
+import { FemaleNPC } from '../core/femaleNPC.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -16,8 +17,8 @@ export class GameScene extends Scene {
         this.scale = 1;
         this.touchCount = 0;
         this.initialPinchDistance = 0;
-        this.maleNPC = new NPC(0, 0, 'male');
-        this.femaleNPC = new NPC(0, 0, 'female');
+        this.maleNPC = new MaleNPC(0, 0);
+        this.femaleNPC = new FemaleNPC(0, 0);
         this.maleNPC.updateGridPosition(4, 4);
         this.femaleNPC.updateGridPosition(6, 6);
     }
