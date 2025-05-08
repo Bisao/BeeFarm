@@ -2,24 +2,7 @@ import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
 
-class TileManager {
-    constructor() {
-        this.tiles = {
-            grass: new Image(),
-            dirt: new Image(),
-            flowerGrass: new Image()
-        };
-        this.tiles.grass.src = 'grass.png';
-        this.tiles.dirt.src = 'dirt.png';
-        this.tiles.flowerGrass.src = 'flowerGrass.png';
-    }
-
-    drawTile(ctx, type, x, y, scale) {
-        if (this.tiles[type]) {
-            ctx.drawImage(this.tiles[type], x, y, 50 / scale, 50 / scale);
-        }
-    }
-}
+import { TileManager } from '../core/tileManager.js';
 
 
 export class GameScene extends Scene {
