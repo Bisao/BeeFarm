@@ -25,29 +25,37 @@ export class GameScene extends Scene {
     enter() {
         this.container.innerHTML = `
             <div class="top-bar">
-                <button class="settings-button" id="settingsBtn">⚙️ Settings</button>
+                <button class="settings-button" id="configBtn">⚙️ Configurações</button>
+            </div>
+            <div class="modal-overlay" id="configModal">
+                <div class="settings-modal">
+                    <h2>Configurações</h2>
+                    <div class="settings-content">
+                        <!-- Conteúdo das configurações aqui -->
+                    </div>
+                    <button class="button" id="configCloseBtn">Fechar</button>
+                </div>
             </div>
         `;
         this.container.style.display = 'block';
         this.canvas.style.display = 'block';
 
-        // Criar modal de configurações
-        const modalHtml = `
-            <div class="modal-overlay" id="settingsModal">
-                <div class="settings-modal">
-                    <h2>Configurações</h2>
-                    <button class="button" id="closeSettingsBtn">Fechar</button>
-                </div>
-            </div>
-        `;
-        this.container.insertAdjacentHTML('beforeend', modalHtml);
+        const configBtn = document.getElementById('configBtn');
+        const configModal = document.getElementById('configModal');
+        const configCloseBtn = document.getElementById('configCloseBtn');
 
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            document.getElementById('settingsModal').style.display = 'flex';
+        configBtn.addEventListener('click', () => {
+            configModal.style.display = configModal.style.display === 'flex' ? 'none' : 'flex';
         });
 
-        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
-            document.getElementById('settingsModal').style.display = 'none';
+        configCloseBtn.addEventListener('click', () => {
+            configModal.style.display = 'none';
+        });
+
+        configModal.addEventListener('click', (e) => {
+            if (e.target === configModal) {
+                configModal.style.display = 'none';
+            }
         });
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
