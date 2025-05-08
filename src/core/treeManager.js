@@ -2,10 +2,19 @@
 export class TreeManager {
     constructor() {
         this.trees = [];
+        this.occupiedPositions = new Set();
         this.treeImages = {
             pine: this.loadImage('/src/assets/images/trees/tree_pine-removebg-preview.png'),
             simple: this.loadImage('/src/assets/images/trees/tree_simple-removebg-preview.png')
         };
+    }
+
+    isPositionOccupied(x, y) {
+        return this.occupiedPositions.has(`${x},${y}`);
+    }
+
+    occupyPosition(x, y) {
+        this.occupiedPositions.add(`${x},${y}`);
     }
 
     loadImage(src) {
@@ -16,11 +25,20 @@ export class TreeManager {
 
     generateRandomTrees(gridWidth, gridHeight, count) {
         this.trees = [];
-        for (let i = 0; i < count; i++) {
+        this.occupiedPositions.clear();
+        let attempts = 0;
+        const maxAttempts = count * 10;
+
+        while (this.trees.length < count && attempts < maxAttempts) {
             const x = Math.floor(Math.random() * gridWidth);
             const y = Math.floor(Math.random() * gridHeight);
-            const type = Math.random() < 0.5 ? 'pine' : 'simple';
-            this.trees.push({ x, y, type });
+            
+            if (!this.isPositionOccupied(x, y)) {
+                const type = Math.random() < 0.5 ? 'pine' : 'simple';
+                this.trees.push({ x, y, type });
+                this.occupyPosition(x, y);
+            }
+            attempts++;
         }
     }
 
