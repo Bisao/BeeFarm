@@ -280,14 +280,16 @@ export class GameScene extends Scene {
         const centerX = this.canvas.width / 2 + this.offset.x;
         const centerY = this.canvas.height / 3 + this.offset.y;
         
-        // Calculate visible area with camera position
-        const viewportWidth = this.canvas.width / this.scale;
-        const viewportHeight = this.canvas.height / this.scale;
+        // Calculate visible area centered on camera
+        const centerTileX = Math.floor((centerX/this.scale) / (this.gridSize/2));
+        const centerTileY = Math.floor((centerY/this.scale) / (this.gridSize/4));
+        const visibleRadius = 10; // Adjust this value to show more/less tiles
+        
         const tilesInView = {
-            minX: Math.max(0, Math.floor((centerX - viewportWidth/2) / (this.gridSize/2)) - this.cullingMargin),
-            maxX: Math.min(this.gridWidth, Math.ceil((centerX + viewportWidth/2) / (this.gridSize/2)) + this.cullingMargin),
-            minY: Math.max(0, Math.floor((centerY - viewportHeight/2) / (this.gridSize/4)) - this.cullingMargin),
-            maxY: Math.min(this.gridHeight, Math.ceil((centerY + viewportHeight/2) / (this.gridSize/4)) + this.cullingMargin)
+            minX: Math.max(0, centerTileX - visibleRadius),
+            maxX: Math.min(this.gridWidth, centerTileX + visibleRadius),
+            minY: Math.max(0, centerTileY - visibleRadius),
+            maxY: Math.min(this.gridHeight, centerTileY + visibleRadius)
         };
 
         this.ctx.save();
@@ -389,20 +391,17 @@ export class GameScene extends Scene {
         const isoY = (tree.x + tree.y) * this.gridSize / 4;
         const img = this.treeManager.treeImages[tree.type];
         
-        // Check if tree is in viewport with margin
-        const margin = this.gridSize * 2; // Increased margin for smoother transitions
-        const viewportWidth = this.canvas.width / scale;
-        const viewportHeight = this.canvas.height / scale;
-        const tileCenter = {
-            x: centerX/scale + isoX,
-            y: centerY/scale + isoY
-        };
+        // Check if tree is within visible radius
+        const centerTileX = Math.floor((centerX/scale) / (this.gridSize/2));
+        const centerTileY = Math.floor((centerY/scale) / (this.gridSize/4));
+        const visibleRadius = 10;
         
-        if (tileCenter.x >= -margin && 
-            tileCenter.x <= viewportWidth + margin &&
-            tileCenter.y >= -margin && 
-            tileCenter.y <= viewportHeight + margin &&
-            img.complete) {
+        const distanceFromCenter = Math.sqrt(
+            Math.pow(tree.x - centerTileX, 2) + 
+            Math.pow(tree.y - centerTileY, 2)
+        );
+        
+        if (distanceFromCenter <= visibleRadius && img.complete) {
             
             const treeWidth = 60;
             const treeHeight = 60;
