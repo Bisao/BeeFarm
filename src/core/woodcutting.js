@@ -1,9 +1,10 @@
 
 export class WoodcuttingSystem {
-    constructor() {
-        this.treesBeingCut = new Map(); // Mapeia árvores sendo cortadas para NPCs
-        this.woodCuttingTime = 3000; // 3 segundos para cortar uma árvore
-        this.woodcarryingCapacity = 3; // Quantidade máxima de madeira que um NPC pode carregar
+    constructor(treeManager) {
+        this.treesBeingCut = new Map();
+        this.woodCuttingTime = 5000; // 5 segundos para cortar uma árvore
+        this.woodcarryingCapacity = 3;
+        this.treeManager = treeManager;
     }
 
     startCuttingTree(npc, tree) {
@@ -32,6 +33,13 @@ export class WoodcuttingSystem {
         this.treesBeingCut.delete(tree);
         npc.addWoodToInventory();
         npc.stopWoodcutting();
+        
+        // Remover a árvore do jogo
+        const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
+        if (treeIndex !== -1) {
+            this.treeManager.trees.splice(treeIndex, 1);
+            this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
+        }
     }
 
     cancelCutting(npc, tree) {

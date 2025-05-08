@@ -95,16 +95,37 @@ export class NPC {
         }
     }
 
-    update(gridWidth, gridHeight) {
+    findNearestTree(trees) {
+        let nearestTree = null;
+        let minDistance = Infinity;
+
+        for (const tree of trees) {
+            const dx = tree.x - this.gridPosition.x;
+            const dy = tree.y - this.gridPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestTree = tree;
+            }
+        }
+
+        return nearestTree;
+    }
+
+    update(gridWidth, gridHeight, trees = [], woodcuttingSystem) {
         const currentTime = Date.now();
         const timeSinceLastState = currentTime - this.lastStateChange;
 
         switch (this.state) {
             case 'idle':
-                if (timeSinceLastState > 3000) { // Wait 3 seconds
+                // Procurar árvore mais próxima
+                const nearestTree = this.findNearestTree(trees);
+                if (nearestTree) {
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
-                    this.setRandomTarget(gridWidth, gridHeight);
+                    this.moveToGrid(nearestTree.x, nearestTree.y);
+                    this.targetTree = nearestTree;
                 }
                 break;
 
@@ -118,7 +139,13 @@ export class NPC {
                         this.position.x = this.targetPosition.x;
                         this.position.y = this.targetPosition.y;
                         this.isMoving = false;
-                        this.state = 'idle';
+                        
+                        // Começar a cortar se chegou na árvore
+                        if (this.targetTree) {
+                            woodcuttingSystem.startCuttingTree(this, this.targetTree);
+                        } else {
+                            this.state = 'idle';
+                        }
                         this.lastStateChange = currentTime;
                     } else {
                         this.position.x += this.direction.x * this.speed;
@@ -126,18 +153,41 @@ export class NPC {
                     }
                 }
                 break;
+
+            case 'woodcutting':
+                // O WoodcuttingSystem gerencia o tempo e conclusão do corte
+                break;
         }
     }
 
     draw(ctx, centerX, centerY, scale) {
-        // Mostrar ícone de machado quando estiver cortando
+        // Mostrar ícone de machado e barra de progresso quando estiver cortando
         if (this.state === 'woodcutting') {
+            // Desenhar ícone do machado
             ctx.fillStyle = '#8B4513';
             ctx.font = '12px Arial';
             ctx.fillText('🪓', 
                 centerX/scale + this.position.x + 10, 
                 centerY/scale + this.position.y - 10
             );
+            
+            // Calcular progresso
+            const currentTime = Date.now();
+            const progress = Math.min((currentTime - this.lastStateChange) / 5000, 1);
+            
+            // Desenhar barra de progresso
+            const barWidth = 30;
+            const barHeight = 5;
+            const barX = centerX/scale + this.position.x - barWidth/2;
+            const barY = centerY/scale + this.position.y - 25;
+            
+            // Fundo da barra
+            ctx.fillStyle = '#333';
+            ctx.fillRect(barX, barY, barWidth, barHeight);
+            
+            // Progresso
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(barX, barY, barWidth * progress, barHeight);
         }
         
         // Draw dotted path to target
