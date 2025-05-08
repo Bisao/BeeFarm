@@ -46,8 +46,25 @@ export class GameScene extends Scene {
         this.canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
             const zoom = e.deltaY > 0 ? 0.9 : 1.1;
+            
+            // Get mouse position relative to canvas
+            const rect = this.canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Calculate offset change based on mouse position
+            const xBeforeZoom = (mouseX - this.offset.x) / this.scale;
+            const yBeforeZoom = (mouseY - this.offset.y) / this.scale;
+            
             this.scale *= zoom;
             this.scale = Math.max(0.1, Math.min(this.scale, 5));
+            
+            const xAfterZoom = xBeforeZoom * this.scale;
+            const yAfterZoom = yBeforeZoom * this.scale;
+            
+            this.offset.x += mouseX - (this.offset.x + xAfterZoom);
+            this.offset.y += mouseY - (this.offset.y + yAfterZoom);
+            
             this.drawGrid();
         });
 
