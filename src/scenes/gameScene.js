@@ -17,12 +17,14 @@ export class GameScene extends Scene {
             x: Math.floor(this.gridWidth / 2),
             y: Math.floor(this.gridHeight / 2)
         };
-        // Calcula o offset inicial para centralizar no spawnpoint
+        // Calcula o offset inicial para centralizar o spawnpoint na tela
         const spawnIsoX = (this.spawnPoint.x - this.spawnPoint.y) * this.gridSize / 2;
         const spawnIsoY = (this.spawnPoint.x + this.spawnPoint.y) * this.gridSize / 4;
-        this.offset = { 
-            x: -spawnIsoX,
-            y: -spawnIsoY
+        
+        // Ajusta o offset considerando o centro da tela e a escala
+        this.offset = {
+            x: -(spawnIsoX * this.scale) + (window.innerWidth / 2),
+            y: -(spawnIsoY * this.scale) + (window.innerHeight / 2)
         };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
