@@ -1,3 +1,4 @@
+
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
@@ -19,6 +20,7 @@ export class GameScene extends Scene {
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.initialScale = 1;
+        this.showGrid = true;
         
         // Add touch event listeners for mobile
         this.canvas.addEventListener('touchstart', (e) => {
@@ -82,28 +84,23 @@ export class GameScene extends Scene {
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
             
-            // Convert mouse position to world space before zoom
             const worldX = (mouseX - this.canvas.width/2 - this.offset.x) / this.scale;
             const worldY = (mouseY - this.canvas.height/2 - this.offset.y) / this.scale;
             
-            // Adjust scale
             const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
             this.scale *= zoomFactor;
-            this.scale = Math.max(0.5, Math.min(this.scale, 3)); // Limit zoom
+            this.scale = Math.max(0.5, Math.min(this.scale, 3));
             
-            // Adjust offset to keep mouse position fixed
             this.offset.x = mouseX - worldX * this.scale - this.canvas.width/2;
             this.offset.y = mouseY - worldY * this.scale - this.canvas.height/2;
             
             this.drawGrid();
         });
         
-        // Prevent context menu
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
         
-        // Initialize tree manager and generate random trees
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
         
@@ -120,14 +117,59 @@ export class GameScene extends Scene {
             </div>
             <div class="modal-overlay" id="configModal">
                 <div class="settings-modal">
-                    <h2>Settings</h2>
+                    <h2>Game Settings</h2>
                     <div class="settings-content">
-                        <!-- Settings content here -->
+                        <div class="setting-item">
+                            <label>Grid Size:</label>
+                            <input type="range" id="gridSizeRange" min="30" max="70" value="50">
+                            <span id="gridSizeValue">50</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>Camera Speed:</label>
+                            <input type="range" id="cameraSpeedRange" min="1" max="10" value="5">
+                            <span id="cameraSpeedValue">5</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>Show Grid Lines:</label>
+                            <input type="checkbox" id="showGridLines" checked>
+                        </div>
                     </div>
                     <button class="button" id="configCloseBtn">Close</button>
                 </div>
             </div>
         `;
+
+        const configBtn = document.getElementById('configBtn');
+        const configModal = document.getElementById('configModal');
+        const configCloseBtn = document.getElementById('configCloseBtn');
+        const gridSizeRange = document.getElementById('gridSizeRange');
+        const gridSizeValue = document.getElementById('gridSizeValue');
+        const cameraSpeedRange = document.getElementById('cameraSpeedRange');
+        const cameraSpeedValue = document.getElementById('cameraSpeedValue');
+        const showGridLines = document.getElementById('showGridLines');
+
+        configBtn.addEventListener('click', () => {
+            configModal.style.display = 'flex';
+        });
+
+        configCloseBtn.addEventListener('click', () => {
+            configModal.style.display = 'none';
+        });
+
+        gridSizeRange.addEventListener('input', (e) => {
+            gridSizeValue.textContent = e.target.value;
+            this.gridSize = parseInt(e.target.value);
+            this.drawGrid();
+        });
+
+        cameraSpeedRange.addEventListener('input', (e) => {
+            cameraSpeedValue.textContent = e.target.value;
+        });
+
+        showGridLines.addEventListener('change', (e) => {
+            this.showGrid = e.target.checked;
+            this.drawGrid();
+        });
 
         this.canvas.style.display = 'block';
         this.resizeCanvas();
@@ -168,15 +210,15 @@ export class GameScene extends Scene {
                 this.ctx.lineTo(centerX/this.scale + isoX, centerY/this.scale + isoY + this.gridSize / 2);
                 this.ctx.lineTo(centerX/this.scale + isoX - this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
                 this.ctx.closePath();
-                // Fill with grass color
+                
                 this.ctx.fillStyle = '#90EE90';
                 this.ctx.fill();
                 
-                // Add grid lines
-                this.ctx.strokeStyle = '#4CAF50';
-                this.ctx.stroke();
+                if (this.showGrid) {
+                    this.ctx.strokeStyle = '#4CAF50';
+                    this.ctx.stroke();
+                }
                 
-                // Add tile pattern
                 const pattern = Math.random() < 0.1 ? '.' : Math.random() < 0.05 ? '*' : '';
                 if (pattern) {
                     this.ctx.fillStyle = '#000';
@@ -189,7 +231,6 @@ export class GameScene extends Scene {
             }
         }
 
-        // Draw trees before NPCs so NPCs appear in front
         this.treeManager.draw(this.ctx, centerX, centerY, this.scale);
         this.maleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.femaleNPC.draw(this.ctx, centerX, centerY, this.scale);
