@@ -25,9 +25,11 @@ export class GameScene extends Scene {
         this.initialScale = 1;
         this.showGrid = true;
         this.needsUpdate = true;
+        this.tilePool = new TilePool();
         this.visibleTiles = new Set();
         this.lastFrameTime = 0;
         this.frameInterval = 1000 / 60; // 60 FPS target
+        this.cullingMargin = 2; // Extra tiles to render beyond viewport
         
         // Add touch event listeners for mobile
         this.canvas.addEventListener('touchstart', (e) => {
@@ -253,6 +255,16 @@ export class GameScene extends Scene {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         const centerX = this.canvas.width / 2 + this.offset.x;
         const centerY = this.canvas.height / 3 + this.offset.y;
+        
+        // Calculate visible area
+        const viewportWidth = this.canvas.width / this.scale;
+        const viewportHeight = this.canvas.height / this.scale;
+        const tilesInView = {
+            minX: Math.max(0, Math.floor((centerX - viewportWidth/2) / (this.gridSize/2)) - this.cullingMargin),
+            maxX: Math.min(this.gridWidth, Math.ceil((centerX + viewportWidth/2) / (this.gridSize/2)) + this.cullingMargin),
+            minY: Math.max(0, Math.floor((centerY - viewportHeight/2) / (this.gridSize/4)) - this.cullingMargin),
+            maxY: Math.min(this.gridHeight, Math.ceil((centerY + viewportHeight/2) / (this.gridSize/4)) + this.cullingMargin)
+        };
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
@@ -261,8 +273,12 @@ export class GameScene extends Scene {
             (this.canvas.height / 2) * (1 - 1/this.scale)
         );
 
-        for (let y = 0; y < this.gridHeight; y++) {
-            for (let x = 0; x < this.gridWidth; x++) {
+        // Release all tiles back to pool
+        this.visibleTiles.forEach(tile => this.tilePool.releaseTile(tile));
+        this.visibleTiles.clear();
+        
+        for (let y = tilesInView.minY; y < tilesInView.maxY; y++) {
+            for (let x = tilesInView.minX; x < tilesInView.maxX; x++) {
                 const isoX = (x - y) * this.gridSize / 2;
                 const isoY = (x + y) * this.gridSize / 4;
 
