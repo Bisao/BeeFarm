@@ -233,9 +233,14 @@ export class GameScene extends Scene {
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Calcular o centro do grid
+        const gridCenterX = (this.gridWidth * this.gridSize) / 4;
+        const gridCenterY = (this.gridHeight * this.gridSize) / 8;
+        
         // Centralizar câmera no grid
-        const centerX = this.canvas.width / 2;
-        const centerY = this.canvas.height / 2;
+        const centerX = this.canvas.width / 2 - gridCenterX;
+        const centerY = this.canvas.height / 2 - gridCenterY;
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
