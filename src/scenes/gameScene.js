@@ -3,6 +3,7 @@ import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
 import { TreeManager } from '../core/treeManager.js';
+import { StructureManager } from '../core/structures/structureManager.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -129,6 +130,11 @@ export class GameScene extends Scene {
         
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+        
+        this.structureManager = new StructureManager();
+        // Adicionar algumas casas de exemplo
+        this.structureManager.addStructure('house', 10, 10);
+        this.structureManager.addStructure('house', 15, 15);
         
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
@@ -268,7 +274,8 @@ export class GameScene extends Scene {
         const objects = [
             { type: 'npc', obj: this.maleNPC },
             { type: 'npc', obj: this.femaleNPC },
-            ...this.treeManager.trees.map(tree => ({ type: 'tree', obj: tree }))
+            ...this.treeManager.trees.map(tree => ({ type: 'tree', obj: tree })),
+            ...this.structureManager.structures.map(structure => ({ type: 'structure', obj: structure }))
         ].sort((a, b) => {
             const aY = a.type === 'npc' ? a.obj.position.y : (a.obj.x + a.obj.y) * this.gridSize / 4;
             const bY = b.type === 'npc' ? b.obj.position.y : (b.obj.x + b.obj.y) * this.gridSize / 4;
@@ -279,8 +286,10 @@ export class GameScene extends Scene {
         for (const object of objects) {
             if (object.type === 'npc') {
                 object.obj.draw(this.ctx, centerX, centerY, this.scale);
-            } else {
+            } else if (object.type === 'tree') {
                 this.drawTree(this.ctx, object.obj, centerX, centerY, this.scale);
+            } else if (object.type === 'structure') {
+                object.obj.draw(this.ctx, centerX, centerY, this.scale);
             }
         }
         this.ctx.restore();
