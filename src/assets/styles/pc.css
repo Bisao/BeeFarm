@@ -123,7 +123,7 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1001;
+    z-index: 100000;
 }
 
 .settings-modal {
@@ -132,6 +132,8 @@ body {
     border-radius: 10px;
     width: 90%;
     max-width: 400px;
+    z-index: 100001;
+    position: relative;
 }
 
 .settings-modal h2 {
