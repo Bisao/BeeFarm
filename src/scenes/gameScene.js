@@ -134,7 +134,24 @@ export class GameScene extends Scene {
             if (this.touchCount < 2) this.isDragging = false;
         });
 
+        // Start automatic movement
+        this.startAutomaticMovement();
         this.drawGrid();
+    }
+
+    startAutomaticMovement() {
+        const directions = ['up', 'down', 'left', 'right'];
+        
+        setInterval(() => {
+            // Choose random direction
+            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+            this.testNPC.move(randomDirection);
+            
+            // Move for 2 seconds then stop
+            setTimeout(() => {
+                this.testNPC.stopMoving();
+            }, 2000);
+        }, 4000); // Change direction every 4 seconds
     }
 
     resizeCanvas() {
