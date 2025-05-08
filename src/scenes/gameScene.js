@@ -20,9 +20,7 @@ export class GameScene extends Scene {
 
     enter() {
         this.canvas.style.display = 'block';
-        this.container.innerHTML = `
-            <button class="button" onclick="window.history.back()" style="position: absolute; top: 10px; left: 10px;">Back</button>
-        `;
+        this.container.innerHTML = '';
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
         
