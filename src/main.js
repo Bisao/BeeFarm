@@ -19,10 +19,14 @@ async function init() {
     try {
         await loadCSS();
         const sceneManager = new SceneManager();
-    
-    // Register scenes
-    sceneManager.registerScene('start', new StartScene());
-
+        
+        // Register scenes
+        sceneManager.registerScene('start', new StartScene());
+        sceneManager.registerScene('settings', new SettingsScene());
+        sceneManager.registerScene('game', new GameScene());
+        
+        // Start with the start scene
+        sceneManager.changeScene('start');
     } catch (error) {
         console.error('Error initializing game:', error);
         const container = document.getElementById('game-container');
@@ -33,12 +37,6 @@ async function init() {
             </div>
         `;
     }
-
-    sceneManager.registerScene('settings', new SettingsScene());
-    sceneManager.registerScene('game', new GameScene());
-    
-    // Start with the start scene
-    sceneManager.changeScene('start');
 }
 
 window.addEventListener('load', init);
