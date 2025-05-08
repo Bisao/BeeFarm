@@ -23,6 +23,7 @@ async function init() {
     sceneManager.registerScene('start', new StartScene());
     sceneManager.registerScene('settings', new SettingsScene());
     sceneManager.registerScene('game', new GameScene());
+sceneManager.registerScene('area1', new AreaScene());
     
     // Start with the start scene
     sceneManager.changeScene('start');
