@@ -76,32 +76,56 @@ export class MaleNPC extends NPC {
         this.gridPosition.y = Math.round(this.gridPosition.y);
         this.position.x = (this.gridPosition.x - this.gridPosition.y) * 50 / 2;
         this.position.y = (this.gridPosition.x + this.gridPosition.y) * 50 / 4;
-        
+
         // Reset frame when stopping
         this.frame = 0;
         this.currentAnimation = `idle${this.lastDirection.charAt(0).toUpperCase() + this.lastDirection.slice(1)}`;
     }
 
     loadSprites() {
-        const loadImage = (src) => {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-                img.src = src;
-            });
-        };
+        return new Promise((resolve) => {
+            let loadedImages = 0;
+            let totalImages = 0;
 
-        Object.entries(MALE_NPC_ANIMATIONS).forEach(async ([name, animation]) => {
-            if (name.startsWith('walk')) {
-                for (let i = 0; i < animation.frames; i++) {
-                    const sprite = await loadImage(`${animation.path}${i}${animation.extension}`);
-                    this.sprites[name][i] = sprite;
+            // Count total images
+            Object.entries(MALE_NPC_ANIMATIONS).forEach(([name, config]) => {
+                if (name.startsWith('idle')) {
+                    totalImages++;
+                } else {
+                    totalImages += config.frames;
                 }
-            } else {
-                const sprite = await loadImage(animation.path);
-                this.sprites[name][0] = sprite;
-            }
+            });
+
+            const onImageLoad = () => {
+                loadedImages++;
+                if (loadedImages === totalImages) {
+                    resolve();
+                }
+            };
+
+            // Load idle sprites
+            Object.entries(MALE_NPC_ANIMATIONS).forEach(([name, config]) => {
+                if (name.startsWith('idle')) {
+                    const sprite = new Image();
+                    sprite.onload = onImageLoad;
+                    sprite.onerror = () => console.error(`Failed to load: ${config.path}`);
+                    sprite.src = config.path;
+                    this.sprites[name] = [sprite];
+                }
+            });
+
+            // Load animation sprites
+            Object.entries(MALE_NPC_ANIMATIONS).forEach(([animName, config]) => {
+                if (!animName.startsWith('idle')) {
+                    for(let i = 0; i < config.frames; i++) {
+                        const img = new Image();
+                        img.onload = onImageLoad;
+                        img.onerror = () => console.error(`Failed to load: ${config.path}${i}${config.extension}`);
+                        img.src = `${config.path}${i}${config.extension}`;
+                        this.sprites[animName].push(img);
+                    }
+                }
+            });
         });
     }
 

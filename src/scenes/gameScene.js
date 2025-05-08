@@ -20,7 +20,9 @@ export class GameScene extends Scene {
         
         // Create test NPC
         this.testNPC = new MaleNPC(0, 0);
-        this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
+        this.testNPC.loadSprites().then(() => {
+            this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
+        }).catch(err => console.error('Failed to load game assets:', err));
     }
 
     enter() {
