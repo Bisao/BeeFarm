@@ -31,8 +31,23 @@ export class GameScene extends Scene {
         this.container.style.display = 'block';
         this.canvas.style.display = 'block';
 
+        // Criar modal de configurações
+        const modalHtml = `
+            <div class="modal-overlay" id="settingsModal">
+                <div class="settings-modal">
+                    <h2>Configurações</h2>
+                    <button class="button" id="closeSettingsBtn">Fechar</button>
+                </div>
+            </div>
+        `;
+        this.container.insertAdjacentHTML('beforeend', modalHtml);
+
         document.getElementById('settingsBtn').addEventListener('click', () => {
-            this.manager.changeScene('settings');
+            document.getElementById('settingsModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+            document.getElementById('settingsModal').style.display = 'none';
         });
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
