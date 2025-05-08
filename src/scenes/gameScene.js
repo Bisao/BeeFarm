@@ -19,6 +19,9 @@ export class GameScene extends Scene {
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.initialScale = 1;
+        this.minScale = window.innerWidth <= 768 ? 0.8 : 0.5;
+        this.maxScale = 3;
+        this.renderDistance = window.innerWidth <= 768 ? 15 : 25;
         
         // Add touch event listeners for mobile
         this.canvas.addEventListener('touchstart', (e) => {
@@ -89,7 +92,7 @@ export class GameScene extends Scene {
             // Adjust scale
             const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
             this.scale *= zoomFactor;
-            this.scale = Math.max(0.5, Math.min(this.scale, 3)); // Limit zoom
+            this.scale = Math.max(this.minScale, Math.min(this.scale, this.maxScale));
             
             // Adjust offset to keep mouse position fixed
             this.offset.x = mouseX - worldX * this.scale - this.canvas.width/2;
@@ -157,8 +160,18 @@ export class GameScene extends Scene {
             (this.canvas.height / 2) * (1 - 1/this.scale)
         );
 
-        for (let y = 0; y < this.gridHeight; y++) {
-            for (let x = 0; x < this.gridWidth; x++) {
+        // Calcular área visível
+        const viewX = -this.offset.x / (this.gridSize * this.scale);
+        const viewY = -this.offset.y / (this.gridSize * this.scale);
+        
+        // Determinar range de células visíveis
+        const startX = Math.max(0, Math.floor(viewX - this.renderDistance));
+        const startY = Math.max(0, Math.floor(viewY - this.renderDistance));
+        const endX = Math.min(this.gridWidth, Math.ceil(viewX + this.renderDistance));
+        const endY = Math.min(this.gridHeight, Math.ceil(viewY + this.renderDistance));
+        
+        for (let y = startY; y < endY; y++) {
+            for (let x = startX; x < endX; x++) {
                 const isoX = (x - y) * this.gridSize / 2;
                 const isoY = (x + y) * this.gridSize / 4;
 
