@@ -85,7 +85,7 @@ export class GameScene extends Scene {
     }
 
     update(delta) {
-        // Add game update logic here
+        this.testNPC.update(this.gridWidth, this.gridHeight);
     }
 
     draw() {

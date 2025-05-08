@@ -3,19 +3,101 @@ export class NPC {
     constructor(x, y) {
         this.position = { x, y };
         this.gridPosition = { x: 0, y: 0 };
-        this.color = '#FFD700'; // Default color (gold)
+        this.targetPosition = null;
+        this.color = '#FFD700';
         this.size = 20;
+        this.speed = 2;
+        this.isMoving = false;
+        this.direction = { x: 0, y: 0 };
+        this.waitTime = 0;
+        this.house = null;
+        this.state = 'idle'; // idle, walking, visiting
+        this.lastStateChange = Date.now();
     }
 
     updateGridPosition(x, y) {
         this.gridPosition.x = x;
         this.gridPosition.y = y;
-        // Convert grid position to isometric position
-        this.position.x = (x - y) * 50 / 2; // 50 is gridSize
+        this.position.x = (x - y) * 50 / 2;
         this.position.y = (x + y) * 50 / 4;
     }
 
+    setRandomTarget(gridWidth, gridHeight) {
+        const targetX = Math.floor(Math.random() * gridWidth);
+        const targetY = Math.floor(Math.random() * gridHeight);
+        this.moveToGrid(targetX, targetY);
+    }
+
+    moveToGrid(targetX, targetY) {
+        this.targetPosition = {
+            x: (targetX - targetY) * 50 / 2,
+            y: (targetX + targetY) * 50 / 4
+        };
+        this.isMoving = true;
+        
+        const dx = this.targetPosition.x - this.position.x;
+        const dy = this.targetPosition.y - this.position.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 0) {
+            this.direction = {
+                x: dx / distance,
+                y: dy / distance
+            };
+        }
+    }
+
+    moveToHouse() {
+        if (this.house) {
+            this.moveToGrid(this.house.gridPosition.x, this.house.gridPosition.y);
+        }
+    }
+
+    update(gridWidth, gridHeight) {
+        const currentTime = Date.now();
+        const timeSinceLastState = currentTime - this.lastStateChange;
+
+        switch (this.state) {
+            case 'idle':
+                if (timeSinceLastState > 3000) { // Wait 3 seconds
+                    this.state = 'walking';
+                    this.lastStateChange = currentTime;
+                    this.setRandomTarget(gridWidth, gridHeight);
+                }
+                break;
+
+            case 'walking':
+                if (this.isMoving) {
+                    const dx = this.targetPosition.x - this.position.x;
+                    const dy = this.targetPosition.y - this.position.y;
+                    const distanceToTarget = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distanceToTarget < this.speed) {
+                        this.position.x = this.targetPosition.x;
+                        this.position.y = this.targetPosition.y;
+                        this.isMoving = false;
+                        this.state = 'idle';
+                        this.lastStateChange = currentTime;
+                    } else {
+                        this.position.x += this.direction.x * this.speed;
+                        this.position.y += this.direction.y * this.speed;
+                    }
+                }
+                break;
+        }
+    }
+
     draw(ctx, centerX, centerY, scale) {
+        // Draw movement trail if moving
+        if (this.isMoving) {
+            ctx.beginPath();
+            ctx.moveTo(centerX/scale + this.position.x, centerY/scale + this.position.y);
+            ctx.lineTo(centerX/scale + this.targetPosition.x, centerY/scale + this.targetPosition.y);
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.stroke();
+        }
+
+        // Draw NPC
         ctx.beginPath();
         ctx.arc(
             centerX/scale + this.position.x,
