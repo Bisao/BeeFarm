@@ -105,6 +105,18 @@ body {
     background: #45a049;
 }
 
+.settings-scene {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+}
+
+.settings-scene h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
 #game-canvas {
     position: fixed;
     top: 0;
