@@ -21,7 +21,7 @@ export class GameScene extends Scene {
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.initialScale = 1;
-        this.showGrid = true;
+        this.showGrid = false;
         this.isRendering = false;
         this.lastFrameTime = 0;
         this.targetFPS = 30;
