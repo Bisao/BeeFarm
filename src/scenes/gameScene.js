@@ -27,6 +27,7 @@ export class GameScene extends Scene {
 
     enter() {
         this.container.innerHTML = `
+            <canvas id="gameCanvas"></canvas>
             <div class="game-ui">
                 <div class="top-bar">
                     <button class="settings-button" id="configBtn">⚙️ Settings</button>
@@ -88,6 +89,15 @@ export class GameScene extends Scene {
         cameraSpeedRange.addEventListener('input', (e) => {
             cameraSpeedValue.textContent = e.target.value;
         });
+
+        this.canvas = document.getElementById('gameCanvas');
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.ctx = this.canvas.getContext('2d');
+        this.isRendering = true;
+        this.camera = { scale: 1 };
+        
+        requestAnimationFrame(() => this.draw());
     }
 
     update(delta) {
