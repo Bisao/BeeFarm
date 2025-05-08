@@ -1,18 +1,23 @@
 
 export class NPC {
-    constructor(x, y) {
+    constructor(x, y, gender = 'male') {
         this.position = { x, y };
         this.gridPosition = { x: 0, y: 0 };
         this.targetPosition = null;
-        this.color = '#FFD700';
+        this.gender = gender;
+        this.color = gender === 'male' ? '#4169E1' : '#FF69B4'; // Azul para masculino, rosa para feminino
         this.size = 20;
-        this.speed = 0.8;
+        this.maxSpeed = 1.2;
+        this.currentSpeed = 0;
+        this.acceleration = 0.05;
+        this.deceleration = 0.08;
         this.isMoving = false;
         this.direction = { x: 0, y: 0 };
         this.waitTime = 0;
         this.house = null;
-        this.state = 'idle'; // idle, walking, visiting
+        this.state = 'idle';
         this.lastStateChange = Date.now();
+        this.wobble = { x: 0, y: 0 };
     }
 
     updateGridPosition(x, y) {
@@ -23,27 +28,26 @@ export class NPC {
     }
 
     setRandomTarget(gridWidth, gridHeight) {
-        // Choose random diagonal direction: 0 = northeast, 1 = northwest, 2 = southwest, 3 = southeast
         const direction = Math.floor(Math.random() * 4);
         let targetX = this.gridPosition.x;
         let targetY = this.gridPosition.y;
         
-        const steps = Math.floor(Math.random() * 2) + 1; // Move 1 or 2 steps diagonally
+        const steps = Math.floor(Math.random() * 2) + 1;
         
         switch(direction) {
-            case 0: // northeast
+            case 0:
                 targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
                 targetY = Math.max(this.gridPosition.y - steps, 0);
                 break;
-            case 1: // northwest
+            case 1:
                 targetX = Math.max(this.gridPosition.x - steps, 0);
                 targetY = Math.max(this.gridPosition.y - steps, 0);
                 break;
-            case 2: // southwest
+            case 2:
                 targetX = Math.max(this.gridPosition.x - steps, 0);
                 targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
                 break;
-            case 3: // southeast
+            case 3:
                 targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
                 targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
                 break;
@@ -83,7 +87,7 @@ export class NPC {
 
         switch (this.state) {
             case 'idle':
-                if (timeSinceLastState > 3000) { // Wait 3 seconds
+                if (timeSinceLastState > 3000) {
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
                     this.setRandomTarget(gridWidth, gridHeight);
@@ -96,15 +100,25 @@ export class NPC {
                     const dy = this.targetPosition.y - this.position.y;
                     const distanceToTarget = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distanceToTarget < this.speed) {
+                    if (distanceToTarget < this.currentSpeed) {
                         this.position.x = this.targetPosition.x;
                         this.position.y = this.targetPosition.y;
                         this.isMoving = false;
                         this.state = 'idle';
+                        this.currentSpeed = 0;
                         this.lastStateChange = currentTime;
                     } else {
-                        this.position.x += this.direction.x * this.speed;
-                        this.position.y += this.direction.y * this.speed;
+                        if (distanceToTarget > this.maxSpeed * 10) {
+                            this.currentSpeed = Math.min(this.currentSpeed + this.acceleration, this.maxSpeed);
+                        } else {
+                            this.currentSpeed = Math.max(this.currentSpeed - this.deceleration, this.maxSpeed * 0.3);
+                        }
+                        
+                        this.wobble.x = (Math.random() - 0.5) * 0.2;
+                        this.wobble.y = (Math.random() - 0.5) * 0.2;
+                        
+                        this.position.x += (this.direction.x + this.wobble.x) * this.currentSpeed;
+                        this.position.y += (this.direction.y + this.wobble.y) * this.currentSpeed;
                     }
                 }
                 break;
@@ -112,7 +126,6 @@ export class NPC {
     }
 
     draw(ctx, centerX, centerY, scale) {
-        // Draw dotted path to target
         if (this.isMoving) {
             ctx.beginPath();
             ctx.moveTo(centerX/scale + this.position.x, centerY/scale + this.position.y);
@@ -125,7 +138,6 @@ export class NPC {
             ctx.lineWidth = 1;
         }
 
-        // Draw NPC
         ctx.beginPath();
         ctx.arc(
             centerX/scale + this.position.x,
