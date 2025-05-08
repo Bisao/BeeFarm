@@ -1,6 +1,6 @@
 
 import { Scene } from '../core/baseScene.js';
-import { MaleNPC } from '../core/maleNPC.js';
+import { NPC } from '../core/npc.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -19,10 +19,8 @@ export class GameScene extends Scene {
         this.initialPinchDistance = 0;
         
         // Create test NPC
-        this.testNPC = new MaleNPC(0, 0);
-        this.testNPC.loadSprites().then(() => {
-            this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
-        }).catch(err => console.error('Failed to load game assets:', err));
+        this.testNPC = new NPC(0, 0);
+        this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
     }
 
     enter() {
@@ -30,34 +28,6 @@ export class GameScene extends Scene {
         this.container.innerHTML = '';
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
-        
-        // Keyboard controls
-        window.addEventListener('keydown', (e) => {
-            switch(e.key) {
-                case 'w':
-                case 'ArrowUp':
-                    this.testNPC.move('up');
-                    break;
-                case 's':
-                case 'ArrowDown':
-                    this.testNPC.move('down');
-                    break;
-                case 'a':
-                case 'ArrowLeft':
-                    this.testNPC.move('left');
-                    break;
-                case 'd':
-                case 'ArrowRight':
-                    this.testNPC.move('right');
-                    break;
-            }
-        });
-        
-        window.addEventListener('keyup', (e) => {
-            if(['w','s','a','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
-                this.testNPC.stopMoving();
-            }
-        });
         
         // Mouse events
         this.canvas.addEventListener('mousedown', (e) => {
@@ -136,44 +106,7 @@ export class GameScene extends Scene {
             if (this.touchCount < 2) this.isDragging = false;
         });
 
-        // Start automatic movement
-        this.startAutomaticMovement();
-        this.startGameLoop();
         this.drawGrid();
-    }
-
-    startGameLoop() {
-        setInterval(() => {
-            this.drawGrid();
-        }, 1000 / 60); // 60 FPS
-    }
-
-    startAutomaticMovement() {
-        const directions = ['up', 'down', 'left', 'right'];
-        let currentDirection = null;
-        let moveTimer = 0;
-        let pauseTimer = 0;
-        let isMoving = false;
-        
-        setInterval(() => {
-            if (!isMoving) {
-                pauseTimer++;
-                if (pauseTimer >= 3) { // Pausa por 3 segundos
-                    isMoving = true;
-                    moveTimer = 0;
-                    currentDirection = directions[Math.floor(Math.random() * directions.length)];
-                    pauseTimer = 0;
-                }
-            } else {
-                moveTimer++;
-                if (moveTimer < 5) { // Move por 5 segundos
-                    this.testNPC.move(currentDirection);
-                } else {
-                    isMoving = false;
-                    this.testNPC.stopMoving();
-                }
-            }
-        }, 1000); // Atualiza a cada segundo
     }
 
     resizeCanvas() {
