@@ -7,9 +7,9 @@ export class TileManager {
             flowerGrass: new Image()
         };
         
-        this.tileImages.dirt.src = 'src/assets/tiles/dirt.png';
-        this.tileImages.grass.src = 'src/assets/tiles/grass.png';
-        this.tileImages.flowerGrass.src = 'src/assets/tiles/flower_grass.png';
+        this.tileImages.dirt.src = '/src/assets/tiles/dirt.png';
+        this.tileImages.grass.src = '/src/assets/tiles/grass.png';
+        this.tileImages.flowerGrass.src = '/src/assets/tiles/flower_grass.png';
         
         this.tileSize = 50;
         
