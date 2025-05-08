@@ -104,11 +104,16 @@ export class NPC {
         }
     }
 
-    findNearestTree(trees) {
+    findNearestTree(trees, woodcuttingSystem) {
         let nearestTree = null;
         let minDistance = Infinity;
 
         for (const tree of trees) {
+            // Pula árvores que já estão sendo cortadas
+            if (woodcuttingSystem.isTreeBeingCut(tree)) {
+                continue;
+            }
+
             const dx = tree.x - this.gridPosition.x;
             const dy = tree.y - this.gridPosition.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
@@ -130,7 +135,7 @@ export class NPC {
 
         switch (this.state) {
             case 'idle':
-                const nearestTree = this.findNearestTree(trees);
+                const nearestTree = this.findNearestTree(trees, woodcuttingSystem);
                 if (nearestTree && this.woodInventory < 3) {
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
