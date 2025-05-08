@@ -1,5 +1,6 @@
 import { Scene } from '../core/baseScene.js';
 import { NPC } from '../core/npc.js';
+import { House } from '../structures/house.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -18,6 +19,8 @@ export class GameScene extends Scene {
         this.initialPinchDistance = 0;
         this.testNPC = new NPC(0, 0);
         this.testNPC.updateGridPosition(5, 5);
+        this.testHouse = new House(0, 0);
+        this.testHouse.updateGridPosition(3, 3);
     }
 
     enter() {
@@ -80,6 +83,7 @@ export class GameScene extends Scene {
             }
         }
 
+        this.testHouse.draw(this.ctx, centerX, centerY, this.scale);
         this.testNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.ctx.restore();
     }
