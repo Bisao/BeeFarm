@@ -30,6 +30,8 @@ export class WoodcuttingSystem {
     }
 
     completeCutting(npc, tree) {
+        if (!this.treeManager || !this.treeManager.trees) return;
+        
         this.treesBeingCut.delete(tree);
         npc.addWoodToInventory();
         npc.stopWoodcutting();
