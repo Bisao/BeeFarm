@@ -106,7 +106,7 @@ export class GameScene extends Scene {
         const isoX = (tree.x - tree.y) * this.gridSize / 2;
         const isoY = (tree.x + tree.y) * this.gridSize / 4;
         const img = this.treeManager.treeImages[tree.type];
-        
+
         if (img.complete) {
             const treeWidth = 60;
             const treeHeight = 60;
@@ -114,7 +114,41 @@ export class GameScene extends Scene {
                 x: centerX/scale + isoX,
                 y: centerY/scale + isoY
             };
-            
+
         }
+    }
+
+    drawIsometricGrid(ctx, centerX, centerY, scale) {
+        const gridSize = this.gridSize * scale;
+        const gridWidth = this.gridWidth;
+        const gridHeight = this.gridHeight;
+
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.lineWidth = 1;
+
+        for (let y = 0; y <= gridHeight; y++) {
+            for (let x = 0; x <= gridWidth; x++) {
+                const isoX = (x - y) * gridSize / 2;
+                const isoY = (x + y) * gridSize / 4;
+
+                // Draw grid lines
+                ctx.beginPath();
+                ctx.moveTo(centerX + (isoX - gridSize / 2), centerY + isoY);
+                ctx.lineTo(centerX + (isoX + gridSize / 2), centerY + isoY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(centerX + isoX, centerY + (isoY - gridSize / 4));
+                ctx.lineTo(centerX + isoX, centerY + (isoY + gridSize / 4));
+                ctx.stroke();
+            }
+        }
+    }
+
+    draw() {
+        if (!this.isRendering) {
+            return;
+        }
+        this.drawIsometricGrid(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
     }
 }
