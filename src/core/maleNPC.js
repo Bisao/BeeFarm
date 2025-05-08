@@ -32,24 +32,31 @@ export class MaleNPC {
         let targetY = this.gridPosition.y;
         
         const steps = Math.floor(Math.random() * 2) + 1;
+        let newX = targetX;
+        let newY = targetY;
         
         switch(direction) {
-            case 0:
-                targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
-                targetY = Math.max(this.gridPosition.y - steps, 0);
+            case 0: // direita-cima
+                newX = this.gridPosition.x + steps;
+                newY = this.gridPosition.y - steps;
                 break;
-            case 1:
-                targetX = Math.max(this.gridPosition.x - steps, 0);
-                targetY = Math.max(this.gridPosition.y - steps, 0);
+            case 1: // esquerda-cima
+                newX = this.gridPosition.x - steps;
+                newY = this.gridPosition.y - steps;
                 break;
-            case 2:
-                targetX = Math.max(this.gridPosition.x - steps, 0);
-                targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
+            case 2: // esquerda-baixo
+                newX = this.gridPosition.x - steps;
+                newY = this.gridPosition.y + steps;
                 break;
-            case 3:
-                targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
-                targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
+            case 3: // direita-baixo
+                newX = this.gridPosition.x + steps;
+                newY = this.gridPosition.y + steps;
                 break;
+        }
+        
+        if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight) {
+            targetX = newX;
+            targetY = newY;
         }
         
         this.moveToGrid(targetX, targetY);
