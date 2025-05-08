@@ -8,6 +8,7 @@ export class GameScene extends Scene {
     constructor() {
         super();
         this.container = document.getElementById('game-container');
+        this.miniMap = null;
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 50;
@@ -153,6 +154,8 @@ export class GameScene extends Scene {
     }
 
     enter() {
+        const { MiniMap } = await import('../core/miniMap.js');
+        this.miniMap = new MiniMap(this);
         this.container.innerHTML = `
             <div class="top-bar">
                 <button class="settings-button" id="configBtn">⚙️ Settings</button>
@@ -312,6 +315,9 @@ export class GameScene extends Scene {
         if (currentTime - this.lastFrameTime >= this.frameInterval && this.needsUpdate) {
             this.lastFrameTime = currentTime;
             this.drawGrid();
+            if (this.miniMap) {
+                this.miniMap.draw();
+            }
             this.needsUpdate = false;
         }
     }

@@ -1,4 +1,15 @@
 
+.mini-map {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+
 * {
     margin: 0;
     padding: 0;
