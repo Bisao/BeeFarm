@@ -39,7 +39,7 @@ export class WoodcuttingSystem {
     }
 
     completeCutting(npc, tree) {
-        if (!this.treeManager || !tree) return;
+        if (!this.treeManager?.trees || !tree) return;
         
         // Iniciar efeito de fade out
         tree.opacity = 1;
