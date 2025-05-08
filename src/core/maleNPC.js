@@ -21,24 +21,32 @@ export class MaleNPC extends NPC {
 
     move(direction) {
         this.moving = true;
+        let newX = this.gridPosition.x;
+        let newY = this.gridPosition.y;
+
         switch(direction) {
             case 'up':
                 this.currentAnimation = 'walkUp';
-                this.gridPosition.y -= this.speed;
+                newY = Math.max(0, Math.round(this.gridPosition.y - this.speed));
                 break;
             case 'down':
                 this.currentAnimation = 'walkDown';
-                this.gridPosition.y += this.speed;
+                newY = Math.min(9, Math.round(this.gridPosition.y + this.speed));
                 break;
             case 'left':
                 this.currentAnimation = 'walkLeft';
-                this.gridPosition.x -= this.speed;
+                newX = Math.max(0, Math.round(this.gridPosition.x - this.speed));
                 break;
             case 'right':
                 this.currentAnimation = 'walkRight';
-                this.gridPosition.x += this.speed;
+                newX = Math.min(9, Math.round(this.gridPosition.x + this.speed));
                 break;
         }
+
+        // Update grid position
+        this.gridPosition.x = newX;
+        this.gridPosition.y = newY;
+
         // Update isometric position
         this.position.x = (this.gridPosition.x - this.gridPosition.y) * 50 / 2;
         this.position.y = (this.gridPosition.x + this.gridPosition.y) * 50 / 4;
@@ -46,6 +54,11 @@ export class MaleNPC extends NPC {
 
     stopMoving() {
         this.moving = false;
+        // Snap to nearest grid position
+        this.gridPosition.x = Math.round(this.gridPosition.x);
+        this.gridPosition.y = Math.round(this.gridPosition.y);
+        this.position.x = (this.gridPosition.x - this.gridPosition.y) * 50 / 2;
+        this.position.y = (this.gridPosition.x + this.gridPosition.y) * 50 / 4;
     }
 
     loadSprites() {
