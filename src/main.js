@@ -9,7 +9,7 @@ const loadCSS = () => {
     return new Promise((resolve) => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = `src/assets/styles/${window.innerWidth <= 768 ? 'mobile' : 'pc'}.css`;
+        link.href = `/src/assets/styles/${window.innerWidth <= 768 ? 'mobile' : 'pc'}.css`;
         link.onload = resolve;
         document.head.appendChild(link);
     });
