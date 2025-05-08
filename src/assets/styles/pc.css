@@ -140,6 +140,31 @@ body {
     text-align: center;
 }
 
+.settings-content {
+    padding: 20px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-item label {
+    min-width: 120px;
+    color: #fff;
+}
+
+.setting-item input[type="range"] {
+    flex: 1;
+}
+
+.setting-item span {
+    min-width: 30px;
+    color: #fff;
+}
+
 #game-canvas {
     position: fixed;
     top: 50px;
