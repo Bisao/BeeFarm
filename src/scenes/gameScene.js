@@ -21,7 +21,7 @@ export class GameScene extends Scene {
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.initialScale = 1;
-        this.showGrid = false;
+        this.showGrid = true;
         this.isRendering = false;
         this.lastFrameTime = 0;
         this.targetFPS = 30;
@@ -271,6 +271,11 @@ export class GameScene extends Scene {
                 
                 this.ctx.fillStyle = '#90EE90';
                 this.ctx.fill();
+                
+                if (this.showGrid) {
+                    this.ctx.strokeStyle = '#4CAF50';
+                    this.ctx.stroke();
+                }
                 
                 // Removido o código que gerava padrões aleatórios
             }
