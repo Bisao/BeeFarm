@@ -230,8 +230,14 @@ export class GameScene extends Scene {
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        const centerX = this.canvas.width / 2 + this.offset.x;
-        const centerY = this.canvas.height / 2 + this.offset.y;
+        
+        // Calcular o centro do grid
+        const gridCenterX = (this.gridWidth * this.gridSize) / 2;
+        const gridCenterY = (this.gridHeight * this.gridSize) / 4;
+        
+        // Ajustar offset para centralizar
+        const centerX = (this.canvas.width / 2 - gridCenterX * this.scale) + this.offset.x;
+        const centerY = (this.canvas.height / 2 - gridCenterY * this.scale) + this.offset.y;
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
