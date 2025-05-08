@@ -90,7 +90,7 @@ body {
     left: 0;
     width: 100%;
     height: calc(100% - 50px);
-    z-index: 1;
+    z-index: 3;
     display: none;
 }
 
@@ -115,6 +115,10 @@ body {
     padding: 0 20px;
     z-index: 2;
     pointer-events: auto;
+}
+
+.build-menu {
+    z-index: 2;
 }
 
 .settings-button {
@@ -181,7 +185,7 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 3;
+    z-index: 1;
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: auto;
