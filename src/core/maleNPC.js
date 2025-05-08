@@ -8,7 +8,11 @@ export class MaleNPC extends NPC {
             walkDown: [],
             walkUp: [],
             walkLeft: [],
-            walkRight: []
+            walkRight: [],
+            idleDown: [],
+            idleUp: [],
+            idleLeft: [],
+            idleRight: []
         };
         this.currentAnimation = 'walkDown';
         this.frame = 0;
@@ -75,7 +79,7 @@ export class MaleNPC extends NPC {
         
         // Reset frame when stopping
         this.frame = 0;
-        this.currentAnimation = `walk${this.lastDirection.charAt(0).toUpperCase() + this.lastDirection.slice(1)}`;
+        this.currentAnimation = `idle${this.lastDirection.charAt(0).toUpperCase() + this.lastDirection.slice(1)}`;
     }
 
     loadSprites() {

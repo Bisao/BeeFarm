@@ -19,5 +19,25 @@ export const MALE_NPC_ANIMATIONS = {
         frames: 8,
         path: '/attached_assets/citizen-male-caminhando-direita-gif_',
         speed: 100
+    },
+    idleDown: {
+        frames: 1,
+        path: '/attached_assets/citizen-male-caminhando-baixo-gif_0',
+        speed: 100
+    },
+    idleUp: {
+        frames: 1,
+        path: '/attached_assets/citizen-male-caminhando-cima-gif_0',
+        speed: 100
+    },
+    idleLeft: {
+        frames: 1,
+        path: '/attached_assets/citizen-male-caminhando-esquerda-gif_0',
+        speed: 100
+    },
+    idleRight: {
+        frames: 1,
+        path: '/attached_assets/citizen-male-caminhando-direita-gif_0',
+        speed: 100
     }
 };
