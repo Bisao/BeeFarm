@@ -69,6 +69,23 @@
     background: #45a049;
 }
 
+.error-screen {
+    text-align: center;
+    padding: 20px;
+}
+
+.error-screen h2 {
+    margin-bottom: 20px;
+    color: #ff4444;
+}
+
+.settings-scene {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+}
+
 .top-bar {
     position: fixed;
     top: 0;
@@ -86,11 +103,19 @@
 .settings-button {
     background: #4CAF50;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 20px;
     color: white;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
+    margin: 5px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.settings-button:active {
+    background: #45a049;
+    transform: scale(0.98);
 }
 
 .modal-overlay {
