@@ -13,6 +13,8 @@ export class NPC {
         this.house = null;
         this.state = 'idle'; // idle, walking, visiting
         this.lastStateChange = Date.now();
+        this.visitedCells = new Set();
+        this.lastDirections = [];
     }
 
     updateGridPosition(x, y) {
@@ -23,27 +25,42 @@ export class NPC {
     }
 
     setRandomTarget(gridWidth, gridHeight) {
-        // Choose random direction: 0 = right, 1 = up, 2 = left, 3 = down
-        const direction = Math.floor(Math.random() * 4);
-        let targetX = this.gridPosition.x;
-        let targetY = this.gridPosition.y;
-        
-        switch(direction) {
-            case 0: // right
-                targetX = Math.min(this.gridPosition.x + Math.floor(Math.random() * 3) + 1, gridWidth - 1);
-                break;
-            case 1: // up
-                targetY = Math.max(this.gridPosition.y - Math.floor(Math.random() * 3) - 1, 0);
-                break;
-            case 2: // left
-                targetX = Math.max(this.gridPosition.x - Math.floor(Math.random() * 3) - 1, 0);
-                break;
-            case 3: // down
-                targetY = Math.min(this.gridPosition.y + Math.floor(Math.random() * 3) + 1, gridHeight - 1);
-                break;
+        const currentKey = `${this.gridPosition.x},${this.gridPosition.y}`;
+        this.visitedCells.add(currentKey);
+
+        // Define possible directions
+        const directions = [
+            {dx: 1, dy: 0}, // right
+            {dx: 0, dy: -1}, // up
+            {dx: -1, dy: 0}, // left
+            {dx: 0, dy: 1}  // down
+        ];
+
+        // Filter valid moves and score them
+        const possibleMoves = directions
+            .map(dir => {
+                const newX = this.gridPosition.x + dir.dx;
+                const newY = this.gridPosition.y + dir.dy;
+                const key = `${newX},${newY}`;
+                const isVisited = this.visitedCells.has(key);
+                
+                return {
+                    x: newX,
+                    y: newY,
+                    score: isVisited ? 1 : 3,
+                    isValid: newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight
+                };
+            })
+            .filter(move => move.isValid);
+
+        // Choose best move
+        if (possibleMoves.length > 0) {
+            const bestMove = possibleMoves.reduce((best, current) => 
+                current.score > best.score ? current : best
+            );
+            
+            this.moveToGrid(bestMove.x, bestMove.y);
         }
-        
-        this.moveToGrid(targetX, targetY);
     }
 
     moveToGrid(targetX, targetY) {
