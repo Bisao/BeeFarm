@@ -27,14 +27,51 @@ export class GameScene extends Scene {
         this.femaleNPC.updateGridPosition(6, 5);
     }
 
+    constructor() {
+        super();
+        this.container = document.getElementById('game-container');
+        this.gridSize = 50;
+        this.gridWidth = 50;
+        this.gridHeight = 50;
+        this.selectedStructure = null;
+        this.previewStructure = null;
+        this.highlightTile = null;
+
+        this.treeManager = new TreeManager();
+        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+
+        this.structureManager = new StructureManager();
+        this.structureManager.addStructure('house', 10, 10);
+        this.structureManager.addStructure('house', 15, 15);
+
+        this.maleNPC = new MaleNPC(0, 0);
+        this.femaleNPC = new FemaleNPC(0, 0);
+        this.maleNPC.updateGridPosition(4, 5);
+        this.femaleNPC.updateGridPosition(6, 5);
+    }
+
     enter() {
         this.container.innerHTML = `
             <canvas id="gameCanvas"></canvas>
             <div class="game-ui">
                 <div class="top-bar">
                     <button class="settings-button" id="configBtn">⚙️ Settings</button>
+                    <button class="settings-button" id="buildBtn">🏠 Build</button>
                 </div>
                 
+                <div class="modal-overlay" id="buildModal">
+                    <div class="build-modal">
+                        <h2>Build Structures</h2>
+                        <div class="build-grid">
+                            <button class="build-item" data-type="miner">⛏️ Miner House</button>
+                            <button class="build-item" data-type="farmer">🌱 Farmer House</button>
+                            <button class="build-item" data-type="fisherman">🎣 Fisherman House</button>
+                            <button class="build-item" data-type="lumberjack">🪓 Lumberjack House</button>
+                        </div>
+                        <button class="button" id="buildCloseBtn">Close</button>
+                    </div>
+                </div>
+
                 <div class="modal-overlay" id="configModal">
                     <div class="settings-modal">
                         <h2>Game Settings</h2>
@@ -76,6 +113,61 @@ export class GameScene extends Scene {
         configModal.addEventListener('click', (e) => {
             if (e.target === configModal) {
                 configCloseBtn.click();
+            }
+        });
+
+        const buildBtn = document.getElementById('buildBtn');
+        const buildModal = document.getElementById('buildModal');
+        const buildCloseBtn = document.getElementById('buildCloseBtn');
+        const buildItems = document.querySelectorAll('.build-item');
+
+        buildBtn.addEventListener('click', () => {
+            buildModal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                buildModal.classList.add('visible');
+                buildModal.querySelector('.build-modal').classList.add('visible');
+            });
+        });
+
+        buildCloseBtn.addEventListener('click', () => {
+            this.selectedStructure = null;
+            buildModal.classList.remove('visible');
+            buildModal.querySelector('.build-modal').classList.remove('visible');
+            setTimeout(() => {
+                buildModal.style.display = 'none';
+            }, 300);
+        });
+
+        buildItems.forEach(item => {
+            item.addEventListener('click', () => {
+                this.selectedStructure = item.dataset.type;
+                buildCloseBtn.click();
+            });
+        });
+
+        this.canvas.addEventListener('mousemove', (e) => {
+            if (this.selectedStructure) {
+                const rect = this.canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                const gridPos = this.screenToGrid(mouseX, mouseY);
+                if (gridPos) {
+                    const isOccupied = this.structureManager.isPositionOccupied(gridPos.x, gridPos.y);
+                    this.highlightTile = {
+                        x: gridPos.x,
+                        y: gridPos.y,
+                        available: !isOccupied
+                    };
+                }
+            }
+        });
+
+        this.canvas.addEventListener('click', (e) => {
+            if (this.selectedStructure && this.highlightTile && this.highlightTile.available) {
+                this.structureManager.addStructure(this.selectedStructure, this.highlightTile.x, this.highlightTile.y);
+                this.selectedStructure = null;
+                this.highlightTile = null;
             }
         });
 
@@ -179,6 +271,26 @@ export class GameScene extends Scene {
             this.structureManager.draw(this.ctx, 0, 0, 1);
         }
         
+        // Draw highlight tile if needed
+        if (this.selectedStructure && this.highlightTile) {
+            const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
+            const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
+            
+            ctx.fillStyle = this.highlightTile.available ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
+            ctx.strokeStyle = this.highlightTile.available ? '#4CAF50' : '#F44336';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX + isoX, centerY + isoY - this.gridSize/4);
+            ctx.lineTo(centerX + isoX + this.gridSize/2, centerY + isoY);
+            ctx.lineTo(centerX + isoX, centerY + isoY + this.gridSize/4);
+            ctx.lineTo(centerX + isoX - this.gridSize/2, centerY + isoY);
+            ctx.closePath();
+            
+            ctx.fill();
+            ctx.stroke();
+        }
+
         // Restaurar contexto
         this.ctx.restore();
         
@@ -208,3 +320,20 @@ export class GameScene extends Scene {
         }
     }
 }
+    screenToGrid(screenX, screenY) {
+        const centerX = this.canvas.width/2;
+        const centerY = this.canvas.height/2;
+        
+        // Adjust for camera position and scale
+        const adjustedX = (screenX - centerX - this.camera.offset.x) / this.camera.scale;
+        const adjustedY = (screenY - centerY - this.camera.offset.y) / this.camera.scale;
+        
+        // Convert screen coordinates to isometric grid
+        const tileX = Math.floor((2 * adjustedY + adjustedX) / this.gridSize);
+        const tileY = Math.floor((2 * adjustedY - adjustedX) / this.gridSize);
+        
+        if (tileX >= 0 && tileX < this.gridWidth && tileY >= 0 && tileY < this.gridHeight) {
+            return { x: tileX, y: tileY };
+        }
+        return null;
+    }
