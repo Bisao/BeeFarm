@@ -234,15 +234,7 @@ export class GameScene extends Scene {
                     this.ctx.stroke();
                 }
                 
-                const pattern = Math.random() < 0.1 ? '.' : Math.random() < 0.05 ? '*' : '';
-                if (pattern) {
-                    this.ctx.fillStyle = '#000';
-                    this.ctx.font = '12px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(pattern, 
-                        centerX/this.scale + isoX, 
-                        centerY/this.scale + isoY + 5);
-                }
+                // Removido o código que gerava padrões aleatórios
             }
         }
 
