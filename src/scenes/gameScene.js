@@ -74,7 +74,7 @@ export class GameScene extends Scene {
         
         // Initialize tree manager and generate random trees
         this.treeManager = new TreeManager();
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 30);
+        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
         
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
