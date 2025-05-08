@@ -18,6 +18,68 @@ export class GameScene extends Scene {
         this.scale = 1;
         this.touchCount = 0;
         this.initialPinchDistance = 0;
+        this.initialScale = 1;
+        
+        // Add touch event listeners for mobile
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.touchCount = e.touches.length;
+            
+            if (this.touchCount === 2) {
+                // Get initial pinch distance for zoom
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                this.initialPinchDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                this.initialScale = this.scale;
+            } else if (this.touchCount === 1) {
+                // Single touch for panning
+                this.isDragging = true;
+                this.lastPos = { 
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY 
+                };
+            }
+        });
+        
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (this.touchCount === 2) {
+                // Handle pinch zoom
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                
+                // Calculate new scale
+                this.scale = this.initialScale * (currentDistance / this.initialPinchDistance);
+                this.scale = Math.max(0.5, Math.min(this.scale, 3));
+                this.drawGrid();
+            } else if (this.isDragging) {
+                // Handle pan
+                const dx = e.touches[0].clientX - this.lastPos.x;
+                const dy = e.touches[0].clientY - this.lastPos.y;
+                this.offset.x += dx;
+                this.offset.y += dy;
+                this.lastPos = {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+                this.drawGrid();
+            }
+        });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.touchCount = e.touches.length;
+            if (this.touchCount < 1) {
+                this.isDragging = false;
+            }
+        });
         
         // Add mouse event listeners
         this.canvas.addEventListener('mousedown', (e) => {
