@@ -228,6 +228,19 @@ export class GameScene extends Scene {
     resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        
+        // Calcular o centro do grid em coordenadas isométricas
+        const centerGridX = Math.floor(this.gridWidth / 2);
+        const centerGridY = Math.floor(this.gridHeight / 2);
+        
+        // Converter para coordenadas isométricas
+        const isoX = (centerGridX - centerGridY) * this.gridSize / 2;
+        const isoY = (centerGridX + centerGridY) * this.gridSize / 4;
+        
+        // Ajustar offset para centralizar no tile central
+        this.offset.x = -isoX * this.scale + (this.canvas.width / 2);
+        this.offset.y = -isoY * this.scale + (this.canvas.height / 2);
+        
         this.drawGrid();
     }
 
