@@ -3,8 +3,8 @@ export class TreeManager {
     constructor() {
         this.trees = [];
         this.treeImages = {
-            pine: this.loadImage('/attached_assets/tree_pine-removebg-preview.png'),
-            simple: this.loadImage('/attached_assets/tree_simple-removebg-preview.png')
+            pine: this.loadImage('/src/assets/images/tree_pine-removebg-preview.png'),
+            simple: this.loadImage('/src/assets/images/tree_simple-removebg-preview.png')
         };
     }
 
