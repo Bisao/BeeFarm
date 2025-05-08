@@ -7,6 +7,48 @@
     height: 100vh;
     display: grid;
     place-items: center;
+    background: #1a1a1a;
+    color: white;
+}
+
+.start-scene {
+    text-align: center;
+}
+
+.start-scene h1 {
+    font-size: 48px;
+    margin-bottom: 40px;
+}
+
+.loading-screen {
+    text-align: center;
+}
+
+.progress-bar {
+    width: 200px;
+    height: 20px;
+    background: #333;
+    margin: 20px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #4CAF50;
+    animation: loading 2s linear infinite;
+    transform-origin: left;
+}
+
+@keyframes loading {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
 }
 
 .button {
