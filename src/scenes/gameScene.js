@@ -26,10 +26,12 @@ export class GameScene extends Scene {
         this.maleNPC.updateGridPosition(this.spawnPoint.x, this.spawnPoint.y);
         this.femaleNPC.updateGridPosition(this.spawnPoint.x + 2, this.spawnPoint.y);
         
-        // Calcula o offset inicial para centralizar no NPC principal
+        // Define a posição inicial da câmera (25,25)
+        const initialX = (25 - 25) * this.gridSize / 2;
+        const initialY = (25 + 25) * this.gridSize / 4;
         this.offset = {
-            x: -this.maleNPC.position.x * this.scale + (window.innerWidth / 2),
-            y: -this.maleNPC.position.y * this.scale + (window.innerHeight / 2)
+            x: -initialX + (window.innerWidth / 2),
+            y: -initialY + (window.innerHeight / 2)
         };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
