@@ -6,7 +6,9 @@ export class MaleNPC extends NPC {
         super(x, y);
         this.sprites = {
             walkDown: [],
-            walkUp: []
+            walkUp: [],
+            walkLeft: [],
+            walkRight: []
         };
         this.currentAnimation = 'walkDown';
         this.frame = 0;
@@ -28,6 +30,20 @@ export class MaleNPC extends NPC {
             const img = new Image();
             img.src = `/attached_assets/citizen-male-caminhando-cima-gif_${i}_delay-0.1s.gif`;
             this.sprites.walkUp.push(img);
+        }
+
+        // Load walk left animation
+        for(let i = 0; i < 8; i++) {
+            const img = new Image();
+            img.src = `/attached_assets/citizen-male-caminhando-esquerda-gif_${i}_delay-0.1s.gif`;
+            this.sprites.walkLeft.push(img);
+        }
+
+        // Load walk right animation
+        for(let i = 0; i < 8; i++) {
+            const img = new Image();
+            img.src = `/attached_assets/citizen-male-caminhando-direita-gif_${i}_delay-0.1s.gif`;
+            this.sprites.walkRight.push(img);
         }
     }
 
