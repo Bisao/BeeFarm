@@ -9,8 +9,8 @@ export class GameScene extends Scene {
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 50;
-        this.gridWidth = 10;
-        this.gridHeight = 10;
+        this.gridWidth = 50;
+        this.gridHeight = 50;
         this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
