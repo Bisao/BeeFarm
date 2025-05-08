@@ -21,10 +21,13 @@ export class GameScene extends Scene {
         const spawnIsoX = (this.spawnPoint.x - this.spawnPoint.y) * this.gridSize / 2;
         const spawnIsoY = (this.spawnPoint.x + this.spawnPoint.y) * this.gridSize / 4;
         
+        // Define a escala inicial antes de calcular o offset
+        this.scale = 3; // Zoom máximo inicial
+        
         // Ajusta o offset considerando o centro da tela e a escala
         this.offset = {
-            x: -(spawnIsoX * this.scale) + (window.innerWidth / 2),
-            y: -(spawnIsoY * this.scale) + (window.innerHeight / 2)
+            x: -spawnIsoX + (window.innerWidth / 2),
+            y: -spawnIsoY + (window.innerHeight / 2)
         };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
