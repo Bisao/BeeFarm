@@ -27,11 +27,11 @@ export class GameScene extends Scene {
         this.femaleNPC.updateGridPosition(this.spawnPoint.x + 2, this.spawnPoint.y);
         
         // Define a posição inicial da câmera no centro do grid
-        const centerX = this.gridWidth * this.gridSize / 4;
-        const centerY = this.gridHeight * this.gridSize / 8;
+        const gridCenterX = (this.gridWidth * this.gridSize) / 2;
+        const gridCenterY = (this.gridHeight * this.gridSize) / 4;
         this.offset = {
-            x: -centerX + (window.innerWidth / 2),
-            y: -centerY + (window.innerHeight / 2)
+            x: -gridCenterX + (window.innerWidth / 2),
+            y: -gridCenterY + (window.innerHeight / 2)
         };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
