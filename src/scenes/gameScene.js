@@ -38,12 +38,7 @@ export class GameScene extends Scene {
                         <span class="resource">🪵 Wood: <span id="woodCount">0</span></span>
                     </div>
                 </div>
-                <div class="build-menu">
-                    <button class="build-btn" data-type="lumberjack">🪓 Lumberjack</button>
-                    <button class="build-btn" data-type="miner">⛏️ Miner</button>
-                    <button class="build-btn" data-type="farmer">🌱 Farmer</button>
-                    <button class="build-btn" data-type="fisherman">🎣 Fisherman</button>
-                </div>
+                
                 <div class="modal-overlay" id="configModal">
                     <div class="settings-modal">
                         <h2>Game Settings</h2>
@@ -107,47 +102,7 @@ export class GameScene extends Scene {
         this.canvas.addEventListener('wheel', this.camera.handleWheel.bind(this.camera));
         this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-        // Setup shop button
-        const shopBtn = document.createElement('button');
-        shopBtn.textContent = '🏪 Shop';
-        shopBtn.className = 'settings-button';
-        shopBtn.style.marginLeft = '10px';
-        document.querySelector('.top-bar').appendChild(shopBtn);
-
-        // Setup shop modal
-        const shopModal = document.createElement('div');
-        shopModal.className = 'modal-overlay';
-        shopModal.id = 'shopModal';
-        shopModal.innerHTML = `
-            <div class="settings-modal">
-                <h2>Shop</h2>
-                <div class="shop-content">
-                    <button class="build-btn" data-type="lumberjack">🪓 Lumberjack House (100 gold)</button>
-                    <button class="build-btn" data-type="miner">⛏️ Miner House (150 gold)</button>
-                    <button class="build-btn" data-type="farmer">🌱 Farmer House (80 gold)</button>
-                    <button class="build-btn" data-type="fisherman">🎣 Fisherman House (120 gold)</button>
-                </div>
-                <button class="button" id="shopCloseBtn">Close</button>
-            </div>
-        `;
-        this.container.appendChild(shopModal);
-
-        shopBtn.addEventListener('click', () => {
-            shopModal.style.display = 'flex';
-            requestAnimationFrame(() => {
-                shopModal.classList.add('visible');
-                shopModal.querySelector('.settings-modal').classList.add('visible');
-            });
-        });
-
-        const shopCloseBtn = document.getElementById('shopCloseBtn');
-        shopCloseBtn.addEventListener('click', () => {
-            shopModal.classList.remove('visible');
-            shopModal.querySelector('.settings-modal').classList.remove('visible');
-            setTimeout(() => {
-                shopModal.style.display = 'none';
-            }, 300);
-        });
+        
         
         requestAnimationFrame(() => this.draw());
     }
