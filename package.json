@@ -1,0 +1,9 @@
+
+{
+  "name": "2d-game",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node src/main.js"
+  }
+}
