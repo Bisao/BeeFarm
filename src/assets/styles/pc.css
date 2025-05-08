@@ -132,8 +132,8 @@ body {
     border-radius: 10px;
     width: 90%;
     max-width: 400px;
-    position: relative;
     z-index: 100001;
+    position: relative;
 }
 
 .settings-modal h2 {
