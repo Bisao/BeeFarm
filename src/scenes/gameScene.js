@@ -1,5 +1,6 @@
 
 import { Scene } from '../core/baseScene.js';
+import { NPC } from '../core/npc.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -16,6 +17,10 @@ export class GameScene extends Scene {
         this.scale = 1;
         this.touchCount = 0;
         this.initialPinchDistance = 0;
+        
+        // Create test NPC
+        this.testNPC = new NPC(0, 0);
+        this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
     }
 
     enter() {
@@ -139,6 +144,10 @@ export class GameScene extends Scene {
                 this.ctx.stroke();
             }
         }
+        
+        // Draw NPC
+        this.testNPC.draw(this.ctx, centerX, centerY, this.scale);
+        
         this.ctx.restore();
     }
 
