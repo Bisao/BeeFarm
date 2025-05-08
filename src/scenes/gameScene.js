@@ -273,8 +273,12 @@ export class GameScene extends Scene {
             { type: 'npc', obj: this.femaleNPC },
             ...this.treeManager.trees.map(tree => ({ type: 'tree', obj: tree }))
         ].sort((a, b) => {
-            const aY = a.type === 'npc' ? a.obj.position.y : (a.obj.x + a.obj.y) * this.gridSize / 4;
-            const bY = b.type === 'npc' ? b.obj.position.y : (b.obj.x + b.obj.y) * this.gridSize / 4;
+            const aY = a.type === 'npc' ? 
+                      (a.obj.position.y + 10) : // Adiciona um pequeno offset para NPCs
+                      (a.obj.x + a.obj.y) * this.gridSize / 4;
+            const bY = b.type === 'npc' ? 
+                      (b.obj.position.y + 10) : 
+                      (b.obj.x + b.obj.y) * this.gridSize / 4;
             return aY - bY;
         });
 
