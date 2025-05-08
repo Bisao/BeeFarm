@@ -21,6 +21,7 @@ export class GameScene extends Scene {
         this.testNPC.updateGridPosition(5, 5);
         this.testHouse = new House(0, 0);
         this.testHouse.updateGridPosition(3, 3);
+        this.testNPC.setHouse(this.testHouse);
     }
 
     enter() {
