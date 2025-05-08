@@ -15,7 +15,7 @@ export class MaleNPC extends NPC {
         this.animationSpeed = MALE_NPC_ANIMATIONS[this.currentAnimation].speed;
         this.lastFrameTime = 0;
         this.moving = false;
-        this.speed = 0.2;
+        this.speed = 0.15;
         this.lastDirection = 'down';
         this.loadSprites();
     }

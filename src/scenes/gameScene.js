@@ -149,20 +149,29 @@ export class GameScene extends Scene {
     startAutomaticMovement() {
         const directions = ['up', 'down', 'left', 'right'];
         let currentDirection = null;
+        let moveTimer = 0;
+        let pauseTimer = 0;
+        let isMoving = false;
         
         setInterval(() => {
-            if (!currentDirection || Math.random() < 0.3) {
-                // 30% chance to change direction
-                const newDirection = directions[Math.floor(Math.random() * directions.length)];
-                if (newDirection !== currentDirection) {
-                    currentDirection = newDirection;
-                    this.testNPC.move(currentDirection);
+            if (!isMoving) {
+                pauseTimer++;
+                if (pauseTimer >= 3) { // Pausa por 3 segundos
+                    isMoving = true;
+                    moveTimer = 0;
+                    currentDirection = directions[Math.floor(Math.random() * directions.length)];
+                    pauseTimer = 0;
                 }
             } else {
-                // Continue in same direction
-                this.testNPC.move(currentDirection);
+                moveTimer++;
+                if (moveTimer < 5) { // Move por 5 segundos
+                    this.testNPC.move(currentDirection);
+                } else {
+                    isMoving = false;
+                    this.testNPC.stopMoving();
+                }
             }
-        }, 1000); // Check movement every second
+        }, 1000); // Atualiza a cada segundo
     }
 
     resizeCanvas() {
