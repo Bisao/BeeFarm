@@ -3,6 +3,7 @@ import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
 import { TreeManager } from '../core/treeManager.js';
+import { TilePool } from '../core/tilePool.js';
 
 export class GameScene extends Scene {
     constructor() {
