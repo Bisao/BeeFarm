@@ -10,11 +10,13 @@ export class GameScene extends Scene {
         super();
         this.container = document.getElementById('game-container');
         this.canvas = document.getElementById('game-canvas');
-        this.woodcuttingSystem = new WoodcuttingSystem(this.treeManager);
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
+        this.treeManager = new TreeManager();
+        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+        this.woodcuttingSystem = new WoodcuttingSystem(this.treeManager);
         this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
