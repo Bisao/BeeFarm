@@ -158,14 +158,8 @@ export class GameScene extends Scene {
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Define o centro da câmera
-        const cameraX = -this.offset.x;
-        const cameraY = -this.offset.y;
-        
-        // Calcula o centro da tela
         const centerX = this.canvas.width / 2 + this.offset.x;
-        const centerY = this.canvas.height / 2 + this.offset.y;
+        const centerY = this.canvas.height / 3 + this.offset.y;
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
