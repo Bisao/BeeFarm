@@ -83,6 +83,26 @@ export class MaleNPC extends NPC {
     }
 
     loadSprites() {
+        const loadImage = (src) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        };
+
+        Object.entries(MALE_NPC_ANIMATIONS).forEach(async ([name, animation]) => {
+            if (name.startsWith('walk')) {
+                for (let i = 0; i < animation.frames; i++) {
+                    const sprite = await loadImage(`${animation.path}${i}${animation.extension}`);
+                    this.sprites[name][i] = sprite;
+                }
+            } else {
+                const sprite = await loadImage(animation.path);
+                this.sprites[name][0] = sprite;
+            }
+        });
         Object.entries(MALE_NPC_ANIMATIONS).forEach(([animName, config]) => {
             for(let i = 0; i < config.frames; i++) {
                 const img = new Image();
