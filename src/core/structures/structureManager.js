@@ -30,4 +30,10 @@ export class StructureManager {
         this.occupiedPositions.add(`${x},${y}`);
         return true;
     }
+
+    draw(ctx, centerX, centerY, scale) {
+        for (const structure of this.structures) {
+            structure.draw(ctx, centerX, centerY, scale);
+        }
+    }
 }
