@@ -231,9 +231,25 @@ export class GameScene extends Scene {
             }
         }
 
-        this.treeManager.draw(this.ctx, centerX, centerY, this.scale);
-        this.maleNPC.draw(this.ctx, centerX, centerY, this.scale);
-        this.femaleNPC.draw(this.ctx, centerX, centerY, this.scale);
+        // Ordenar NPCs e árvores baseado na posição Y
+        const objects = [
+            { type: 'npc', obj: this.maleNPC },
+            { type: 'npc', obj: this.femaleNPC },
+            ...this.treeManager.trees.map(tree => ({ type: 'tree', obj: tree }))
+        ].sort((a, b) => {
+            const aY = a.type === 'npc' ? a.obj.position.y : (a.obj.x + a.obj.y) * this.gridSize / 4;
+            const bY = b.type === 'npc' ? b.obj.position.y : (b.obj.x + b.obj.y) * this.gridSize / 4;
+            return aY - bY;
+        });
+
+        // Desenhar objetos em ordem
+        for (const object of objects) {
+            if (object.type === 'npc') {
+                object.obj.draw(this.ctx, centerX, centerY, this.scale);
+            } else {
+                this.drawTree(this.ctx, object.obj, centerX, centerY, this.scale);
+            }
+        }
         this.ctx.restore();
     }
 
@@ -244,5 +260,27 @@ export class GameScene extends Scene {
 
     draw() {
         this.drawGrid();
+    }
+}
+drawTree(ctx, tree, centerX, centerY, scale) {
+    const isoX = (tree.x - tree.y) * this.gridSize / 2;
+    const isoY = (tree.x + tree.y) * this.gridSize / 4;
+    const img = this.treeManager.treeImages[tree.type];
+    
+    if (img.complete) {
+        const treeWidth = 40;
+        const treeHeight = 40;
+        const tileCenter = {
+            x: centerX/scale + isoX,
+            y: centerY/scale + isoY
+        };
+        
+        ctx.drawImage(
+            img,
+            tileCenter.x - treeWidth/2,
+            tileCenter.y - treeHeight/2,
+            treeWidth,
+            treeHeight
+        );
     }
 }
