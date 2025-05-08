@@ -12,14 +12,10 @@ export class StartScene extends Scene {
             <div class="start-scene">
                 <h1>Game Title</h1>
                 <button class="button" id="playBtn">Play</button>
-                <button class="button" id="settingsBtn">Settings</button>
             </div>
         `;
 
         document.getElementById('playBtn').addEventListener('click', () => this.startGame());
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            this.manager.changeScene('settings');
-        });
     }
 
     async startGame() {

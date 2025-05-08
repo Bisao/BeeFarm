@@ -21,21 +21,7 @@ export class GameScene extends Scene {
     }
 
     enter() {
-        this.container.innerHTML = `
-            <div class="top-bar">
-                <button class="settings-button" id="configBtn">⚙️ Settings</button>
-            </div>
-            <div class="modal-overlay" id="configModal">
-                <div class="settings-modal">
-                    <h2>Settings</h2>
-                    <div class="settings-content">
-                        <!-- Settings content here -->
-                    </div>
-                    <button class="button" id="configCloseBtn">Close</button>
-                </div>
-            </div>
-        `;
-
+        this.container.innerHTML = '';
         this.canvas.style.display = 'block';
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
