@@ -103,13 +103,6 @@ export class MaleNPC extends NPC {
                 this.sprites[name][0] = sprite;
             }
         });
-        Object.entries(MALE_NPC_ANIMATIONS).forEach(([animName, config]) => {
-            for(let i = 0; i < config.frames; i++) {
-                const img = new Image();
-                img.src = `${config.path}${i}_delay-0.1s.gif`;
-                this.sprites[animName].push(img);
-            }
-        });
     }
 
     draw(ctx, centerX, centerY, scale) {
