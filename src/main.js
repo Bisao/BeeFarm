@@ -21,6 +21,7 @@ async function init() {
     
     // Register scenes
     sceneManager.registerScene('start', new StartScene());
+    sceneManager.registerScene('settings', new SettingsScene());
     sceneManager.registerScene('game', new GameScene());
     
     // Start with the start scene
