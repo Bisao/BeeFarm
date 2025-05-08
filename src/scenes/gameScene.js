@@ -203,7 +203,9 @@ export class GameScene extends Scene {
         }
 
         // Draw trees before NPCs so NPCs appear in front
-        this.treeManager.draw(this.ctx, centerX, centerY, this.scale);
+        const viewX = -this.offset.x / (this.gridSize * this.scale);
+        const viewY = -this.offset.y / (this.gridSize * this.scale);
+        this.treeManager.draw(this.ctx, centerX, centerY, this.scale, viewX, viewY);
         this.maleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.femaleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.ctx.restore();

@@ -6,6 +6,14 @@ export class TreeManager {
             pine: this.loadImage('/src/assets/images/trees/tree_pine-removebg-preview.png'),
             simple: this.loadImage('/src/assets/images/trees/tree_simple-removebg-preview.png')
         };
+        this.renderConfig = {
+            maxRenderDistance: 25,
+            enabled: true
+        };
+    }
+
+    setRenderConfig(config) {
+        this.renderConfig = { ...this.renderConfig, ...config };
     }
 
     loadImage(src) {
@@ -24,8 +32,16 @@ export class TreeManager {
         }
     }
 
-    draw(ctx, centerX, centerY, scale) {
+    draw(ctx, centerX, centerY, scale, viewX, viewY) {
+        if (!this.renderConfig.enabled) return;
+        
         for (const tree of this.trees) {
+            const dx = tree.x - viewX;
+            const dy = tree.y - viewY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance > this.renderConfig.maxRenderDistance) continue;
+            
             const isoX = (tree.x - tree.y) * 50 / 2;
             const isoY = (tree.x + tree.y) * 50 / 4;
             const img = this.treeImages[tree.type];
