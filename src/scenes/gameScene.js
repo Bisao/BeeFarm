@@ -159,6 +159,45 @@ export class GameScene extends Scene {
         if (!this.isRendering) {
             return;
         }
+        
+        // Limpar canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Desenhar grid
         this.drawIsometricGrid(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        
+        // Desenhar árvores
+        this.treeManager.trees.forEach(tree => {
+            this.drawTree(this.ctx, tree, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        });
+        
+        // Desenhar NPCs
+        this.maleNPC.draw(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        this.femaleNPC.draw(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+        
+        // Desenhar estruturas
+        this.structureManager.draw(this.ctx, this.canvas.width/2, this.canvas.height/2, this.camera.scale);
+    }
+
+    drawTree(ctx, tree, centerX, centerY, scale) {
+        const isoX = (tree.x - tree.y) * this.gridSize / 2;
+        const isoY = (tree.x + tree.y) * this.gridSize / 4;
+        const img = this.treeManager.treeImages[tree.type];
+
+        if (img && img.complete && img.naturalHeight !== 0) {
+            const treeWidth = 60 * scale;
+            const treeHeight = 60 * scale;
+            const tileCenter = {
+                x: centerX + isoX * scale,
+                y: centerY + isoY * scale
+            };
+            
+            ctx.drawImage(img, 
+                tileCenter.x - treeWidth/2, 
+                tileCenter.y - treeHeight, 
+                treeWidth, 
+                treeHeight
+            );
+        }
     }
 }
