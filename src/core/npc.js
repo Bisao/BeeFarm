@@ -79,12 +79,7 @@ export class NPC {
         this.moveToGrid(targetX, targetY);
     }
 
-    moveToGrid(targetX, targetY, isTreeTarget = false) {
-        if (isTreeTarget) {
-            // Ajusta a posição para ficar à esquerda da árvore
-            targetX = targetX - 1;
-        }
-        
+    moveToGrid(targetX, targetY) {
         this.targetPosition = {
             x: (targetX - targetY) * 50 / 2,
             y: (targetX + targetY) * 50 / 4
@@ -144,7 +139,7 @@ export class NPC {
                 if (nearestTree) {
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
-                    this.moveToGrid(nearestTree.x, nearestTree.y, true);
+                    this.moveToGrid(nearestTree.x, nearestTree.y);
                     this.targetTree = nearestTree;
                 }
                 break;
