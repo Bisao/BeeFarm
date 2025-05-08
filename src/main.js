@@ -16,11 +16,24 @@ const loadCSS = () => {
 };
 
 async function init() {
-    await loadCSS();
-    const sceneManager = new SceneManager();
+    try {
+        await loadCSS();
+        const sceneManager = new SceneManager();
     
     // Register scenes
     sceneManager.registerScene('start', new StartScene());
+
+    } catch (error) {
+        console.error('Error initializing game:', error);
+        const container = document.getElementById('game-container');
+        container.innerHTML = `
+            <div class="error-screen">
+                <h2>Failed to load game</h2>
+                <p>Please refresh the page to try again.</p>
+            </div>
+        `;
+    }
+
     sceneManager.registerScene('settings', new SettingsScene());
     sceneManager.registerScene('game', new GameScene());
     
