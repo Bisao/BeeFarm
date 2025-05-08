@@ -15,12 +15,14 @@ export class MaleNPC extends NPC {
         this.animationSpeed = MALE_NPC_ANIMATIONS[this.currentAnimation].speed;
         this.lastFrameTime = 0;
         this.moving = false;
-        this.speed = 0.1;
+        this.speed = 1;
+        this.lastDirection = 'down';
         this.loadSprites();
     }
 
     move(direction) {
         this.moving = true;
+        this.lastDirection = direction;
         let newX = this.gridPosition.x;
         let newY = this.gridPosition.y;
 
@@ -59,6 +61,10 @@ export class MaleNPC extends NPC {
         this.gridPosition.y = Math.round(this.gridPosition.y);
         this.position.x = (this.gridPosition.x - this.gridPosition.y) * 50 / 2;
         this.position.y = (this.gridPosition.x + this.gridPosition.y) * 50 / 4;
+        
+        // Reset frame when stopping
+        this.frame = 0;
+        this.currentAnimation = `walk${this.lastDirection.charAt(0).toUpperCase() + this.lastDirection.slice(1)}`;
     }
 
     loadSprites() {
