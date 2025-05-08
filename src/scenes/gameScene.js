@@ -235,16 +235,13 @@ export class GameScene extends Scene {
         const gridCenterX = (this.gridWidth * this.gridSize) / 2;
         const gridCenterY = (this.gridHeight * this.gridSize) / 4;
         
-        // Ajustar offset para centralizar
-        const centerX = (this.canvas.width / 2 - gridCenterX * this.scale) + this.offset.x;
-        const centerY = (this.canvas.height / 2 - gridCenterY * this.scale) + this.offset.y;
-
+        // Calcular o offset para centralizar a câmera
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+        
         this.ctx.save();
+        this.ctx.translate(centerX + this.offset.x, centerY + this.offset.y);
         this.ctx.scale(this.scale, this.scale);
-        this.ctx.translate(
-            (this.canvas.width / 2) * (1 - 1/this.scale),
-            (this.canvas.height / 2) * (1 - 1/this.scale)
-        );
 
         for (let y = 0; y < this.gridHeight; y++) {
             for (let x = 0; x < this.gridWidth; x++) {
