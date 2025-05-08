@@ -36,9 +36,10 @@ export class TreeManager {
         if (!this.renderConfig.enabled) return;
         
         for (const tree of this.trees) {
-            const dx = tree.x - viewX;
-            const dy = tree.y - viewY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            // Converter coordenadas isométricas para coordenadas do mundo
+            const dx = Math.abs(tree.x - Math.floor(viewX));
+            const dy = Math.abs(tree.y - Math.floor(viewY));
+            const distance = Math.max(dx, dy);
             
             if (distance > this.renderConfig.maxRenderDistance) continue;
             
