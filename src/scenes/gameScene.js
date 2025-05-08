@@ -16,7 +16,7 @@ export class GameScene extends Scene {
         this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
-        this.scale = 1;
+        this.scale = 3; // Iniciando com zoom máximo
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.initialScale = 1;
@@ -132,8 +132,11 @@ export class GameScene extends Scene {
         
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(4, 5);
-        this.femaleNPC.updateGridPosition(6, 5);
+        // Posicionar NPCs no centro do grid
+        const centerX = Math.floor(this.gridWidth / 2);
+        const centerY = Math.floor(this.gridHeight / 2);
+        this.maleNPC.updateGridPosition(centerX - 1, centerY);
+        this.femaleNPC.updateGridPosition(centerX + 1, centerY);
     }
 
     enter() {
@@ -230,8 +233,9 @@ export class GameScene extends Scene {
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        const centerX = this.canvas.width / 2 + this.offset.x;
-        const centerY = this.canvas.height / 3 + this.offset.y;
+        // Centralizar câmera no grid
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
