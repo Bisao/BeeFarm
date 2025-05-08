@@ -1,4 +1,3 @@
-
 import { Scene } from '../core/baseScene.js';
 import { NPC } from '../core/npc.js';
 
@@ -17,18 +16,27 @@ export class GameScene extends Scene {
         this.scale = 1;
         this.touchCount = 0;
         this.initialPinchDistance = 0;
-        
+
         // Create test NPC
         this.testNPC = new NPC(0, 0);
         this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
     }
 
     enter() {
+        this.container.innerHTML = `
+            <div class="top-bar">
+                <button class="settings-button" id="settingsBtn">⚙️ Settings</button>
+            </div>
+        `;
+        this.container.style.display = 'block';
         this.canvas.style.display = 'block';
-        this.container.innerHTML = '';
+
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            this.manager.changeScene('settings');
+        });
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
-        
+
         // Mouse events
         this.canvas.addEventListener('mousedown', (e) => {
             if (e.button === 2) {
@@ -49,7 +57,7 @@ export class GameScene extends Scene {
         this.canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
             const zoom = e.deltaY > 0 ? 0.9 : 1.1;
-            
+
             // Get mouse position relative to canvas
             const rect = this.canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
@@ -58,16 +66,16 @@ export class GameScene extends Scene {
             // Calculate offset change based on mouse position
             const xBeforeZoom = (mouseX - this.offset.x) / this.scale;
             const yBeforeZoom = (mouseY - this.offset.y) / this.scale;
-            
+
             this.scale *= zoom;
             this.scale = Math.max(0.1, Math.min(this.scale, 5));
-            
+
             const xAfterZoom = xBeforeZoom * this.scale;
             const yAfterZoom = yBeforeZoom * this.scale;
-            
+
             this.offset.x += mouseX - (this.offset.x + xAfterZoom);
             this.offset.y += mouseY - (this.offset.y + yAfterZoom);
-            
+
             this.drawGrid();
         });
 
@@ -117,7 +125,7 @@ export class GameScene extends Scene {
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+
         const centerX = this.canvas.width / 2 + this.offset.x;
         const centerY = this.canvas.height / 3 + this.offset.y;
 
@@ -144,10 +152,10 @@ export class GameScene extends Scene {
                 this.ctx.stroke();
             }
         }
-        
+
         // Draw NPC
         this.testNPC.draw(this.ctx, centerX, centerY, this.scale);
-        
+
         this.ctx.restore();
     }
 
