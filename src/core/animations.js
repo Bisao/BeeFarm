@@ -1,46 +1,47 @@
+
 export const MALE_NPC_ANIMATIONS = {
     walkDown: {
         frames: 8,
-        path: 'attached_assets/citizen-male-caminhando-baixo-gif_',
-        extension: '_delay-0.1s.gif',
+        path: 'src/assets/animations/walk-down-',
+        extension: '.gif',
         speed: 100
     },
     walkUp: {
         frames: 8,
-        path: 'attached_assets/citizen-male-caminhando-cima-gif_',
-        extension: '_delay-0.1s.gif',
+        path: 'src/assets/animations/walk-up-',
+        extension: '.gif',
         speed: 100
     },
     walkLeft: {
         frames: 8,
-        path: 'attached_assets/citizen-male-caminhando-esquerda-gif_',
-        extension: '_delay-0.1s.gif',
+        path: 'src/assets/animations/walk-left-',
+        extension: '.gif',
         speed: 100
     },
     walkRight: {
         frames: 8,
-        path: 'attached_assets/citizen-male-caminhando-direita-gif_',
-        extension: '_delay-0.1s.gif',
+        path: 'src/assets/animations/walk-right-',
+        extension: '.gif',
         speed: 100
     },
     idleDown: {
         frames: 1,
-        path: 'src/assets/animations/Citizen Male - parado baixo.gif',
+        path: 'src/assets/animations/idle-down.gif',
         speed: 100
     },
     idleUp: {
         frames: 1,
-        path: 'src/assets/animations/Citizen Male - parado cima.gif',
+        path: 'src/assets/animations/idle-up.gif',
         speed: 100
     },
     idleLeft: {
         frames: 1,
-        path: 'src/assets/animations/Citizen Male - parado esquerda.gif',
+        path: 'src/assets/animations/idle-left.gif',
         speed: 100
     },
     idleRight: {
         frames: 1,
-        path: 'src/assets/animations/Citizen Male - parado direita.gif',
+        path: 'src/assets/animations/idle-right.gif',
         speed: 100
     }
 };
