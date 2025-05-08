@@ -84,15 +84,7 @@ body {
     border-radius: 10px;
 }
 
-#game-canvas {
-    position: fixed;
-    top: 50px;
-    left: 0;
-    width: 100%;
-    height: calc(100% - 50px);
-    z-index: 3;
-    display: none;
-}
+
 
 .game-ui {
     position: fixed;
