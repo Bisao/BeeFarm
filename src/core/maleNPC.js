@@ -1,5 +1,5 @@
-
 import { NPC } from './npc.js';
+import { MALE_NPC_ANIMATIONS } from './animations.js';
 
 export class MaleNPC extends NPC {
     constructor(x, y) {
@@ -12,44 +12,26 @@ export class MaleNPC extends NPC {
         };
         this.currentAnimation = 'walkDown';
         this.frame = 0;
-        this.animationSpeed = 100; // ms per frame
+        this.animationSpeed = MALE_NPC_ANIMATIONS[this.currentAnimation].speed;
         this.lastFrameTime = 0;
         this.loadSprites();
     }
 
     loadSprites() {
-        // Load walk down animation
-        for(let i = 0; i < 8; i++) {
-            const img = new Image();
-            img.src = `/attached_assets/citizen-male-caminhando-baixo-gif_${i}_delay-0.1s.gif`;
-            this.sprites.walkDown.push(img);
-        }
-        
-        // Load walk up animation
-        for(let i = 0; i < 8; i++) {
-            const img = new Image();
-            img.src = `/attached_assets/citizen-male-caminhando-cima-gif_${i}_delay-0.1s.gif`;
-            this.sprites.walkUp.push(img);
-        }
-
-        // Load walk left animation
-        for(let i = 0; i < 8; i++) {
-            const img = new Image();
-            img.src = `/attached_assets/citizen-male-caminhando-esquerda-gif_${i}_delay-0.1s.gif`;
-            this.sprites.walkLeft.push(img);
-        }
-
-        // Load walk right animation
-        for(let i = 0; i < 8; i++) {
-            const img = new Image();
-            img.src = `/attached_assets/citizen-male-caminhando-direita-gif_${i}_delay-0.1s.gif`;
-            this.sprites.walkRight.push(img);
-        }
+        Object.entries(MALE_NPC_ANIMATIONS).forEach(([animName, config]) => {
+            for(let i = 0; i < config.frames; i++) {
+                const img = new Image();
+                img.src = `${config.path}${i}_delay-0.1s.gif`;
+                this.sprites[animName].push(img);
+            }
+        });
     }
 
     draw(ctx, centerX, centerY, scale) {
         const now = performance.now();
-        if (now - this.lastFrameTime > this.animationSpeed) {
+        const config = MALE_NPC_ANIMATIONS[this.currentAnimation];
+
+        if (now - this.lastFrameTime > config.speed) {
             this.frame = (this.frame + 1) % this.sprites[this.currentAnimation].length;
             this.lastFrameTime = now;
         }
