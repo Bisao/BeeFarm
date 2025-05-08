@@ -106,45 +106,14 @@
 .settings-button {
     background: #4CAF50;
     border: none;
-    padding: 15px 25px;
+    padding: 10px 20px;
     color: white;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 20px;
-    margin: 8px;
+    font-size: 18px;
+    margin: 5px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 0.2s, background-color 0.2s;
-    min-width: 44px;
-    min-height: 44px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.settings-button:active {
-    transform: scale(0.95);
-    background: #45a049;
-}
-
-.settings-modal {
-    max-height: 90vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: 20px;
-}
-
-.setting-item {
-    padding: 20px;
-    margin: 15px 0;
-}
-
-.setting-item input[type="range"] {
-    height: 30px;
-    padding: 10px 0;
-}
-
-.setting-item input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
 }
 
 .settings-button:active {

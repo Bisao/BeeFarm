@@ -3,18 +3,14 @@ import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
 import { TreeManager } from '../core/treeManager.js';
-import { TilePool } from '../core/tilePool.js';
 
 export class GameScene extends Scene {
     constructor() {
         super();
         this.container = document.getElementById('game-container');
-        this.miniMap = null;
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 50;
-        this.lastRenderTime = 0;
-        this.renderInterval = 1000 / 30; // 30 FPS cap
         this.gridWidth = 50;
         this.gridHeight = 50;
         this.offset = { x: 0, y: 0 };
@@ -25,60 +21,16 @@ export class GameScene extends Scene {
         this.initialPinchDistance = 0;
         this.initialScale = 1;
         this.showGrid = true;
-        this.needsUpdate = true;
-        this.tilePool = new TilePool();
-        this.visibleTiles = new Set();
-        this.lastFrameTime = 0;
-        this.frameInterval = 1000 / 60; // 60 FPS target
-        this.cullingMargin = 2; // Extra tiles to render beyond viewport
         
         // Add touch event listeners for mobile
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            if (e.touches.length === 2) {
-                const touch1 = e.touches[0];
-                const touch2 = e.touches[1];
-                this.initialPinchDistance = Math.hypot(
-                    touch1.clientX - touch2.clientX,
-                    touch1.clientY - touch2.clientY
-                );
-                this.initialScale = this.scale;
-            } else if (e.touches.length === 1) {
+            if (e.touches.length === 1) {
                 this.isDragging = true;
                 this.lastPos = { 
                     x: e.touches[0].clientX,
                     y: e.touches[0].clientY 
                 };
-            }
-        });
-        
-        this.canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            if (e.touches.length === 2) {
-                const touch1 = e.touches[0];
-                const touch2 = e.touches[1];
-                const currentDistance = Math.hypot(
-                    touch1.clientX - touch2.clientX,
-                    touch1.clientY - touch2.clientY
-                );
-                
-                const scale = (currentDistance / this.initialPinchDistance) * this.initialScale;
-                this.scale = Math.max(0.5, Math.min(scale, 3));
-                this.needsUpdate = true;
-                
-                if (window.navigator.vibrate) {
-                    window.navigator.vibrate(50);
-                }
-            } else if (this.isDragging && e.touches.length === 1) {
-                const dx = e.touches[0].clientX - this.lastPos.x;
-                const dy = e.touches[0].clientY - this.lastPos.y;
-                this.offset.x += dx;
-                this.offset.y += dy;
-                this.lastPos = {
-                    x: e.touches[0].clientX,
-                    y: e.touches[0].clientY
-                };
-                this.needsUpdate = true;
             }
         });
         
@@ -158,9 +110,7 @@ export class GameScene extends Scene {
         this.femaleNPC.updateGridPosition(6, 5);
     }
 
-    async enter() {
-        const { MiniMap } = await import('../core/miniMap.js');
-        this.miniMap = new MiniMap(this);
+    enter() {
         this.container.innerHTML = `
             <div class="top-bar">
                 <button class="settings-button" id="configBtn">⚙️ Settings</button>
@@ -252,45 +202,10 @@ export class GameScene extends Scene {
         this.drawGrid();
     }
 
-    isInViewport(x, y) {
-        const centerX = this.canvas.width / 2 + this.offset.x;
-        const centerY = this.canvas.height / 3 + this.offset.y;
-        const viewportWidth = this.canvas.width / this.scale;
-        const viewportHeight = this.canvas.height / this.scale;
-        
-        const isoX = (x - y) * this.gridSize / 2;
-        const isoY = (x + y) * this.gridSize / 4;
-        
-        const screenX = centerX/this.scale + isoX;
-        const screenY = centerY/this.scale + isoY;
-        
-        return screenX > -this.gridSize && screenX < viewportWidth + this.gridSize &&
-               screenY > -this.gridSize && screenY < viewportHeight + this.gridSize;
-    }
-
     drawGrid() {
-        if (!this.needsUpdate && this.lastCameraPos &&
-            Math.abs(this.offset.x - this.lastCameraPos.x) < 1 &&
-            Math.abs(this.offset.y - this.lastCameraPos.y) < 1) {
-            return; // Skip render if camera hasn't moved significantly
-        }
-        
-        this.lastCameraPos = { ...this.offset };
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         const centerX = this.canvas.width / 2 + this.offset.x;
         const centerY = this.canvas.height / 3 + this.offset.y;
-        
-        // Calculate visible area centered on camera
-        const centerTileX = Math.floor((centerX/this.scale) / (this.gridSize/2));
-        const centerTileY = Math.floor((centerY/this.scale) / (this.gridSize/4));
-        const visibleRadius = 10; // Adjust this value to show more/less tiles
-        
-        const tilesInView = {
-            minX: Math.max(0, centerTileX - visibleRadius),
-            maxX: Math.min(this.gridWidth, centerTileX + visibleRadius),
-            minY: Math.max(0, centerTileY - visibleRadius),
-            maxY: Math.min(this.gridHeight, centerTileY + visibleRadius)
-        };
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
@@ -299,12 +214,8 @@ export class GameScene extends Scene {
             (this.canvas.height / 2) * (1 - 1/this.scale)
         );
 
-        // Release all tiles back to pool
-        this.visibleTiles.forEach(tile => this.tilePool.releaseTile(tile));
-        this.visibleTiles.clear();
-        
-        for (let y = tilesInView.minY; y < tilesInView.maxY; y++) {
-            for (let x = tilesInView.minX; x < tilesInView.maxX; x++) {
+        for (let y = 0; y < this.gridHeight; y++) {
+            for (let x = 0; x < this.gridWidth; x++) {
                 const isoX = (x - y) * this.gridSize / 2;
                 const isoY = (x + y) * this.gridSize / 4;
 
@@ -355,35 +266,7 @@ export class GameScene extends Scene {
     }
 
     draw() {
-        const currentTime = performance.now();
-        const deltaTime = currentTime - this.lastFrameTime;
-        
-        // Update loop - runs at 60 FPS
-        if (deltaTime >= this.frameInterval) {
-            this.lastFrameTime = currentTime;
-            this.maleNPC.update(this.gridWidth, this.gridHeight);
-            this.femaleNPC.update(this.gridWidth, this.gridHeight);
-            this.needsUpdate = true;
-        }
-        
-        // Render loop - capped at 30 FPS
-        if (currentTime - this.lastRenderTime >= this.renderInterval) {
-            this.lastRenderTime = currentTime;
-            
-            // Only redraw if camera moved or update needed
-            if (this.needsUpdate || 
-                (this.lastCameraPos && 
-                 (Math.abs(this.offset.x - this.lastCameraPos.x) > 1 ||
-                  Math.abs(this.offset.y - this.lastCameraPos.y) > 1))) {
-                this.drawGrid();
-                if (this.miniMap) {
-                    this.miniMap.draw();
-                }
-                this.needsUpdate = false;
-            }
-        }
-        
-        requestAnimationFrame(() => this.draw());
+        this.drawGrid();
     }
 
     drawTree(ctx, tree, centerX, centerY, scale) {
@@ -391,20 +274,13 @@ export class GameScene extends Scene {
         const isoY = (tree.x + tree.y) * this.gridSize / 4;
         const img = this.treeManager.treeImages[tree.type];
         
-        // Check if tree is within visible radius
-        const centerTileX = Math.floor((centerX/scale) / (this.gridSize/2));
-        const centerTileY = Math.floor((centerY/scale) / (this.gridSize/4));
-        const visibleRadius = 10;
-        
-        const distanceFromCenter = Math.sqrt(
-            Math.pow(tree.x - centerTileX, 2) + 
-            Math.pow(tree.y - centerTileY, 2)
-        );
-        
-        if (distanceFromCenter <= visibleRadius && img.complete) {
-            
+        if (img.complete) {
             const treeWidth = 60;
             const treeHeight = 60;
+            const tileCenter = {
+                x: centerX/scale + isoX,
+                y: centerY/scale + isoY
+            };
             
             ctx.drawImage(
                 img,
