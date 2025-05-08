@@ -7,7 +7,7 @@ export class House extends Structure {
         this.type = 'house';
         this.size = 80;
         this.image = new Image();
-        this.image.src = '/src/assets/images/structures/house.png';
+        this.image.src = 'src/assets/images/structures/house.png';
     }
 
     draw(ctx, centerX, centerY, scale) {
