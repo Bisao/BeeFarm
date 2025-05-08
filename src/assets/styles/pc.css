@@ -136,16 +136,7 @@ body {
     background: #45a049;
 }
 
-.resources {
-    display: flex;
-    gap: 20px;
-    pointer-events: auto;
-}
 
-.resource {
-    color: white;
-    font-size: 18px;
-}
 
 .build-menu {
     position: fixed;

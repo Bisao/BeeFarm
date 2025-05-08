@@ -33,10 +33,6 @@ export class GameScene extends Scene {
             <div class="game-ui">
                 <div class="top-bar">
                     <button class="settings-button" id="configBtn">⚙️ Settings</button>
-                    <div class="resources">
-                        <span class="resource">🪙 Gold: <span id="goldCount">0</span></span>
-                        <span class="resource">🪵 Wood: <span id="woodCount">0</span></span>
-                    </div>
                 </div>
                 
                 <div class="modal-overlay" id="configModal">
