@@ -17,17 +17,19 @@ export class GameScene extends Scene {
             x: Math.floor(this.gridWidth / 2),
             y: Math.floor(this.gridHeight / 2)
         };
-        // Calcula o offset inicial para centralizar o spawnpoint na tela
-        const spawnIsoX = (this.spawnPoint.x - this.spawnPoint.y) * this.gridSize / 2;
-        const spawnIsoY = (this.spawnPoint.x + this.spawnPoint.y) * this.gridSize / 4;
-        
-        // Define a escala inicial antes de calcular o offset
+        // Define a escala inicial
         this.scale = 3; // Zoom máximo inicial
+
+        // Cria os NPCs na posição inicial
+        this.maleNPC = new MaleNPC(0, 0);
+        this.femaleNPC = new FemaleNPC(0, 0);
+        this.maleNPC.updateGridPosition(this.spawnPoint.x, this.spawnPoint.y);
+        this.femaleNPC.updateGridPosition(this.spawnPoint.x + 2, this.spawnPoint.y);
         
-        // Ajusta o offset considerando o centro da tela e a escala
+        // Calcula o offset inicial para centralizar no NPC principal
         this.offset = {
-            x: -spawnIsoX + (window.innerWidth / 2),
-            y: -spawnIsoY + (window.innerHeight / 2)
+            x: -this.maleNPC.position.x * this.scale + (window.innerWidth / 2),
+            y: -this.maleNPC.position.y * this.scale + (window.innerHeight / 2)
         };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
@@ -144,11 +146,6 @@ export class GameScene extends Scene {
         
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
-        
-        this.maleNPC = new MaleNPC(0, 0);
-        this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(this.spawnPoint.x, this.spawnPoint.y);
-        this.femaleNPC.updateGridPosition(this.spawnPoint.x + 2, this.spawnPoint.y);
     }
 
     enter() {
