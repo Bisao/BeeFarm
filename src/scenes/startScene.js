@@ -23,11 +23,12 @@ export class StartScene extends Scene {
     }
 
     async startGame() {
-        // Show loading screen
+        // Show loading screen with better feedback
         this.container.innerHTML = `
             <div class="loading-screen">
-                <h2>Loading...</h2>
+                <h2>Carregando recursos...</h2>
                 <div class="progress-bar"></div>
+                <p class="loading-tip">Preparando o mundo do jogo...</p>
             </div>
         `;
 
