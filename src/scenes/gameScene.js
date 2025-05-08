@@ -21,22 +21,37 @@ export class GameScene extends Scene {
         this.initialPinchDistance = 0;
         this.initialScale = 1;
         this.showGrid = true;
+        this.isRendering = false;
+        this.lastFrameTime = 0;
+        this.targetFPS = 30;
+        this.frameInterval = 1000 / this.targetFPS;
         
         // Add touch event listeners for mobile
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
+            this.touchCount = e.touches.length;
+            
             if (e.touches.length === 1) {
                 this.isDragging = true;
                 this.lastPos = { 
                     x: e.touches[0].clientX,
                     y: e.touches[0].clientY 
                 };
+            } else if (e.touches.length === 2) {
+                this.isDragging = false;
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                this.initialPinchDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                this.initialScale = this.scale;
             }
         });
         
         this.canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            if (this.isDragging && e.touches.length === 1) {
+            if (e.touches.length === 1 && this.isDragging) {
                 const dx = e.touches[0].clientX - this.lastPos.x;
                 const dy = e.touches[0].clientY - this.lastPos.y;
                 this.offset.x += dx;
@@ -45,7 +60,18 @@ export class GameScene extends Scene {
                     x: e.touches[0].clientX,
                     y: e.touches[0].clientY
                 };
-                this.drawGrid();
+                this.requestRender();
+            } else if (e.touches.length === 2) {
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                
+                const newScale = this.initialScale * (currentDistance / this.initialPinchDistance);
+                this.scale = Math.max(0.5, Math.min(newScale, 3));
+                this.requestRender();
             }
         });
         
@@ -265,8 +291,38 @@ export class GameScene extends Scene {
         this.femaleNPC.update(this.gridWidth, this.gridHeight);
     }
 
+    requestRender() {
+        if (!this.isRendering) {
+            this.isRendering = true;
+            requestAnimationFrame((timestamp) => {
+                if (timestamp - this.lastFrameTime >= this.frameInterval) {
+                    this.drawGrid();
+                    this.lastFrameTime = timestamp;
+                }
+                this.isRendering = false;
+            });
+        }
+    }
+
     draw() {
-        this.drawGrid();
+        this.requestRender();
+    }
+
+    cleanup() {
+        this.canvas.removeEventListener('touchstart');
+        this.canvas.removeEventListener('touchmove');
+        this.canvas.removeEventListener('touchend');
+        this.canvas.removeEventListener('mousedown');
+        this.canvas.removeEventListener('mousemove');
+        this.canvas.removeEventListener('mouseup');
+        this.canvas.removeEventListener('wheel');
+        this.canvas.removeEventListener('contextmenu');
+    }
+
+    exit() {
+        this.cleanup();
+        this.canvas.style.display = 'none';
+        window.removeEventListener('resize', () => this.resizeCanvas());
     }
 
     drawTree(ctx, tree, centerX, centerY, scale) {
