@@ -63,6 +63,9 @@ export class FemaleNPC {
     }
 
     moveToGrid(targetX, targetY) {
+        this.gridPosition.x = targetX;
+        this.gridPosition.y = targetY;
+        
         this.targetPosition = {
             x: (targetX - targetY) * 50 / 2,
             y: (targetX + targetY) * 50 / 4
