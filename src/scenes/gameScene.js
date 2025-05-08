@@ -235,6 +235,38 @@ export class GameScene extends Scene {
         this.maleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.femaleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.ctx.restore();
+        
+        // Draw UI elements below grid
+        const bottomY = this.canvas.height - 100;
+        
+        // Draw control panel background
+        this.ctx.fillStyle = 'rgba(42, 42, 42, 0.8)';
+        this.ctx.fillRect(0, bottomY, this.canvas.width, 100);
+        
+        // Draw character info
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '16px Arial';
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText(`Male NPC: (${this.maleNPC.x}, ${this.maleNPC.y})`, 20, bottomY + 30);
+        this.ctx.fillText(`Female NPC: (${this.femaleNPC.x}, ${this.femaleNPC.y})`, 20, bottomY + 60);
+        
+        // Draw minimap
+        const minimapSize = 150;
+        const minimapX = this.canvas.width - minimapSize - 20;
+        const minimapY = bottomY + 10;
+        
+        // Minimap background
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        this.ctx.fillRect(minimapX, minimapY, minimapSize, 80);
+        
+        // Draw NPCs on minimap
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(minimapX + (this.maleNPC.x / this.gridWidth) * minimapSize, 
+                         minimapY + (this.maleNPC.y / this.gridHeight) * 80, 4, 4);
+        
+        this.ctx.fillStyle = 'pink';
+        this.ctx.fillRect(minimapX + (this.femaleNPC.x / this.gridWidth) * minimapSize,
+                         minimapY + (this.femaleNPC.y / this.gridHeight) * 80, 4, 4);
     }
 
     update(delta) {
