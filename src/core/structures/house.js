@@ -8,26 +8,26 @@ export class House extends Structure {
         this.size = 45;
     }
 
+    constructor(x, y) {
+        super(x, y);
+        this.type = 'house';
+        this.size = 80;
+        this.image = new Image();
+        this.image.src = '/src/assets/images/structures/house.png';
+    }
+
     draw(ctx, centerX, centerY, scale) {
         const isoX = (this.x - this.y) * 50 / 2;
         const isoY = (this.x + this.y) * 50 / 4;
         
-        // Base da casa
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(
-            centerX/scale + isoX - this.size/2,
-            centerY/scale + isoY - this.size/2,
-            this.size,
-            this.size
-        );
-        
-        // Telhado
-        ctx.fillStyle = '#A52A2A';
-        ctx.beginPath();
-        ctx.moveTo(centerX/scale + isoX - this.size/2, centerY/scale + isoY - this.size/2);
-        ctx.lineTo(centerX/scale + isoX, centerY/scale + isoY - this.size);
-        ctx.lineTo(centerX/scale + isoX + this.size/2, centerY/scale + isoY - this.size/2);
-        ctx.closePath();
-        ctx.fill();
+        if (this.image.complete) {
+            ctx.drawImage(
+                this.image,
+                centerX/scale + isoX - this.size/2,
+                centerY/scale + isoY - this.size/2,
+                this.size,
+                this.size
+            );
+        }
     }
 }
