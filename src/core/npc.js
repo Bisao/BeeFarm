@@ -11,35 +11,8 @@ export class NPC {
         this.direction = { x: 0, y: 0 };
         this.waitTime = 0;
         this.house = null;
-        this.state = 'idle'; // idle, walking, visiting, woodcutting
+        this.state = 'idle'; // idle, walking, visiting
         this.lastStateChange = Date.now();
-        this.woodInventory = 0;
-        this.currentTree = null;
-    }
-
-    startWoodcutting(tree) {
-        this.state = 'woodcutting';
-        this.currentTree = tree;
-        this.lastStateChange = Date.now();
-        this.isWoodcutting = true;
-    }
-
-    stopWoodcutting() {
-        this.state = 'idle';
-        this.currentTree = null;
-        this.lastStateChange = Date.now();
-        this.isWoodcutting = false;
-        
-        if (this.woodInventory >= 3) {
-            this.moveToHouse();
-        }
-    }
-
-    addWoodToInventory() {
-        this.woodInventory++;
-        if (this.woodInventory >= 3) {
-            this.moveToHouse();
-        }
     }
 
     updateGridPosition(x, y) {
@@ -104,43 +77,16 @@ export class NPC {
         }
     }
 
-    findNearestTree(trees, woodcuttingSystem) {
-        let nearestTree = null;
-        let minDistance = Infinity;
-
-        for (const tree of trees) {
-            // Pula árvores que já estão sendo cortadas
-            if (woodcuttingSystem.isTreeBeingCut(tree)) {
-                continue;
-            }
-
-            const dx = tree.x - this.gridPosition.x;
-            const dy = tree.y - this.gridPosition.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestTree = tree;
-            }
-        }
-
-        return nearestTree;
-    }
-
-    update(gridWidth, gridHeight, trees = [], woodcuttingSystem) {
-        if (!trees || !woodcuttingSystem) return;
-        
+    update(gridWidth, gridHeight) {
         const currentTime = Date.now();
         const timeSinceLastState = currentTime - this.lastStateChange;
 
         switch (this.state) {
             case 'idle':
-                const nearestTree = this.findNearestTree(trees, woodcuttingSystem);
-                if (nearestTree) {
+                if (timeSinceLastState > 3000) { // Wait 3 seconds
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
-                    this.moveToGrid(nearestTree.x, nearestTree.y);
-                    this.targetTree = nearestTree;
+                    this.setRandomTarget(gridWidth, gridHeight);
                 }
                 break;
 
@@ -154,20 +100,7 @@ export class NPC {
                         this.position.x = this.targetPosition.x;
                         this.position.y = this.targetPosition.y;
                         this.isMoving = false;
-                        
-                        if (this.targetTree && this.woodInventory < 3) {
-                            const success = woodcuttingSystem.startCuttingTree(this, this.targetTree);
-                            if (!success) {
-                                this.state = 'idle';
-                                this.targetTree = null;
-                            }
-                        } else {
-                            if (this.house && this.woodInventory >= 3) {
-                                this.woodInventory = 0;
-                            }
-                            this.state = 'idle';
-                            this.targetTree = null;
-                        }
+                        this.state = 'idle';
                         this.lastStateChange = currentTime;
                     } else {
                         this.position.x += this.direction.x * this.speed;
@@ -175,46 +108,10 @@ export class NPC {
                     }
                 }
                 break;
-
-            case 'woodcutting':
-                if (!woodcuttingSystem.isTreeBeingCut(this.targetTree)) {
-                    this.state = 'idle';
-                    this.targetTree = null;
-                }
-                break;
         }
     }
 
     draw(ctx, centerX, centerY, scale) {
-        // Mostrar ícone de machado e barra de progresso quando estiver cortando
-        if (this.state === 'woodcutting') {
-            // Desenhar ícone do machado
-            ctx.fillStyle = '#8B4513';
-            ctx.font = '12px Arial';
-            ctx.fillText('🪓', 
-                centerX/scale + this.position.x + 10, 
-                centerY/scale + this.position.y - 10
-            );
-            
-            // Calcular progresso
-            const currentTime = Date.now();
-            const progress = Math.min((currentTime - this.lastStateChange) / 5000, 1);
-            
-            // Desenhar barra de progresso
-            const barWidth = 30;
-            const barHeight = 5;
-            const barX = centerX/scale + this.position.x - barWidth/2;
-            const barY = centerY/scale + this.position.y - 25;
-            
-            // Fundo da barra
-            ctx.fillStyle = '#333';
-            ctx.fillRect(barX, barY, barWidth, barHeight);
-            
-            // Progresso
-            ctx.fillStyle = '#4CAF50';
-            ctx.fillRect(barX, barY, barWidth * progress, barHeight);
-        }
-        
         // Draw dotted path to target
         if (this.isMoving) {
             ctx.beginPath();

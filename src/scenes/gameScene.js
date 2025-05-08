@@ -1,8 +1,8 @@
+
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
 import { TreeManager } from '../core/treeManager.js';
-import { WoodcuttingSystem } from '../core/woodcutting.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -14,20 +14,6 @@ export class GameScene extends Scene {
         this.gridWidth = 50;
         this.gridHeight = 50;
         this.offset = { x: 0, y: 0 };
-        this.treeManager = new TreeManager();
-        // Aguardar carregamento das imagens
-        Promise.all(Object.values(this.treeManager.treeImages).map(img => {
-            return new Promise((resolve) => {
-                if (img.complete) {
-                    resolve();
-                } else {
-                    img.onload = resolve;
-                }
-            });
-        })).then(() => {
-            this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
-            this.woodcuttingSystem = new WoodcuttingSystem(this.treeManager);
-        });
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
         this.scale = 1;
@@ -39,12 +25,12 @@ export class GameScene extends Scene {
         this.lastFrameTime = 0;
         this.targetFPS = 30;
         this.frameInterval = 1000 / this.targetFPS;
-
+        
         // Add touch event listeners for mobile
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             this.touchCount = e.touches.length;
-
+            
             if (e.touches.length === 1) {
                 this.isDragging = true;
                 this.lastPos = { 
@@ -62,7 +48,7 @@ export class GameScene extends Scene {
                 this.initialScale = this.scale;
             }
         });
-
+        
         this.canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
             if (e.touches.length === 1 && this.isDragging) {
@@ -82,25 +68,25 @@ export class GameScene extends Scene {
                     touch2.clientX - touch1.clientX,
                     touch2.clientY - touch1.clientY
                 );
-
+                
                 const newScale = this.initialScale * (currentDistance / this.initialPinchDistance);
                 this.scale = Math.max(0.5, Math.min(newScale, 3));
                 this.requestRender();
             }
         });
-
+        
         this.canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
             this.isDragging = false;
         });
-
+        
         // Add mouse event listeners
         this.canvas.addEventListener('mousedown', (e) => {
             this.isDragging = true;
             this.lastPos = { x: e.clientX, y: e.clientY };
             e.preventDefault();
         });
-
+        
         this.canvas.addEventListener('mousemove', (e) => {
             if (this.isDragging) {
                 const dx = e.clientX - this.lastPos.x;
@@ -111,36 +97,39 @@ export class GameScene extends Scene {
                 this.drawGrid();
             }
         });
-
+        
         this.canvas.addEventListener('mouseup', (e) => {
             if (e.button === 2) {
                 this.isDragging = false;
             }
         });
-
+        
         this.canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
             const rect = this.canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
-
+            
             const worldX = (mouseX - this.canvas.width/2 - this.offset.x) / this.scale;
             const worldY = (mouseY - this.canvas.height/2 - this.offset.y) / this.scale;
-
+            
             const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
             this.scale *= zoomFactor;
             this.scale = Math.max(0.5, Math.min(this.scale, 3));
-
+            
             this.offset.x = mouseX - worldX * this.scale - this.canvas.width/2;
             this.offset.y = mouseY - worldY * this.scale - this.canvas.height/2;
-
+            
             this.drawGrid();
         });
-
+        
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
-
+        
+        this.treeManager = new TreeManager();
+        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+        
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
         this.maleNPC.updateGridPosition(4, 5);
@@ -262,15 +251,15 @@ export class GameScene extends Scene {
                 this.ctx.lineTo(centerX/this.scale + isoX, centerY/this.scale + isoY + this.gridSize / 2);
                 this.ctx.lineTo(centerX/this.scale + isoX - this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
                 this.ctx.closePath();
-
+                
                 this.ctx.fillStyle = '#90EE90';
                 this.ctx.fill();
-
+                
                 if (this.showGrid) {
                     this.ctx.strokeStyle = '#4CAF50';
                     this.ctx.stroke();
                 }
-
+                
                 // Removido o código que gerava padrões aleatórios
             }
         }
@@ -298,8 +287,8 @@ export class GameScene extends Scene {
     }
 
     update(delta) {
-        this.maleNPC.update(this.gridWidth, this.gridHeight, this.treeManager.trees, this.woodcuttingSystem);
-        this.femaleNPC.update(this.gridWidth, this.gridHeight, this.treeManager.trees, this.woodcuttingSystem);
+        this.maleNPC.update(this.gridWidth, this.gridHeight);
+        this.femaleNPC.update(this.gridWidth, this.gridHeight);
     }
 
     requestRender() {
@@ -340,7 +329,7 @@ export class GameScene extends Scene {
         const isoX = (tree.x - tree.y) * this.gridSize / 2;
         const isoY = (tree.x + tree.y) * this.gridSize / 4;
         const img = this.treeManager.treeImages[tree.type];
-
+        
         if (img.complete) {
             const treeWidth = 60;
             const treeHeight = 60;
@@ -348,7 +337,7 @@ export class GameScene extends Scene {
                 x: centerX/scale + isoX,
                 y: centerY/scale + isoY
             };
-
+            
             ctx.drawImage(
                 img,
                 tileCenter.x - treeWidth/2,

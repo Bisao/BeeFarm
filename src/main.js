@@ -16,22 +16,16 @@ const loadCSS = () => {
 };
 
 async function init() {
-    if (typeof window !== 'undefined') {
-        await loadCSS();
-        const sceneManager = new SceneManager();
-        
-        // Register scenes
-        sceneManager.registerScene('start', new StartScene());
-        sceneManager.registerScene('settings', new SettingsScene());
-        sceneManager.registerScene('game', new GameScene());
-        
-        // Start with the start scene
-        sceneManager.changeScene('start');
-    }
+    await loadCSS();
+    const sceneManager = new SceneManager();
+    
+    // Register scenes
+    sceneManager.registerScene('start', new StartScene());
+    sceneManager.registerScene('settings', new SettingsScene());
+    sceneManager.registerScene('game', new GameScene());
+    
+    // Start with the start scene
+    sceneManager.changeScene('start');
 }
 
-if (typeof window !== 'undefined') {
-    window.addEventListener('load', init);
-}
-
-export { init };
+window.addEventListener('load', init);
