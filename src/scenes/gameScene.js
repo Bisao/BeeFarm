@@ -136,7 +136,14 @@ export class GameScene extends Scene {
 
         // Start automatic movement
         this.startAutomaticMovement();
+        this.startGameLoop();
         this.drawGrid();
+    }
+
+    startGameLoop() {
+        setInterval(() => {
+            this.drawGrid();
+        }, 1000 / 60); // 60 FPS
     }
 
     startAutomaticMovement() {
