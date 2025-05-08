@@ -39,7 +39,7 @@ export class WoodcuttingSystem {
     }
 
     completeCutting(npc, tree) {
-        if (!this.treeManager?.trees) return;
+        if (!this.treeManager || !tree) return;
         
         // Iniciar efeito de fade out
         tree.opacity = 1;
@@ -51,10 +51,12 @@ export class WoodcuttingSystem {
             if (tree.opacity <= 0) {
                 clearInterval(fadeInterval);
                 // Remover a árvore do mapa
-                const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
-                if (treeIndex !== -1) {
-                    this.treeManager.trees.splice(treeIndex, 1);
-                    this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
+                if (this.treeManager.trees) {
+                    const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
+                    if (treeIndex !== -1) {
+                        this.treeManager.trees.splice(treeIndex, 1);
+                        this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
+                    }
                 }
             }
         }, 50);
