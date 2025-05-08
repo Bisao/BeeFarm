@@ -11,7 +11,6 @@ export class WoodcuttingSystem {
     startCuttingTree(npc, tree) {
         if (!tree || !npc) return false;
         if (this.treesBeingCut.has(tree)) return false;
-        if (npc.woodInventory >= this.woodcarryingCapacity) return false;
 
         this.treesBeingCut.set(tree, npc);
         this.cuttingProgress.set(tree, 0);

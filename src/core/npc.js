@@ -136,14 +136,11 @@ export class NPC {
         switch (this.state) {
             case 'idle':
                 const nearestTree = this.findNearestTree(trees, woodcuttingSystem);
-                if (nearestTree && this.woodInventory < 3) {
+                if (nearestTree) {
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
                     this.moveToGrid(nearestTree.x, nearestTree.y);
                     this.targetTree = nearestTree;
-                } else if (this.woodInventory >= 3 && this.house) {
-                    this.moveToHouse();
-                    this.state = 'walking';
                 }
                 break;
 
