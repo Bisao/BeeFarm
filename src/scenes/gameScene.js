@@ -1,7 +1,6 @@
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
-import { TreeManager } from '../core/treeManager.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -71,9 +70,6 @@ export class GameScene extends Scene {
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
-        this.treeManager = new TreeManager();
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 50);
-        
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
         this.maleNPC.updateGridPosition(4, 5);
@@ -140,7 +136,6 @@ export class GameScene extends Scene {
             }
         }
 
-        this.treeManager.draw(this.ctx, centerX, centerY, this.scale);
         this.maleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.femaleNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.ctx.restore();
