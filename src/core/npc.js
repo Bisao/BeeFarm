@@ -23,8 +23,26 @@ export class NPC {
     }
 
     setRandomTarget(gridWidth, gridHeight) {
-        const targetX = Math.floor(Math.random() * gridWidth);
-        const targetY = Math.floor(Math.random() * gridHeight);
+        // Choose random direction: 0 = right, 1 = up, 2 = left, 3 = down
+        const direction = Math.floor(Math.random() * 4);
+        let targetX = this.gridPosition.x;
+        let targetY = this.gridPosition.y;
+        
+        switch(direction) {
+            case 0: // right
+                targetX = Math.min(this.gridPosition.x + Math.floor(Math.random() * 3) + 1, gridWidth - 1);
+                break;
+            case 1: // up
+                targetY = Math.max(this.gridPosition.y - Math.floor(Math.random() * 3) - 1, 0);
+                break;
+            case 2: // left
+                targetX = Math.max(this.gridPosition.x - Math.floor(Math.random() * 3) - 1, 0);
+                break;
+            case 3: // down
+                targetY = Math.min(this.gridPosition.y + Math.floor(Math.random() * 3) + 1, gridHeight - 1);
+                break;
+        }
+        
         this.moveToGrid(targetX, targetY);
     }
 
