@@ -13,32 +13,13 @@ export class GameScene extends Scene {
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
-        this.spawnPoint = {
-            x: Math.floor(this.gridWidth / 2),
-            y: Math.floor(this.gridHeight / 2)
-        };
-        // Define a escala inicial
-        this.scale = 3; // Zoom máximo inicial
-
-        // Cria os NPCs na posição inicial
-        this.maleNPC = new MaleNPC(0, 0);
-        this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(this.spawnPoint.x, this.spawnPoint.y);
-        this.femaleNPC.updateGridPosition(this.spawnPoint.x + 2, this.spawnPoint.y);
-        
-        // Define a posição inicial da câmera no centro do grid
-        const gridCenterX = (this.gridWidth * this.gridSize) / 2;
-        const gridCenterY = (this.gridHeight * this.gridSize) / 4;
-        this.offset = {
-            x: -gridCenterX + (window.innerWidth / 2),
-            y: -gridCenterY + (window.innerHeight / 2)
-        };
+        this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
-        this.scale = 3; // Zoom máximo inicial
+        this.scale = 1;
         this.touchCount = 0;
         this.initialPinchDistance = 0;
-        this.initialScale = 3;
+        this.initialScale = 1;
         this.showGrid = true;
         this.isRendering = false;
         this.lastFrameTime = 0;
@@ -148,6 +129,11 @@ export class GameScene extends Scene {
         
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+        
+        this.maleNPC = new MaleNPC(0, 0);
+        this.femaleNPC = new FemaleNPC(0, 0);
+        this.maleNPC.updateGridPosition(4, 5);
+        this.femaleNPC.updateGridPosition(6, 5);
     }
 
     enter() {
@@ -244,19 +230,15 @@ export class GameScene extends Scene {
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Calcular o centro do grid em coordenadas do mundo
-        const gridCenterX = (this.gridWidth * this.gridSize) / 2;
-        const gridCenterY = (this.gridHeight * this.gridSize) / 2;
-        
-        // Ajustar offset inicial para centralizar
-        const centerX = this.canvas.width / 2;
-        const centerY = this.canvas.height / 2;
-        
+        const centerX = this.canvas.width / 2 + this.offset.x;
+        const centerY = this.canvas.height / 3 + this.offset.y;
+
         this.ctx.save();
-        this.ctx.translate(centerX + this.offset.x, centerY + this.offset.y);
         this.ctx.scale(this.scale, this.scale);
-        this.ctx.translate(-gridCenterX, -gridCenterY);
+        this.ctx.translate(
+            (this.canvas.width / 2) * (1 - 1/this.scale),
+            (this.canvas.height / 2) * (1 - 1/this.scale)
+        );
 
         for (let y = 0; y < this.gridHeight; y++) {
             for (let x = 0; x < this.gridWidth; x++) {
