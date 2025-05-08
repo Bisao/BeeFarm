@@ -2,6 +2,26 @@ import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
 
+class TileManager {
+    constructor() {
+        this.tiles = {
+            grass: new Image(),
+            dirt: new Image(),
+            flowerGrass: new Image()
+        };
+        this.tiles.grass.src = 'grass.png';
+        this.tiles.dirt.src = 'dirt.png';
+        this.tiles.flowerGrass.src = 'flowerGrass.png';
+    }
+
+    drawTile(ctx, type, x, y, scale) {
+        if (this.tiles[type]) {
+            ctx.drawImage(this.tiles[type], x, y, 50 / scale, 50 / scale);
+        }
+    }
+}
+
+
 export class GameScene extends Scene {
     constructor() {
         super();
@@ -22,6 +42,7 @@ export class GameScene extends Scene {
         this.femaleNPC = new FemaleNPC(0, 0);
         this.maleNPC.updateGridPosition(4, 4);
         this.femaleNPC.updateGridPosition(6, 6);
+        this.tileManager = new TileManager();
     }
 
     enter() {
@@ -73,14 +94,14 @@ export class GameScene extends Scene {
                 const isoX = (x - y) * this.gridSize / 2;
                 const isoY = (x + y) * this.gridSize / 4;
 
-                this.ctx.beginPath();
-                this.ctx.moveTo(centerX/this.scale + isoX, centerY/this.scale + isoY);
-                this.ctx.lineTo(centerX/this.scale + isoX + this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
-                this.ctx.lineTo(centerX/this.scale + isoX, centerY/this.scale + isoY + this.gridSize / 2);
-                this.ctx.lineTo(centerX/this.scale + isoX - this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
-                this.ctx.closePath();
-                this.ctx.strokeStyle = '#4CAF50';
-                this.ctx.stroke();
+                const tileType = Math.random() < 0.2 ? 'flowerGrass' : (Math.random() < 0.5 ? 'grass' : 'dirt');
+                this.tileManager.drawTile(
+                    this.ctx, 
+                    tileType,
+                    centerX/this.scale + isoX, 
+                    centerY/this.scale + isoY,
+                    this.scale
+                );
             }
         }
 
