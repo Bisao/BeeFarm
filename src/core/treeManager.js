@@ -50,8 +50,8 @@ export class TreeManager {
             
             if (img.complete) {
                 // Scale trees to fit grid cells (40x40 pixels)
-                const treeWidth = 40;
-                const treeHeight = 40;
+                const treeWidth = 60;
+                const treeHeight = 60;
                 
                 // Center the tree on the tile
                 const tileCenter = {

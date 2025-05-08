@@ -268,8 +268,8 @@ export class GameScene extends Scene {
         const img = this.treeManager.treeImages[tree.type];
         
         if (img.complete) {
-            const treeWidth = 40;
-            const treeHeight = 40;
+            const treeWidth = 60;
+            const treeHeight = 60;
             const tileCenter = {
                 x: centerX/scale + isoX,
                 y: centerY/scale + isoY
