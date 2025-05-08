@@ -22,22 +22,22 @@ export const MALE_NPC_ANIMATIONS = {
     },
     idleDown: {
         frames: 1,
-        path: 'attached_assets/Citizen Male - parado baixo',
+        path: 'attached_assets/Citizen Male - parado baixo.gif',
         speed: 100
     },
     idleUp: {
         frames: 1,
-        path: 'attached_assets/Citizen Male - parado cima',
+        path: 'attached_assets/Citizen Male - parado cima.gif',
         speed: 100
     },
     idleLeft: {
         frames: 1,
-        path: 'attached_assets/Citizen Male - parado esquerda',
+        path: 'attached_assets/Citizen Male - parado esquerda.gif',
         speed: 100
     },
     idleRight: {
         frames: 1,
-        path: 'attached_assets/Citizen Male - parado direita',
+        path: 'attached_assets/Citizen Male - parado direita.gif',
         speed: 100
     }
 };
