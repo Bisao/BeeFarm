@@ -103,8 +103,11 @@ export class NPC {
                         this.state = 'idle';
                         this.lastStateChange = currentTime;
                     } else {
-                        this.position.x += this.direction.x * this.speed;
-                        this.position.y += this.direction.y * this.speed;
+                        // Adicionar pequena variação aleatória ao movimento
+                        const wobbleX = (Math.random() - 0.5) * 0.3;
+                        const wobbleY = (Math.random() - 0.5) * 0.3;
+                        this.position.x += (this.direction.x + wobbleX) * this.speed;
+                        this.position.y += (this.direction.y + wobbleY) * this.speed;
                     }
                 }
                 break;
