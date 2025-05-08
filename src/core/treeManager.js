@@ -1,4 +1,3 @@
-
 export class TreeManager {
     constructor() {
         this.trees = [];
@@ -32,7 +31,7 @@ export class TreeManager {
         while (this.trees.length < count && attempts < maxAttempts) {
             const x = Math.floor(Math.random() * gridWidth);
             const y = Math.floor(Math.random() * gridHeight);
-            
+
             if (!this.isPositionOccupied(x, y)) {
                 const type = Math.random() < 0.5 ? 'pine' : 'simple';
                 this.trees.push({ x, y, type });
@@ -47,18 +46,19 @@ export class TreeManager {
             const isoX = (tree.x - tree.y) * 50 / 2;
             const isoY = (tree.x + tree.y) * 50 / 4;
             const img = this.treeImages[tree.type];
-            
+
             if (img.complete) {
                 // Scale trees to fit grid cells (40x40 pixels)
                 const treeWidth = 60;
                 const treeHeight = 60;
-                
+
                 // Center the tree on the tile
                 const tileCenter = {
                     x: centerX/scale + isoX,
                     y: centerY/scale + isoY
                 };
-                
+
+                ctx.globalAlpha = tree.opacity || 1;
                 ctx.drawImage(
                     img,
                     tileCenter.x - treeWidth/2,
@@ -66,6 +66,7 @@ export class TreeManager {
                     treeWidth,
                     treeHeight
                 );
+                ctx.globalAlpha = 1;
             }
         }
     }

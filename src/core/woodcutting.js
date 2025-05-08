@@ -41,12 +41,23 @@ export class WoodcuttingSystem {
     completeCutting(npc, tree) {
         if (!this.treeManager?.trees) return;
         
-        // Remover a árvore do mapa
-        const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
-        if (treeIndex !== -1) {
-            this.treeManager.trees.splice(treeIndex, 1);
-            this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
-        }
+        // Iniciar efeito de fade out
+        tree.opacity = 1;
+        tree.fading = true;
+        
+        const fadeInterval = setInterval(() => {
+            tree.opacity -= 0.1;
+            
+            if (tree.opacity <= 0) {
+                clearInterval(fadeInterval);
+                // Remover a árvore do mapa
+                const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
+                if (treeIndex !== -1) {
+                    this.treeManager.trees.splice(treeIndex, 1);
+                    this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
+                }
+            }
+        }, 50);
         
         // Limpar estados de corte
         this.treesBeingCut.delete(tree);
