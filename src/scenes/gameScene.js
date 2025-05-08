@@ -95,7 +95,57 @@ export class GameScene extends Scene {
         this.canvas.height = window.innerHeight;
         this.ctx = this.canvas.getContext('2d');
         this.isRendering = true;
-        this.camera = { scale: 1 };
+        this.camera = new CameraManager(this.canvas);
+        this.touchHandler = new TouchHandler(this.canvas, this.camera);
+        
+        // Setup mouse controls
+        this.canvas.addEventListener('mousedown', this.camera.handleMouseDown.bind(this.camera));
+        this.canvas.addEventListener('mousemove', this.camera.handleMouseMove.bind(this.camera));
+        this.canvas.addEventListener('mouseup', this.camera.handleMouseUp.bind(this.camera));
+        this.canvas.addEventListener('wheel', this.camera.handleWheel.bind(this.camera));
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Setup shop button
+        const shopBtn = document.createElement('button');
+        shopBtn.textContent = '🏪 Shop';
+        shopBtn.className = 'settings-button';
+        shopBtn.style.marginLeft = '10px';
+        document.querySelector('.top-bar').appendChild(shopBtn);
+
+        // Setup shop modal
+        const shopModal = document.createElement('div');
+        shopModal.className = 'modal-overlay';
+        shopModal.id = 'shopModal';
+        shopModal.innerHTML = `
+            <div class="settings-modal">
+                <h2>Shop</h2>
+                <div class="shop-content">
+                    <button class="build-btn" data-type="lumberjack">🪓 Lumberjack House (100 gold)</button>
+                    <button class="build-btn" data-type="miner">⛏️ Miner House (150 gold)</button>
+                    <button class="build-btn" data-type="farmer">🌱 Farmer House (80 gold)</button>
+                    <button class="build-btn" data-type="fisherman">🎣 Fisherman House (120 gold)</button>
+                </div>
+                <button class="button" id="shopCloseBtn">Close</button>
+            </div>
+        `;
+        this.container.appendChild(shopModal);
+
+        shopBtn.addEventListener('click', () => {
+            shopModal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                shopModal.classList.add('visible');
+                shopModal.querySelector('.settings-modal').classList.add('visible');
+            });
+        });
+
+        const shopCloseBtn = document.getElementById('shopCloseBtn');
+        shopCloseBtn.addEventListener('click', () => {
+            shopModal.classList.remove('visible');
+            shopModal.querySelector('.settings-modal').classList.remove('visible');
+            setTimeout(() => {
+                shopModal.style.display = 'none';
+            }, 300);
+        });
         
         requestAnimationFrame(() => this.draw());
     }

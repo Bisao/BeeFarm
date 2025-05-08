@@ -7,6 +7,9 @@ export class TouchHandler {
         this.lastPos = { x: 0, y: 0 };
         this.initialPinchDistance = 0;
         this.initialScale = 1;
+        this.touchStartTime = 0;
+        this.longPressDelay = 500;
+        this.touchTimeout = null;
         
         this.setupEventListeners();
     }
@@ -20,12 +23,16 @@ export class TouchHandler {
     handleTouchStart(e) {
         e.preventDefault();
         if (e.touches.length === 1) {
-            this.isDragging = true;
+            this.touchStartTime = Date.now();
             this.lastPos = {
                 x: e.touches[0].clientX,
                 y: e.touches[0].clientY
             };
+            this.touchTimeout = setTimeout(() => {
+                this.isDragging = true;
+            }, this.longPressDelay);
         } else if (e.touches.length === 2) {
+            clearTimeout(this.touchTimeout);
             this.isDragging = false;
             this.initialPinchDistance = this.getPinchDistance(e.touches);
             this.initialScale = this.camera.scale;
@@ -51,6 +58,7 @@ export class TouchHandler {
 
     handleTouchEnd(e) {
         e.preventDefault();
+        clearTimeout(this.touchTimeout);
         this.isDragging = false;
     }
 

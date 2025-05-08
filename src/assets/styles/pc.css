@@ -176,6 +176,30 @@ body {
     transform: scale(1.1);
 }
 
+.shop-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.shop-content .build-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    background: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.shop-content .build-btn:hover {
+    background: #45a049;
+    transform: scale(1.02);
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
