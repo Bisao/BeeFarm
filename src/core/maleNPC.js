@@ -139,7 +139,7 @@ export class MaleNPC extends NPC {
         }
 
         const sprite = this.sprites[this.currentAnimation][this.frame];
-        if (sprite.complete) {
+        if (sprite && sprite.complete) { // Added check for sprite existence
             ctx.drawImage(
                 sprite,
                 centerX/scale + this.position.x - 20,
