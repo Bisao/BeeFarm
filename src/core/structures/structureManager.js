@@ -11,18 +11,19 @@ export class StructureManager {
         return this.occupiedPositions.has(`${x},${y}`);
     }
 
-    addStructure(type, x, y) {
+    addStructure(type, x, y, direction = 'left') {
         if (this.isPositionOccupied(x, y)) {
             return false;
         }
 
         let structure;
-        switch(type) {
-            case 'house':
-                structure = new House(x, y);
-                break;
-            default:
-                return false;
+        const houseTypes = ['miner', 'farmer', 'fisherman', 'lumberjack'];
+        if (houseTypes.includes(type)) {
+            structure = new House(x, y, type);
+            structure.direction = direction;
+            structure.updateImage();
+        } else {
+            return false;
         }
 
         this.structures.push(structure);

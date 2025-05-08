@@ -2,12 +2,23 @@
 import { Structure } from './baseStructure.js';
 
 export class House extends Structure {
-    constructor(x, y) {
+    constructor(x, y, type = 'lumberjack') {
         super(x, y);
-        this.type = 'house';
+        this.type = type;
         this.size = 80;
         this.image = new Image();
-        this.image.src = 'src/assets/images/structures/house.png';
+        this.direction = 'left';
+        this.updateImage();
+    }
+
+    updateImage() {
+        const imagePath = {
+            'miner': `src/assets/images/structures/⛏️ MinerHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`,
+            'farmer': `src/assets/images/structures/🌱 FarmerHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`,
+            'fisherman': `src/assets/images/structures/🎣 FisherManHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`,
+            'lumberjack': `src/assets/images/structures/🪓 LumberJackHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`
+        };
+        this.image.src = imagePath[this.type] || imagePath['lumberjack'];
     }
 
     draw(ctx, centerX, centerY, scale) {
