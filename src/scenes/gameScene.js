@@ -16,10 +16,10 @@ export class GameScene extends Scene {
         this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
-        this.scale = 1;
+        this.scale = 3; // Zoom máximo inicial
         this.touchCount = 0;
         this.initialPinchDistance = 0;
-        this.initialScale = 1;
+        this.initialScale = 3;
         this.showGrid = true;
         this.isRendering = false;
         this.lastFrameTime = 0;
