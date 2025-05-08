@@ -1,3 +1,4 @@
+
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
@@ -16,18 +17,6 @@ export class GameScene extends Scene {
         this.selectedStructure = null;
         this.previewStructure = null;
         this.highlightTile = null;
-
-        this.treeManager = new TreeManager();
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
-
-        this.structureManager = new StructureManager();
-        this.structureManager.addStructure('house', 10, 10);
-        this.structureManager.addStructure('house', 15, 15);
-
-        this.maleNPC = new MaleNPC(0, 0);
-        this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(4, 5);
-        this.femaleNPC.updateGridPosition(6, 5);
 
         this.treeManager = new TreeManager();
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
@@ -137,6 +126,21 @@ export class GameScene extends Scene {
             });
         });
 
+        this.canvas = document.getElementById('gameCanvas');
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.ctx = this.canvas.getContext('2d');
+        this.isRendering = true;
+        this.camera = new CameraManager(this.canvas);
+        this.touchHandler = new TouchHandler(this.canvas, this.camera);
+        
+        // Setup mouse controls
+        this.canvas.addEventListener('mousedown', this.camera.handleMouseDown.bind(this.camera));
+        this.canvas.addEventListener('mousemove', this.camera.handleMouseMove.bind(this.camera));
+        this.canvas.addEventListener('mouseup', this.camera.handleMouseUp.bind(this.camera));
+        this.canvas.addEventListener('wheel', this.camera.handleWheel.bind(this.camera));
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
         this.canvas.addEventListener('mousemove', (e) => {
             if (this.selectedStructure) {
                 const rect = this.canvas.getBoundingClientRect();
@@ -162,27 +166,6 @@ export class GameScene extends Scene {
                 this.highlightTile = null;
             }
         });
-
-        cameraSpeedRange.addEventListener('input', (e) => {
-            cameraSpeedValue.textContent = e.target.value;
-        });
-
-        this.canvas = document.getElementById('gameCanvas');
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.ctx = this.canvas.getContext('2d');
-        this.isRendering = true;
-        this.camera = new CameraManager(this.canvas);
-        this.touchHandler = new TouchHandler(this.canvas, this.camera);
-        
-        // Setup mouse controls
-        this.canvas.addEventListener('mousedown', this.camera.handleMouseDown.bind(this.camera));
-        this.canvas.addEventListener('mousemove', this.camera.handleMouseMove.bind(this.camera));
-        this.canvas.addEventListener('mouseup', this.camera.handleMouseUp.bind(this.camera));
-        this.canvas.addEventListener('wheel', this.camera.handleWheel.bind(this.camera));
-        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        
         
         requestAnimationFrame(() => this.draw());
     }
@@ -199,6 +182,7 @@ export class GameScene extends Scene {
     exit() {
         this.cleanup();
     }
+
     drawIsometricGrid(ctx, centerX, centerY, scale) {
         const gridSize = this.gridSize * scale;
         const gridWidth = this.gridWidth;
@@ -231,26 +215,26 @@ export class GameScene extends Scene {
             return;
         }
         
-        // Limpar canvas
+        // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         const centerX = this.canvas.width/2;
         const centerY = this.canvas.height/2;
         
-        // Aplicar transformações da câmera
+        // Apply camera transformations
         this.ctx.save();
         this.ctx.translate(centerX + this.camera.offset.x, centerY + this.camera.offset.y);
         this.ctx.scale(this.camera.scale, this.camera.scale);
         
-        // Desenhar grid
+        // Draw grid
         this.drawIsometricGrid(this.ctx, 0, 0, 1);
         
-        // Desenhar árvores
+        // Draw trees
         this.treeManager.trees.forEach(tree => {
             this.drawTree(this.ctx, tree, 0, 0, 1);
         });
         
-        // Desenhar NPCs
+        // Draw NPCs
         if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
             this.maleNPC.draw(this.ctx, 0, 0, 1);
         }
@@ -258,7 +242,7 @@ export class GameScene extends Scene {
             this.femaleNPC.draw(this.ctx, 0, 0, 1);
         }
         
-        // Desenhar estruturas
+        // Draw structures
         if (this.structureManager && typeof this.structureManager.draw === 'function') {
             this.structureManager.draw(this.ctx, 0, 0, 1);
         }
@@ -268,25 +252,25 @@ export class GameScene extends Scene {
             const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
             const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
             
-            ctx.fillStyle = this.highlightTile.available ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
-            ctx.strokeStyle = this.highlightTile.available ? '#4CAF50' : '#F44336';
-            ctx.lineWidth = 2;
+            this.ctx.fillStyle = this.highlightTile.available ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
+            this.ctx.strokeStyle = this.highlightTile.available ? '#4CAF50' : '#F44336';
+            this.ctx.lineWidth = 2;
             
-            ctx.beginPath();
-            ctx.moveTo(centerX + isoX, centerY + isoY - this.gridSize/4);
-            ctx.lineTo(centerX + isoX + this.gridSize/2, centerY + isoY);
-            ctx.lineTo(centerX + isoX, centerY + isoY + this.gridSize/4);
-            ctx.lineTo(centerX + isoX - this.gridSize/2, centerY + isoY);
-            ctx.closePath();
+            this.ctx.beginPath();
+            this.ctx.moveTo(isoX, isoY - this.gridSize/4);
+            this.ctx.lineTo(isoX + this.gridSize/2, isoY);
+            this.ctx.lineTo(isoX, isoY + this.gridSize/4);
+            this.ctx.lineTo(isoX - this.gridSize/2, isoY);
+            this.ctx.closePath();
             
-            ctx.fill();
-            ctx.stroke();
+            this.ctx.fill();
+            this.ctx.stroke();
         }
 
-        // Restaurar contexto
+        // Restore context
         this.ctx.restore();
         
-        // Requisitar próximo frame
+        // Request next frame
         requestAnimationFrame(() => this.draw());
     }
 
@@ -311,7 +295,7 @@ export class GameScene extends Scene {
             );
         }
     }
-}
+
     screenToGrid(screenX, screenY) {
         const centerX = this.canvas.width/2;
         const centerY = this.canvas.height/2;
@@ -329,3 +313,4 @@ export class GameScene extends Scene {
         }
         return null;
     }
+}
