@@ -69,51 +69,32 @@ export class GameScene extends Scene {
             </div>
         `;
 
+        this.canvas = document.getElementById('gameCanvas');
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.ctx = this.canvas.getContext('2d');
+        this.isRendering = true;
+        this.camera = new CameraManager(this.canvas);
+        this.touchHandler = new TouchHandler(this.canvas, this.camera);
+
+        // Setup UI elements
         const configBtn = document.getElementById('configBtn');
         const configModal = document.getElementById('configModal');
         const configCloseBtn = document.getElementById('configCloseBtn');
-        const cameraSpeedRange = document.getElementById('cameraSpeedRange');
-        const cameraSpeedValue = document.getElementById('cameraSpeedValue');
-
-        configBtn.addEventListener('click', () => {
-            configModal.style.display = 'flex';
-            requestAnimationFrame(() => {
-                configModal.classList.add('visible');
-                configModal.querySelector('.settings-modal').classList.add('visible');
-            });
-        });
-
-        configCloseBtn.addEventListener('click', () => {
-            configModal.classList.remove('visible');
-            configModal.querySelector('.settings-modal').classList.remove('visible');
-            setTimeout(() => {
-                configModal.style.display = 'none';
-            }, 300);
-        });
-
-        configModal.addEventListener('click', (e) => {
-            if (e.target === configModal) {
-                configCloseBtn.click();
-            }
-        });
-
         const buildBtn = document.getElementById('buildBtn');
         const buildModal = document.getElementById('buildModal');
         const buildCloseBtn = document.getElementById('buildCloseBtn');
         const buildItems = document.querySelectorAll('.build-item');
 
+        // Build modal handlers
         buildBtn.addEventListener('click', () => {
             buildModal.style.display = 'flex';
-            requestAnimationFrame(() => {
-                buildModal.classList.add('visible');
-                buildModal.querySelector('.build-modal').classList.add('visible');
-            });
+            buildModal.classList.add('visible');
         });
 
         buildCloseBtn.addEventListener('click', () => {
             this.selectedStructure = null;
             buildModal.classList.remove('visible');
-            buildModal.querySelector('.build-modal').classList.remove('visible');
             setTimeout(() => {
                 buildModal.style.display = 'none';
             }, 300);
@@ -126,22 +107,23 @@ export class GameScene extends Scene {
             });
         });
 
-        this.canvas = document.getElementById('gameCanvas');
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.ctx = this.canvas.getContext('2d');
-        this.isRendering = true;
-        this.camera = new CameraManager(this.canvas);
-        this.touchHandler = new TouchHandler(this.canvas, this.camera);
-        
-        // Setup mouse controls
-        this.canvas.addEventListener('mousedown', this.camera.handleMouseDown.bind(this.camera));
-        this.canvas.addEventListener('mousemove', this.camera.handleMouseMove.bind(this.camera));
-        this.canvas.addEventListener('mouseup', this.camera.handleMouseUp.bind(this.camera));
-        this.canvas.addEventListener('wheel', this.camera.handleWheel.bind(this.camera));
-        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        // Config modal handlers
+        configBtn.addEventListener('click', () => {
+            configModal.style.display = 'flex';
+            configModal.classList.add('visible');
+        });
 
+        configCloseBtn.addEventListener('click', () => {
+            configModal.classList.remove('visible');
+            setTimeout(() => {
+                configModal.style.display = 'none';
+            }, 300);
+        });
+
+        // Mouse controls
+        this.canvas.addEventListener('mousedown', (e) => this.camera.handleMouseDown(e));
         this.canvas.addEventListener('mousemove', (e) => {
+            this.camera.handleMouseMove(e);
             if (this.selectedStructure) {
                 const rect = this.canvas.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
@@ -158,6 +140,9 @@ export class GameScene extends Scene {
                 }
             }
         });
+        this.canvas.addEventListener('mouseup', (e) => this.camera.handleMouseUp(e));
+        this.canvas.addEventListener('wheel', (e) => this.camera.handleWheel(e));
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
         this.canvas.addEventListener('click', (e) => {
             if (this.selectedStructure && this.highlightTile && this.highlightTile.available) {
@@ -166,7 +151,7 @@ export class GameScene extends Scene {
                 this.highlightTile = null;
             }
         });
-        
+
         requestAnimationFrame(() => this.draw());
     }
 
@@ -176,11 +161,16 @@ export class GameScene extends Scene {
     }
 
     cleanup() {
-        // Cleanup any remaining event listeners
+        // Cleanup event listeners
+        const buildItems = document.querySelectorAll('.build-item');
+        buildItems.forEach(item => {
+            item.removeEventListener('click', null);
+        });
     }
 
     exit() {
         this.cleanup();
+        this.isRendering = false;
     }
 
     drawIsometricGrid(ctx, centerX, centerY, scale) {
@@ -196,7 +186,6 @@ export class GameScene extends Scene {
                 const isoX = (x - y) * gridSize / 2;
                 const isoY = (x + y) * gridSize / 4;
 
-                // Draw grid lines
                 ctx.beginPath();
                 ctx.moveTo(centerX + (isoX - gridSize / 2), centerY + isoY);
                 ctx.lineTo(centerX + (isoX + gridSize / 2), centerY + isoY);
@@ -211,30 +200,23 @@ export class GameScene extends Scene {
     }
 
     draw() {
-        if (!this.isRendering) {
-            return;
-        }
+        if (!this.isRendering) return;
         
-        // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         const centerX = this.canvas.width/2;
         const centerY = this.canvas.height/2;
         
-        // Apply camera transformations
         this.ctx.save();
         this.ctx.translate(centerX + this.camera.offset.x, centerY + this.camera.offset.y);
         this.ctx.scale(this.camera.scale, this.camera.scale);
         
-        // Draw grid
         this.drawIsometricGrid(this.ctx, 0, 0, 1);
         
-        // Draw trees
         this.treeManager.trees.forEach(tree => {
             this.drawTree(this.ctx, tree, 0, 0, 1);
         });
         
-        // Draw NPCs
         if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
             this.maleNPC.draw(this.ctx, 0, 0, 1);
         }
@@ -242,12 +224,10 @@ export class GameScene extends Scene {
             this.femaleNPC.draw(this.ctx, 0, 0, 1);
         }
         
-        // Draw structures
         if (this.structureManager && typeof this.structureManager.draw === 'function') {
             this.structureManager.draw(this.ctx, 0, 0, 1);
         }
         
-        // Draw highlight tile if needed
         if (this.selectedStructure && this.highlightTile) {
             const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
             const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
@@ -267,10 +247,7 @@ export class GameScene extends Scene {
             this.ctx.stroke();
         }
 
-        // Restore context
         this.ctx.restore();
-        
-        // Request next frame
         requestAnimationFrame(() => this.draw());
     }
 
@@ -300,11 +277,9 @@ export class GameScene extends Scene {
         const centerX = this.canvas.width/2;
         const centerY = this.canvas.height/2;
         
-        // Adjust for camera position and scale
         const adjustedX = (screenX - centerX - this.camera.offset.x) / this.camera.scale;
         const adjustedY = (screenY - centerY - this.camera.offset.y) / this.camera.scale;
         
-        // Convert screen coordinates to isometric grid
         const tileX = Math.floor((2 * adjustedY + adjustedX) / this.gridSize);
         const tileY = Math.floor((2 * adjustedY - adjustedX) / this.gridSize);
         
