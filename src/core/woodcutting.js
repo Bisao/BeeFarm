@@ -42,25 +42,33 @@ export class WoodcuttingSystem {
     completeCutting(npc, tree) {
         if (!this.treeManager?.trees) return;
         
-        this.treesBeingCut.delete(tree);
-        this.cuttingProgress.delete(tree);
-        npc.addWoodToInventory();
-        
+        // Remover a árvore do mapa
         const treeIndex = this.treeManager.trees.findIndex(t => t === tree);
         if (treeIndex !== -1) {
             this.treeManager.trees.splice(treeIndex, 1);
             this.treeManager.occupiedPositions.delete(`${tree.x},${tree.y}`);
         }
         
-        // Primeiro parar o corte e depois verificar se precisa ir para casa
+        // Limpar estados de corte
+        this.treesBeingCut.delete(tree);
+        this.cuttingProgress.delete(tree);
+        
+        // Atualizar inventário do NPC
+        npc.addWoodToInventory();
         npc.stopWoodcutting();
         
-        // Se o inventário estiver cheio, vai para casa
+        // Definir próxima ação do NPC
         if (npc.woodInventory >= this.woodcarryingCapacity) {
             npc.moveToHouse();
         } else {
-            // Se não, procura nova árvore
-            npc.state = 'idle';
+            const nextTree = npc.findNearestTree(this.treeManager.trees, this);
+            if (nextTree) {
+                npc.state = 'walking';
+                npc.moveToGrid(nextTree.x, nextTree.y);
+                npc.targetTree = nextTree;
+            } else {
+                npc.state = 'idle';
+            }
         }
     }
 
