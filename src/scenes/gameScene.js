@@ -233,9 +233,9 @@ export class GameScene extends Scene {
         
         // Calcular o centro do grid em coordenadas do mundo
         const gridCenterX = (this.gridWidth * this.gridSize) / 2;
-        const gridCenterY = (this.gridHeight * this.gridSize) / 4;
+        const gridCenterY = (this.gridHeight * this.gridSize) / 2;
         
-        // Centralizar a câmera no grid
+        // Ajustar offset inicial para centralizar
         const centerX = this.canvas.width / 2;
         const centerY = this.canvas.height / 2;
         
