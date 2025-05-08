@@ -21,16 +21,25 @@ export class NPC {
         this.state = 'woodcutting';
         this.currentTree = tree;
         this.lastStateChange = Date.now();
+        this.isWoodcutting = true;
     }
 
     stopWoodcutting() {
         this.state = 'idle';
         this.currentTree = null;
         this.lastStateChange = Date.now();
+        this.isWoodcutting = false;
+        
+        if (this.woodInventory >= 3) {
+            this.moveToHouse();
+        }
     }
 
     addWoodToInventory() {
         this.woodInventory++;
+        if (this.woodInventory >= 3) {
+            this.moveToHouse();
+        }
     }
 
     updateGridPosition(x, y) {
