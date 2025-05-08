@@ -29,20 +29,31 @@ export class MaleNPC extends NPC {
         switch(direction) {
             case 'up':
                 this.currentAnimation = 'walkUp';
-                newY = Math.max(0, Math.round(this.gridPosition.y - this.speed));
+                newY = Math.max(0, this.gridPosition.y - this.speed);
                 break;
             case 'down':
                 this.currentAnimation = 'walkDown';
-                newY = Math.min(9, Math.round(this.gridPosition.y + this.speed));
+                newY = Math.min(9, this.gridPosition.y + this.speed);
                 break;
             case 'left':
                 this.currentAnimation = 'walkLeft';
-                newX = Math.max(0, Math.round(this.gridPosition.x - this.speed));
+                newX = Math.max(0, this.gridPosition.x - this.speed);
                 break;
             case 'right':
                 this.currentAnimation = 'walkRight';
-                newX = Math.min(9, Math.round(this.gridPosition.x + this.speed));
+                newX = Math.min(9, this.gridPosition.x + this.speed);
                 break;
+        }
+
+        // Check if we've moved at least one tile
+        const hasMovedTile = Math.abs(Math.round(newX) - Math.round(this.gridPosition.x)) >= 1 ||
+                            Math.abs(Math.round(newY) - Math.round(this.gridPosition.y)) >= 1;
+
+        if (hasMovedTile) {
+            // Snap to the nearest tile
+            newX = Math.round(newX);
+            newY = Math.round(newY);
+            this.moving = false;
         }
 
         // Update grid position
