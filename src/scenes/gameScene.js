@@ -1,5 +1,6 @@
 import { Scene } from '../core/baseScene.js';
-import { MaleNPC, FemaleNPC } from '../core/baseNPCs.js';
+import { MaleNPC } from '../core/maleNPC.js';
+import { FemaleNPC } from '../core/femaleNPC.js';
 
 export class GameScene extends Scene {
     constructor() {
