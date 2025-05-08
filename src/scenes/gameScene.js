@@ -162,22 +162,6 @@ export class GameScene extends Scene {
     exit() {
         this.cleanup();
     }
-    drawTree(ctx, tree, centerX, centerY, scale) {
-        const isoX = (tree.x - tree.y) * this.gridSize / 2;
-        const isoY = (tree.x + tree.y) * this.gridSize / 4;
-        const img = this.treeManager.treeImages[tree.type];
-
-        if (img.complete) {
-            const treeWidth = 60;
-            const treeHeight = 60;
-            const tileCenter = {
-                x: centerX/scale + isoX,
-                y: centerY/scale + isoY
-            };
-
-        }
-    }
-
     drawIsometricGrid(ctx, centerX, centerY, scale) {
         const gridSize = this.gridSize * scale;
         const gridWidth = this.gridWidth;
@@ -213,9 +197,12 @@ export class GameScene extends Scene {
         // Limpar canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
+        const centerX = this.canvas.width/2;
+        const centerY = this.canvas.height/2;
+        
         // Aplicar transformações da câmera
         this.ctx.save();
-        this.ctx.translate(this.canvas.width/2 + this.camera.offset.x, this.canvas.height/2 + this.camera.offset.y);
+        this.ctx.translate(centerX + this.camera.offset.x, centerY + this.camera.offset.y);
         this.ctx.scale(this.camera.scale, this.camera.scale);
         
         // Desenhar grid
@@ -227,11 +214,17 @@ export class GameScene extends Scene {
         });
         
         // Desenhar NPCs
-        this.maleNPC.draw(this.ctx, 0, 0, 1);
-        this.femaleNPC.draw(this.ctx, 0, 0, 1);
+        if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
+            this.maleNPC.draw(this.ctx, 0, 0, 1);
+        }
+        if (this.femaleNPC && typeof this.femaleNPC.draw === 'function') {
+            this.femaleNPC.draw(this.ctx, 0, 0, 1);
+        }
         
         // Desenhar estruturas
-        this.structureManager.draw(this.ctx, 0, 0, 1);
+        if (this.structureManager && typeof this.structureManager.draw === 'function') {
+            this.structureManager.draw(this.ctx, 0, 0, 1);
+        }
         
         // Restaurar contexto
         this.ctx.restore();
