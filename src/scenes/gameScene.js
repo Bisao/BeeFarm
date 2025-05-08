@@ -389,13 +389,23 @@ export class GameScene extends Scene {
         const isoY = (tree.x + tree.y) * this.gridSize / 4;
         const img = this.treeManager.treeImages[tree.type];
         
-        if (img.complete) {
+        // Check if tree is in viewport with margin
+        const margin = this.gridSize * 2; // Increased margin for smoother transitions
+        const viewportWidth = this.canvas.width / scale;
+        const viewportHeight = this.canvas.height / scale;
+        const tileCenter = {
+            x: centerX/scale + isoX,
+            y: centerY/scale + isoY
+        };
+        
+        if (tileCenter.x >= -margin && 
+            tileCenter.x <= viewportWidth + margin &&
+            tileCenter.y >= -margin && 
+            tileCenter.y <= viewportHeight + margin &&
+            img.complete) {
+            
             const treeWidth = 60;
             const treeHeight = 60;
-            const tileCenter = {
-                x: centerX/scale + isoX,
-                y: centerY/scale + isoY
-            };
             
             ctx.drawImage(
                 img,
