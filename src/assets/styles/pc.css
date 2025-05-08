@@ -123,12 +123,10 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 100000;
+    z-index: 1001;
 }
 
 .settings-modal {
-    position: relative;
-    z-index: 100001;
     background: #2a2a2a;
     padding: 20px;
     border-radius: 10px;

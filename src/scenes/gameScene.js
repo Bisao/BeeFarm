@@ -156,12 +156,6 @@ export class GameScene extends Scene {
             configModal.style.display = 'none';
         });
 
-        configModal.addEventListener('click', (e) => {
-            if (e.target === configModal) {
-                configModal.style.display = 'none';
-            }
-        });
-
         gridSizeRange.addEventListener('input', (e) => {
             gridSizeValue.textContent = e.target.value;
             this.gridSize = parseInt(e.target.value);
