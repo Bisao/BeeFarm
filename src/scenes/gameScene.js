@@ -16,7 +16,7 @@ export class GameScene extends Scene {
         this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
-        this.scale = 3; // Iniciando com zoom máximo
+        this.scale = 1;
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.initialScale = 1;
@@ -132,11 +132,8 @@ export class GameScene extends Scene {
         
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
-        // Posicionar NPCs no centro do grid
-        const centerX = Math.floor(this.gridWidth / 2);
-        const centerY = Math.floor(this.gridHeight / 2);
-        this.maleNPC.updateGridPosition(centerX - 1, centerY);
-        this.femaleNPC.updateGridPosition(centerX + 1, centerY);
+        this.maleNPC.updateGridPosition(4, 5);
+        this.femaleNPC.updateGridPosition(6, 5);
     }
 
     enter() {
@@ -228,32 +225,13 @@ export class GameScene extends Scene {
     resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        
-        // Pegar posição do spawn point (onde os NPCs são criados)
-        const spawnX = Math.floor(this.gridWidth / 2);
-        const spawnY = Math.floor(this.gridHeight / 2);
-        
-        // Converter spawn point para coordenadas isométricas
-        const isoX = (spawnX - spawnY) * this.gridSize / 2;
-        const isoY = (spawnX + spawnY) * this.gridSize / 4;
-        
-        // Ajustar câmera para centralizar no spawn point
-        this.offset.x = -(isoX * this.scale) + (this.canvas.width / 2);
-        this.offset.y = -(isoY * this.scale) + (this.canvas.height / 2);
-        
         this.drawGrid();
     }
 
     drawGrid() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Calcular o centro do grid
-        const gridCenterX = (this.gridWidth * this.gridSize) / 4;
-        const gridCenterY = (this.gridHeight * this.gridSize) / 8;
-        
-        // Centralizar câmera no grid
-        const centerX = this.canvas.width / 2 - gridCenterX;
-        const centerY = this.canvas.height / 2 - gridCenterY;
+        const centerX = this.canvas.width / 2 + this.offset.x;
+        const centerY = this.canvas.height / 3 + this.offset.y;
 
         this.ctx.save();
         this.ctx.scale(this.scale, this.scale);
