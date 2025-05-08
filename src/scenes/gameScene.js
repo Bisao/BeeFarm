@@ -252,12 +252,35 @@ export class GameScene extends Scene {
         this.drawGrid();
     }
 
+    isInViewport(x, y) {
+        const centerX = this.canvas.width / 2 + this.offset.x;
+        const centerY = this.canvas.height / 3 + this.offset.y;
+        const viewportWidth = this.canvas.width / this.scale;
+        const viewportHeight = this.canvas.height / this.scale;
+        
+        const isoX = (x - y) * this.gridSize / 2;
+        const isoY = (x + y) * this.gridSize / 4;
+        
+        const screenX = centerX/this.scale + isoX;
+        const screenY = centerY/this.scale + isoY;
+        
+        return screenX > -this.gridSize && screenX < viewportWidth + this.gridSize &&
+               screenY > -this.gridSize && screenY < viewportHeight + this.gridSize;
+    }
+
     drawGrid() {
+        if (!this.needsUpdate && this.lastCameraPos &&
+            Math.abs(this.offset.x - this.lastCameraPos.x) < 1 &&
+            Math.abs(this.offset.y - this.lastCameraPos.y) < 1) {
+            return; // Skip render if camera hasn't moved significantly
+        }
+        
+        this.lastCameraPos = { ...this.offset };
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         const centerX = this.canvas.width / 2 + this.offset.x;
         const centerY = this.canvas.height / 3 + this.offset.y;
         
-        // Calculate visible area
+        // Calculate visible area with camera position
         const viewportWidth = this.canvas.width / this.scale;
         const viewportHeight = this.canvas.height / this.scale;
         const tilesInView = {
@@ -331,25 +354,33 @@ export class GameScene extends Scene {
 
     draw() {
         const currentTime = performance.now();
+        const deltaTime = currentTime - this.lastFrameTime;
+        
+        // Update loop - runs at 60 FPS
+        if (deltaTime >= this.frameInterval) {
+            this.lastFrameTime = currentTime;
+            this.maleNPC.update(this.gridWidth, this.gridHeight);
+            this.femaleNPC.update(this.gridWidth, this.gridHeight);
+            this.needsUpdate = true;
+        }
+        
+        // Render loop - capped at 30 FPS
         if (currentTime - this.lastRenderTime >= this.renderInterval) {
             this.lastRenderTime = currentTime;
             
-            // Only redraw if something changed
-            if (this.needsUpdate) {
+            // Only redraw if camera moved or update needed
+            if (this.needsUpdate || 
+                (this.lastCameraPos && 
+                 (Math.abs(this.offset.x - this.lastCameraPos.x) > 1 ||
+                  Math.abs(this.offset.y - this.lastCameraPos.y) > 1))) {
                 this.drawGrid();
                 if (this.miniMap) {
                     this.miniMap.draw();
                 }
                 this.needsUpdate = false;
             }
-            
-            // Update NPCs at a fixed timestep
-            if (currentTime - this.lastFrameTime >= this.frameInterval) {
-                this.lastFrameTime = currentTime;
-                this.maleNPC.update(this.gridWidth, this.gridHeight);
-                this.femaleNPC.update(this.gridWidth, this.gridHeight);
-            }
         }
+        
         requestAnimationFrame(() => this.draw());
     }
 
