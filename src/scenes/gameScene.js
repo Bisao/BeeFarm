@@ -1,6 +1,6 @@
 
 import { Scene } from '../core/baseScene.js';
-import { NPC } from '../core/npc.js';
+import { MaleNPC } from '../core/maleNPC.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -19,7 +19,7 @@ export class GameScene extends Scene {
         this.initialPinchDistance = 0;
         
         // Create test NPC
-        this.testNPC = new NPC(0, 0);
+        this.testNPC = new MaleNPC(0, 0);
         this.testNPC.updateGridPosition(5, 5); // Place in middle of grid
     }
 
