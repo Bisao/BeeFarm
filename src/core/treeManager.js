@@ -1,6 +1,4 @@
 
-import { Scene } from './baseScene.js';
-
 export class TreeManager {
     constructor() {
         this.trees = [];
