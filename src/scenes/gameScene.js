@@ -12,6 +12,8 @@ export class GameScene extends Scene {
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.gridSize = 50;
+        this.lastRenderTime = 0;
+        this.renderInterval = 1000 / 30; // 30 FPS cap
         this.gridWidth = 50;
         this.gridHeight = 50;
         this.offset = { x: 0, y: 0 };
@@ -312,14 +314,26 @@ export class GameScene extends Scene {
 
     draw() {
         const currentTime = performance.now();
-        if (currentTime - this.lastFrameTime >= this.frameInterval && this.needsUpdate) {
-            this.lastFrameTime = currentTime;
-            this.drawGrid();
-            if (this.miniMap) {
-                this.miniMap.draw();
+        if (currentTime - this.lastRenderTime >= this.renderInterval) {
+            this.lastRenderTime = currentTime;
+            
+            // Only redraw if something changed
+            if (this.needsUpdate) {
+                this.drawGrid();
+                if (this.miniMap) {
+                    this.miniMap.draw();
+                }
+                this.needsUpdate = false;
             }
-            this.needsUpdate = false;
+            
+            // Update NPCs at a fixed timestep
+            if (currentTime - this.lastFrameTime >= this.frameInterval) {
+                this.lastFrameTime = currentTime;
+                this.maleNPC.update(this.gridWidth, this.gridHeight);
+                this.femaleNPC.update(this.gridWidth, this.gridHeight);
+            }
         }
+        requestAnimationFrame(() => this.draw());
     }
 
     drawTree(ctx, tree, centerX, centerY, scale) {
