@@ -14,7 +14,38 @@ export class MaleNPC extends NPC {
         this.frame = 0;
         this.animationSpeed = MALE_NPC_ANIMATIONS[this.currentAnimation].speed;
         this.lastFrameTime = 0;
+        this.moving = false;
+        this.speed = 0.1;
         this.loadSprites();
+    }
+
+    move(direction) {
+        this.moving = true;
+        switch(direction) {
+            case 'up':
+                this.currentAnimation = 'walkUp';
+                this.gridPosition.y -= this.speed;
+                break;
+            case 'down':
+                this.currentAnimation = 'walkDown';
+                this.gridPosition.y += this.speed;
+                break;
+            case 'left':
+                this.currentAnimation = 'walkLeft';
+                this.gridPosition.x -= this.speed;
+                break;
+            case 'right':
+                this.currentAnimation = 'walkRight';
+                this.gridPosition.x += this.speed;
+                break;
+        }
+        // Update isometric position
+        this.position.x = (this.gridPosition.x - this.gridPosition.y) * 50 / 2;
+        this.position.y = (this.gridPosition.x + this.gridPosition.y) * 50 / 4;
+    }
+
+    stopMoving() {
+        this.moving = false;
     }
 
     loadSprites() {

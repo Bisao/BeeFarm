@@ -29,6 +29,34 @@ export class GameScene extends Scene {
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
         
+        // Keyboard controls
+        window.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'w':
+                case 'ArrowUp':
+                    this.testNPC.move('up');
+                    break;
+                case 's':
+                case 'ArrowDown':
+                    this.testNPC.move('down');
+                    break;
+                case 'a':
+                case 'ArrowLeft':
+                    this.testNPC.move('left');
+                    break;
+                case 'd':
+                case 'ArrowRight':
+                    this.testNPC.move('right');
+                    break;
+            }
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            if(['w','s','a','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+                this.testNPC.stopMoving();
+            }
+        });
+        
         // Mouse events
         this.canvas.addEventListener('mousedown', (e) => {
             if (e.button === 2) {
