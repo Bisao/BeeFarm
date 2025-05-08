@@ -273,8 +273,21 @@ export class GameScene extends Scene {
             { type: 'npc', obj: this.femaleNPC },
             ...this.treeManager.trees.map(tree => ({ type: 'tree', obj: tree }))
         ].sort((a, b) => {
-            const aY = a.type === 'npc' ? a.obj.position.y : (a.obj.x + a.obj.y) * this.gridSize / 4;
-            const bY = b.type === 'npc' ? b.obj.position.y : (b.obj.x + b.obj.y) * this.gridSize / 4;
+            const getY = (obj) => {
+                if (obj.type === 'npc') {
+                    return obj.obj.gridPosition.x + obj.obj.gridPosition.y;
+                }
+                return obj.obj.x + obj.obj.y;
+            };
+            
+            const aY = getY(a);
+            const bY = getY(b);
+            
+            if (aY === bY) {
+                // Se estiverem no mesmo tile, NPCs aparecem na frente
+                return a.type === 'npc' ? 1 : -1;
+            }
+            
             return aY - bY;
         });
 
