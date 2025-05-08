@@ -6,14 +6,6 @@ export class TreeManager {
             pine: this.loadImage('/src/assets/images/trees/tree_pine-removebg-preview.png'),
             simple: this.loadImage('/src/assets/images/trees/tree_simple-removebg-preview.png')
         };
-        this.renderConfig = {
-            maxRenderDistance: 25,
-            enabled: true
-        };
-    }
-
-    setRenderConfig(config) {
-        this.renderConfig = { ...this.renderConfig, ...config };
     }
 
     loadImage(src) {
@@ -32,17 +24,8 @@ export class TreeManager {
         }
     }
 
-    draw(ctx, centerX, centerY, scale, viewX, viewY) {
-        if (!this.renderConfig.enabled) return;
-        
+    draw(ctx, centerX, centerY, scale) {
         for (const tree of this.trees) {
-            // Converter coordenadas isométricas para coordenadas do mundo
-            const dx = Math.abs(tree.x - Math.floor(viewX));
-            const dy = Math.abs(tree.y - Math.floor(viewY));
-            const distance = Math.max(dx, dy);
-            
-            if (distance > this.renderConfig.maxRenderDistance) continue;
-            
             const isoX = (tree.x - tree.y) * 50 / 2;
             const isoY = (tree.x + tree.y) * 50 / 4;
             const img = this.treeImages[tree.type];
