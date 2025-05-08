@@ -5,11 +5,6 @@ export class NPC {
         this.gridPosition = { x: 0, y: 0 };
         this.color = '#FFD700'; // Default color (gold)
         this.size = 20;
-        this.house = null;
-    }
-
-    setHouse(house) {
-        this.house = house;
     }
 
     updateGridPosition(x, y) {
