@@ -1,9 +1,5 @@
 import { Scene } from '../core/baseScene.js';
-import { MaleNPC } from '../core/maleNPC.js';
-import { FemaleNPC } from '../core/femaleNPC.js';
-
-import { TileManager } from '../core/tileManager.js';
-
+import { NPC } from '../core/npc.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -18,14 +14,10 @@ export class GameScene extends Scene {
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
         this.scale = 1;
-        this.tiles = Array(this.gridWidth).fill().map(() => Array(this.gridHeight).fill(true));
         this.touchCount = 0;
         this.initialPinchDistance = 0;
-        this.maleNPC = new MaleNPC(0, 0);
-        this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(4, 4);
-        this.femaleNPC.updateGridPosition(6, 6);
-        this.tileManager = new TileManager();
+        this.testNPC = new NPC(0, 0);
+        this.testNPC.updateGridPosition(5, 5);
     }
 
     enter() {
@@ -77,25 +69,23 @@ export class GameScene extends Scene {
                 const isoX = (x - y) * this.gridSize / 2;
                 const isoY = (x + y) * this.gridSize / 4;
 
-                const tileType = Math.random() < 0.2 ? 'flowerGrass' : (Math.random() < 0.5 ? 'grass' : 'dirt');
-                this.tileManager.drawTile(
-                    this.ctx, 
-                    tileType,
-                    centerX/this.scale + isoX, 
-                    centerY/this.scale + isoY,
-                    this.scale
-                );
+                this.ctx.beginPath();
+                this.ctx.moveTo(centerX/this.scale + isoX, centerY/this.scale + isoY);
+                this.ctx.lineTo(centerX/this.scale + isoX + this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
+                this.ctx.lineTo(centerX/this.scale + isoX, centerY/this.scale + isoY + this.gridSize / 2);
+                this.ctx.lineTo(centerX/this.scale + isoX - this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
+                this.ctx.closePath();
+                this.ctx.strokeStyle = '#4CAF50';
+                this.ctx.stroke();
             }
         }
 
-        this.maleNPC.draw(this.ctx, centerX, centerY, this.scale);
-        this.femaleNPC.draw(this.ctx, centerX, centerY, this.scale);
+        this.testNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.ctx.restore();
     }
 
     update(delta) {
-        this.maleNPC.update(this.gridWidth, this.gridHeight);
-        this.femaleNPC.update(this.gridWidth, this.gridHeight);
+        this.testNPC.update(this.gridWidth, this.gridHeight);
     }
 
     draw() {
