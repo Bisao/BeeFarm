@@ -6,14 +6,17 @@ import { GameScene } from './scenes/gameScene.js';
 
 // Dynamic CSS loading based on screen width
 const loadCSS = () => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `src/assets/styles/${window.innerWidth <= 768 ? 'mobile' : 'pc'}.css`;
-    document.head.appendChild(link);
+    return new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `src/assets/styles/${window.innerWidth <= 768 ? 'mobile' : 'pc'}.css`;
+        link.onload = resolve;
+        document.head.appendChild(link);
+    });
 };
 
-window.addEventListener('load', () => {
-    loadCSS();
+async function init() {
+    await loadCSS();
     const sceneManager = new SceneManager();
     
     // Register scenes
@@ -23,4 +26,6 @@ window.addEventListener('load', () => {
     
     // Start with the start scene
     sceneManager.changeScene('start');
-});
+}
+
+window.addEventListener('load', init);
