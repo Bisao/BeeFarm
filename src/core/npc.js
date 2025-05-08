@@ -123,18 +123,22 @@ export class NPC {
     }
 
     update(gridWidth, gridHeight, trees = [], woodcuttingSystem) {
+        if (!trees || !woodcuttingSystem) return;
+        
         const currentTime = Date.now();
         const timeSinceLastState = currentTime - this.lastStateChange;
 
         switch (this.state) {
             case 'idle':
-                // Procurar árvore mais próxima
                 const nearestTree = this.findNearestTree(trees);
-                if (nearestTree) {
+                if (nearestTree && this.woodInventory < 3) {
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
                     this.moveToGrid(nearestTree.x, nearestTree.y);
                     this.targetTree = nearestTree;
+                } else if (this.woodInventory >= 3 && this.house) {
+                    this.moveToHouse();
+                    this.state = 'walking';
                 }
                 break;
 
@@ -149,11 +153,18 @@ export class NPC {
                         this.position.y = this.targetPosition.y;
                         this.isMoving = false;
                         
-                        // Começar a cortar se chegou na árvore
-                        if (this.targetTree) {
-                            woodcuttingSystem.startCuttingTree(this, this.targetTree);
+                        if (this.targetTree && this.woodInventory < 3) {
+                            const success = woodcuttingSystem.startCuttingTree(this, this.targetTree);
+                            if (!success) {
+                                this.state = 'idle';
+                                this.targetTree = null;
+                            }
                         } else {
+                            if (this.house && this.woodInventory >= 3) {
+                                this.woodInventory = 0;
+                            }
                             this.state = 'idle';
+                            this.targetTree = null;
                         }
                         this.lastStateChange = currentTime;
                     } else {
@@ -164,7 +175,10 @@ export class NPC {
                 break;
 
             case 'woodcutting':
-                // O WoodcuttingSystem gerencia o tempo e conclusão do corte
+                if (!woodcuttingSystem.isTreeBeingCut(this.targetTree)) {
+                    this.state = 'idle';
+                    this.targetTree = null;
+                }
                 break;
         }
     }
