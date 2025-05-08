@@ -150,10 +150,25 @@ export class GameScene extends Scene {
 
         configBtn.addEventListener('click', () => {
             configModal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                configModal.classList.add('visible');
+                configModal.querySelector('.settings-modal').classList.add('visible');
+            });
         });
 
         configCloseBtn.addEventListener('click', () => {
-            configModal.style.display = 'none';
+            configModal.classList.remove('visible');
+            configModal.querySelector('.settings-modal').classList.remove('visible');
+            setTimeout(() => {
+                configModal.style.display = 'none';
+            }, 300);
+        });
+
+        // Fechar modal ao clicar fora
+        configModal.addEventListener('click', (e) => {
+            if (e.target === configModal) {
+                configCloseBtn.click();
+            }
         });
 
         gridSizeRange.addEventListener('input', (e) => {
