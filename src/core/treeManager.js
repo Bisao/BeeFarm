@@ -35,10 +35,16 @@ export class TreeManager {
                 const treeWidth = 40;
                 const treeHeight = 40;
                 
+                // Center the tree on the tile
+                const tileCenter = {
+                    x: centerX/scale + isoX,
+                    y: centerY/scale + isoY
+                };
+                
                 ctx.drawImage(
                     img,
-                    centerX/scale + isoX - treeWidth/2,
-                    centerY/scale + isoY - treeHeight,
+                    tileCenter.x - treeWidth/2,
+                    tileCenter.y - treeHeight/2,
                     treeWidth,
                     treeHeight
                 );
