@@ -137,8 +137,24 @@ export class GameScene extends Scene {
                 this.ctx.lineTo(centerX/this.scale + isoX, centerY/this.scale + isoY + this.gridSize / 2);
                 this.ctx.lineTo(centerX/this.scale + isoX - this.gridSize / 2, centerY/this.scale + isoY + this.gridSize / 4);
                 this.ctx.closePath();
+                // Fill with grass color
+                this.ctx.fillStyle = '#90EE90';
+                this.ctx.fill();
+                
+                // Add grid lines
                 this.ctx.strokeStyle = '#4CAF50';
                 this.ctx.stroke();
+                
+                // Add tile pattern
+                const pattern = Math.random() < 0.1 ? '.' : Math.random() < 0.05 ? '*' : '';
+                if (pattern) {
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.font = '12px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(pattern, 
+                        centerX/this.scale + isoX, 
+                        centerY/this.scale + isoY + 5);
+                }
             }
         }
 
