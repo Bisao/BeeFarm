@@ -5,12 +5,6 @@ export class House extends Structure {
     constructor(x, y) {
         super(x, y);
         this.type = 'house';
-        this.size = 45;
-    }
-
-    constructor(x, y) {
-        super(x, y);
-        this.type = 'house';
         this.size = 80;
         this.image = new Image();
         this.image.src = '/src/assets/images/structures/house.png';
