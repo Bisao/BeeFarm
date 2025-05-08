@@ -1,5 +1,6 @@
 import { Scene } from '../core/baseScene.js';
 import { NPC } from '../core/npc.js';
+import { Obstacle } from '../core/obstacle.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -18,6 +19,26 @@ export class GameScene extends Scene {
         this.initialPinchDistance = 0;
         this.testNPC = new NPC(0, 0);
         this.testNPC.updateGridPosition(5, 5);
+        
+        // Add obstacles
+        this.obstacles = [];
+        this.initializeObstacles();
+    }
+
+    initializeObstacles() {
+        // Add some random obstacles
+        const obstaclePositions = [
+            {x: 2, y: 2},
+            {x: 7, y: 7},
+            {x: 3, y: 8},
+            {x: 8, y: 3}
+        ];
+
+        obstaclePositions.forEach(pos => {
+            const obstacle = new Obstacle(0, 0);
+            obstacle.updateGridPosition(pos.x, pos.y);
+            this.obstacles.push(obstacle);
+        });
     }
 
     enter() {
@@ -79,6 +100,11 @@ export class GameScene extends Scene {
                 this.ctx.stroke();
             }
         }
+
+        // Draw obstacles
+        this.obstacles.forEach(obstacle => {
+            obstacle.draw(this.ctx, centerX, centerY, this.scale);
+        });
 
         this.testNPC.draw(this.ctx, centerX, centerY, this.scale);
         this.ctx.restore();
