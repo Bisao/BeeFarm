@@ -4,6 +4,7 @@ import { FemaleNPC } from '../core/femaleNPC.js';
 import { TreeManager } from '../core/treeManager.js';
 import { StructureManager } from '../core/structures/structureManager.js';
 import { CameraManager } from '../core/CameraManager.js';
+import { TouchHandler } from '../utils/TouchHandler.js';
 
 export class GameScene extends Scene {
     constructor() {
