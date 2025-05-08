@@ -11,8 +11,26 @@ export class NPC {
         this.direction = { x: 0, y: 0 };
         this.waitTime = 0;
         this.house = null;
-        this.state = 'idle'; // idle, walking, visiting
+        this.state = 'idle'; // idle, walking, visiting, woodcutting
         this.lastStateChange = Date.now();
+        this.woodInventory = 0;
+        this.currentTree = null;
+    }
+
+    startWoodcutting(tree) {
+        this.state = 'woodcutting';
+        this.currentTree = tree;
+        this.lastStateChange = Date.now();
+    }
+
+    stopWoodcutting() {
+        this.state = 'idle';
+        this.currentTree = null;
+        this.lastStateChange = Date.now();
+    }
+
+    addWoodToInventory() {
+        this.woodInventory++;
     }
 
     updateGridPosition(x, y) {
@@ -112,6 +130,16 @@ export class NPC {
     }
 
     draw(ctx, centerX, centerY, scale) {
+        // Mostrar ícone de machado quando estiver cortando
+        if (this.state === 'woodcutting') {
+            ctx.fillStyle = '#8B4513';
+            ctx.font = '12px Arial';
+            ctx.fillText('🪓', 
+                centerX/scale + this.position.x + 10, 
+                centerY/scale + this.position.y - 10
+            );
+        }
+        
         // Draw dotted path to target
         if (this.isMoving) {
             ctx.beginPath();
