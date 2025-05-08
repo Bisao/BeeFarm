@@ -153,7 +153,7 @@ export class GameScene extends Scene {
         this.femaleNPC.updateGridPosition(6, 5);
     }
 
-    enter() {
+    async enter() {
         const { MiniMap } = await import('../core/miniMap.js');
         this.miniMap = new MiniMap(this);
         this.container.innerHTML = `
