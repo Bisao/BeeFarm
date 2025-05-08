@@ -26,10 +26,11 @@ export class FemaleNPC {
         this.position.y = (x + y) * 50 / 4;
     }
 
-    setRandomTarget(gridWidth, gridHeight) {
+    setRandomTarget(gridWidth, gridHeight, tiles) {
         const direction = Math.floor(Math.random() * 4);
         let targetX = this.gridPosition.x;
         let targetY = this.gridPosition.y;
+        if (!tiles?.[targetX]?.[targetY]) return;
         
         const steps = Math.floor(Math.random() * 2) + 1;
         let newX = targetX;

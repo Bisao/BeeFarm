@@ -15,6 +15,7 @@ export class GameScene extends Scene {
         this.isDragging = false;
         this.lastPos = { x: 0, y: 0 };
         this.scale = 1;
+        this.tiles = Array(this.gridWidth).fill().map(() => Array(this.gridHeight).fill(true));
         this.touchCount = 0;
         this.initialPinchDistance = 0;
         this.maleNPC = new MaleNPC(0, 0);
