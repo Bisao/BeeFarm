@@ -6,7 +6,7 @@ export class NPC {
         this.targetPosition = null;
         this.color = '#FFD700';
         this.size = 20;
-        this.speed = 2;
+        this.speed = 0.8;
         this.isMoving = false;
         this.direction = { x: 0, y: 0 };
         this.waitTime = 0;
@@ -106,13 +106,17 @@ export class NPC {
     }
 
     draw(ctx, centerX, centerY, scale) {
-        // Draw movement trail if moving
+        // Draw dotted path to target
         if (this.isMoving) {
             ctx.beginPath();
             ctx.moveTo(centerX/scale + this.position.x, centerY/scale + this.position.y);
             ctx.lineTo(centerX/scale + this.targetPosition.x, centerY/scale + this.targetPosition.y);
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+            ctx.lineWidth = 2;
             ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.lineWidth = 1;
         }
 
         // Draw NPC
