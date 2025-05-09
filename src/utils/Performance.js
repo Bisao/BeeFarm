@@ -2,8 +2,14 @@
 export class Performance {
     constructor() {
         this.lastFrameTime = 0;
-        this.frameInterval = 1000 / 30; // 30 FPS
+        this.frameInterval = 1000 / 60; // 60 FPS
         this.isRendering = false;
+        this.frameQueue = new Set();
+        this.metrics = {
+            fps: 0,
+            frameTime: 0,
+            lastUpdate: performance.now()
+        };
     }
 
     shouldRender(timestamp) {
@@ -17,18 +23,6 @@ export class Performance {
 
     endFrame() {
         this.isRendering = false;
-    }
-
-    constructor() {
-        this.lastFrameTime = 0;
-        this.frameInterval = 1000 / 60; // 60 FPS
-        this.isRendering = false;
-        this.frameQueue = new Set();
-        this.metrics = {
-            fps: 0,
-            frameTime: 0,
-            lastUpdate: performance.now()
-        };
     }
 
     requestRender(callback, priority = 0) {
