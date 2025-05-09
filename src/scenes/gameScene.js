@@ -32,6 +32,21 @@ export class GameScene extends Scene {
         // Bind methods
         this.draw = this.draw.bind(this);
         this.setupEventListeners = this.setupEventListeners.bind(this);
+        this.handleError = this.handleError.bind(this);
+    }
+
+    handleError(error, context) {
+        console.error(`Error in ${context}:`, error);
+        this.isRendering = false;
+        if (this.container) {
+            this.container.innerHTML = `
+                <div class="error-screen">
+                    <h2>Error occurred</h2>
+                    <p>${error.message}</p>
+                    <button class="button" onclick="location.reload()">Retry</button>
+                </div>
+            `;
+        }
     }
 
     enter() {

@@ -11,15 +11,20 @@ export class SceneManager {
     }
 
     async init(gameState, assetCache) {
-        if (!gameState || !assetCache) {
-            throw new Error('GameState and AssetCache must be provided');
+        try {
+            if (!gameState || !assetCache) {
+                throw new Error('GameState and AssetCache must be provided');
+            }
+            this.gameState = gameState;
+            this.assetCache = assetCache;
+            
+            // Ensure assets are loaded
+            await this.assetCache.preloadAssets();
+            return true;
+        } catch (error) {
+            console.error('Error initializing scene manager:', error);
+            throw error;
         }
-        this.gameState = gameState;
-        this.assetCache = assetCache;
-        
-        // Ensure assets are loaded
-        await new Promise(resolve => setTimeout(resolve, 100));
-        return true;
     }
 
     registerScene(name, scene) {

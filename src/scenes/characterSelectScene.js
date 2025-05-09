@@ -86,6 +86,13 @@ export class CharacterSelectScene extends Scene {
             this.container.innerHTML = `
                 <div class="error-screen">
                     <h2>Failed to load character</h2>
+                    <p>${error.message}</p>
+                    <button class="button" onclick="location.reload()">Retry</button>
+                </div>
+            `;
+        }
+    }
+                    <h2>Failed to load character</h2>
                     <button class="button" onclick="location.reload()">Retry</button>
                 </div>
             `;
