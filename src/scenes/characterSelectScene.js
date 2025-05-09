@@ -75,6 +75,15 @@ export class CharacterSelectScene extends Scene {
             } else {
                 throw new Error('Game manager not properly initialized');
             }
+        } catch (error) {
+            console.error('Failed to load character:', error);
+            this.container.innerHTML = `
+                <div class="error-screen">
+                    <h2>Failed to load character</h2>
+                    <button class="button" onclick="location.reload()">Retry</button>
+                </div>
+            `;
+        }
     }
 
     exit() {
