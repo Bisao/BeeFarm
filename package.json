@@ -3,7 +3,9 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^6.6.3",
