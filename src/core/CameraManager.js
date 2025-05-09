@@ -4,13 +4,22 @@ export class CameraManager {
         this.canvas = canvas;
         this.offset = { x: 0, y: 0 };
         this.scale = 1;
+        this.minScale = 0.5;
+        this.maxScale = 2;
         this.isDragging = false;
         this.lastPosition = { x: 0, y: 0 };
+        
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
+        this.handleWheel = this.handleWheel.bind(this);
     }
 
     handleMouseDown(e) {
-        this.isDragging = true;
-        this.lastPosition = { x: e.clientX, y: e.clientY };
+        if (e.button === 2) {
+            this.isDragging = true;
+            this.lastPosition = { x: e.clientX, y: e.clientY };
+        }
     }
 
     handleMouseMove(e) {
@@ -25,33 +34,29 @@ export class CameraManager {
         this.lastPosition = { x: e.clientX, y: e.clientY };
     }
 
-    handleMouseUp(e) {
+    handleMouseUp() {
         this.isDragging = false;
     }
 
     handleWheel(e) {
         e.preventDefault();
-        const zoomFactor = 0.1;
-        const zoom = e.deltaY > 0 ? 1 - zoomFactor : 1 + zoomFactor;
+        const zoom = e.deltaY > 0 ? 0.9 : 1.1;
         this.updateScale(this.scale * zoom, e.clientX, e.clientY);
     }
 
     updateScale(newScale, clientX, clientY) {
-        const minScale = 0.5;
-        const maxScale = 2;
+        const oldScale = this.scale;
+        this.scale = Math.max(this.minScale, Math.min(newScale, this.maxScale));
         
-        newScale = Math.min(Math.max(newScale, minScale), maxScale);
-        
-        const rect = this.canvas.getBoundingClientRect();
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
-        
-        const scaleFactor = newScale / this.scale;
-        
-        this.offset.x = x - (x - this.offset.x) * scaleFactor;
-        this.offset.y = y - (y - this.offset.y) * scaleFactor;
-        
-        this.scale = newScale;
+        if (oldScale !== this.scale) {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            
+            const factor = this.scale / oldScale;
+            this.offset.x = x - (x - this.offset.x) * factor;
+            this.offset.y = y - (y - this.offset.y) * factor;
+        }
     }
 
     getTransform() {

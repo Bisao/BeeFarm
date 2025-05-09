@@ -188,24 +188,43 @@ export class GameScene extends Scene {
     cleanup() {
         this.isRendering = false;
         
-        // Remove event listeners
-        const configBtn = document.getElementById('configBtn');
-        const buildBtn = document.getElementById('buildBtn');
-        const configCloseBtn = document.getElementById('configCloseBtn');
-        const buildCloseBtn = document.getElementById('buildCloseBtn');
+        // Store bound event handlers
+        this.boundHandlers = {
+            configClick: () => this.handleConfigClick(),
+            buildClick: () => this.handleBuildClick(),
+            configClose: () => this.handleConfigClose(),
+            buildClose: () => this.handleBuildClose(),
+            mouseDown: (e) => this.camera.handleMouseDown(e),
+            mouseMove: (e) => this.camera.handleMouseMove(e),
+            mouseUp: (e) => this.camera.handleMouseUp(e),
+            wheel: (e) => this.camera.handleWheel(e),
+            contextMenu: (e) => e.preventDefault(),
+            click: (e) => this.handleClick(e)
+        };
         
-        if (configBtn) configBtn.removeEventListener('click', this.handleConfigClick);
-        if (buildBtn) buildBtn.removeEventListener('click', this.handleBuildClick);
-        if (configCloseBtn) configCloseBtn.removeEventListener('click', this.handleConfigClose);
-        if (buildCloseBtn) buildCloseBtn.removeEventListener('click', this.handleBuildClose);
+        // Remove UI event listeners
+        const elements = {
+            configBtn: document.getElementById('configBtn'),
+            buildBtn: document.getElementById('buildBtn'),
+            configCloseBtn: document.getElementById('configCloseBtn'),
+            buildCloseBtn: document.getElementById('buildCloseBtn')
+        };
         
+        Object.entries(elements).forEach(([key, element]) => {
+            if (element) {
+                const handler = this.boundHandlers[key.replace('Btn', '').toLowerCase() + 'Click'];
+                if (handler) element.removeEventListener('click', handler);
+            }
+        });
+        
+        // Remove canvas event listeners
         if (this.canvas) {
-            this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-            this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-            this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-            this.canvas.removeEventListener('wheel', this.handleWheel);
-            this.canvas.removeEventListener('contextmenu', this.handleContextMenu);
-            this.canvas.removeEventListener('click', this.handleClick);
+            this.canvas.removeEventListener('mousedown', this.boundHandlers.mouseDown);
+            this.canvas.removeEventListener('mousemove', this.boundHandlers.mouseMove);
+            this.canvas.removeEventListener('mouseup', this.boundHandlers.mouseUp);
+            this.canvas.removeEventListener('wheel', this.boundHandlers.wheel);
+            this.canvas.removeEventListener('contextmenu', this.boundHandlers.contextMenu);
+            this.canvas.removeEventListener('click', this.boundHandlers.click);
         }
     }
 
