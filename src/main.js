@@ -27,12 +27,14 @@ async function init() {
             loadCSS(),
             assetCache.preloadAssets([
                 '/src/assets/images/structures/house.png',
-                '/src/assets/images/tiles/Tile_Grass.png'
-                // Add other assets here
+                '/src/assets/images/tiles/Tile_Grass.png',
+                '/src/assets/images/trees/tree_pine-removebg-preview.png',
+                '/src/assets/images/trees/tree_simple-removebg-preview.png'
             ])
         ]);
 
-        const sceneManager = new SceneManager(gameState, assetCache);
+        const sceneManager = new SceneManager();
+        sceneManager.init(gameState, assetCache);
         
         sceneManager.registerScene('start', new StartScene());
         sceneManager.registerScene('settings', new SettingsScene());

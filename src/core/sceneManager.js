@@ -6,6 +6,16 @@ export class SceneManager {
         this.history = [];
         this.lastUpdate = performance.now();
         this.animate = this.animate.bind(this);
+        this.gameState = null;
+        this.assetCache = null;
+    }
+
+    init(gameState, assetCache) {
+        if (!gameState || !assetCache) {
+            throw new Error('GameState and AssetCache must be provided');
+        }
+        this.gameState = gameState;
+        this.assetCache = assetCache;
     }
 
     registerScene(name, scene) {
