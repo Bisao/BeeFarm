@@ -36,11 +36,7 @@ export class GameScene extends Scene {
         this.structureManager.addStructure('house', 10, 10);
         this.structureManager.addStructure('house', 15, 15);
 
-        // Initialize NPCs
-        this.maleNPC = new MaleNPC(0, 0);
-        this.femaleNPC = new FemaleNPC(0, 0);
-        this.maleNPC.updateGridPosition(4, 5);
-        this.femaleNPC.updateGridPosition(6, 5);
+        // NPCs will be created by houses
     }
 
     enter(params = {}) {
@@ -284,12 +280,7 @@ export class GameScene extends Scene {
             this.treeManager.draw(this.ctx, 0, 0, 1);
         }
 
-        if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
-            this.maleNPC.draw(this.ctx, 0, 0, 1);
-        }
-        if (this.femaleNPC && typeof this.femaleNPC.draw === 'function') {
-            this.femaleNPC.draw(this.ctx, 0, 0, 1);
-        }
+        // NPCs are drawn by their respective houses
 
         if (this.structureManager) {
             this.structureManager.draw(this.ctx, 0, 0, 1);
