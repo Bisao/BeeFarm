@@ -44,13 +44,23 @@ export class TileManager {
         const screenWidth = ctx.canvas.width;
         const screenHeight = ctx.canvas.height;
         
-        // Calcular área visível
-        const visibleTilesX = Math.ceil(screenWidth / (tileSize / 2)) + 2;
-        const visibleTilesY = Math.ceil(screenHeight / (tileSize / 4)) + 2;
+        // Cache de cálculos frequentes
+        const tileHalfWidth = tileSize / 2;
+        const tileQuarterHeight = tileSize / 4;
         
-        // Calcular limites de renderização
-        const centerTileX = Math.floor(centerX / (tileSize / 2));
-        const centerTileY = Math.floor(centerY / (tileSize / 4));
+        // Calcular área visível com buffer reduzido
+        const visibleTilesX = Math.ceil(screenWidth / tileHalfWidth) + 1;
+        const visibleTilesY = Math.ceil(screenHeight / tileQuarterHeight) + 1;
+        
+        // Otimizar cálculos de posição central
+        const centerTileX = Math.floor(centerX / tileHalfWidth);
+        const centerTileY = Math.floor(centerY / tileQuarterHeight);
+        
+        // Pré-calcular limites
+        const startX = Math.max(0, centerTileX - Math.floor(visibleTilesX / 2));
+        const startY = Math.max(0, centerTileY - Math.floor(visibleTilesY / 2));
+        const endX = Math.min(this.tileGrid[0].length, startX + visibleTilesX);
+        const endY = Math.min(this.tileGrid.length, startY + visibleTilesY);
         
         const startX = Math.max(0, centerTileX - visibleTilesX);
         const startY = Math.max(0, centerTileY - visibleTilesY);

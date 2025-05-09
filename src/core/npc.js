@@ -30,9 +30,9 @@ export class NPC {
         const direction = Math.floor(Math.random() * 4);
         let targetX = this.gridPosition.x;
         let targetY = this.gridPosition.y;
-        
+
         const steps = Math.floor(Math.random() * 2) + 1; // Move 1 or 2 steps diagonally
-        
+
         switch(direction) {
             case 0: // northeast
                 targetX = Math.min(this.gridPosition.x + steps, gridWidth - 1);
@@ -51,7 +51,7 @@ export class NPC {
                 targetY = Math.min(this.gridPosition.y + steps, gridHeight - 1);
                 break;
         }
-        
+
         this.moveToGrid(targetX, targetY);
     }
 
@@ -61,11 +61,11 @@ export class NPC {
             y: (targetX + targetY) * 50 / 4
         };
         this.isMoving = true;
-        
+
         const dx = this.targetPosition.x - this.position.x;
         const dy = this.targetPosition.y - this.position.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance > 0) {
             this.direction = {
                 x: dx / distance,
@@ -81,12 +81,19 @@ export class NPC {
     }
 
     update(gridWidth, gridHeight) {
+        // Otimizar verificação de tempo
         const currentTime = Date.now();
-        const timeSinceLastState = currentTime - this.lastStateChange;
+        const timeSinceLastChange = currentTime - this.lastStateChange;
+
+        // Cache de posição atual
+        const currentPos = {
+            x: this.position.x,
+            y: this.position.y
+        };
 
         switch (this.state) {
             case 'idle':
-                if (timeSinceLastState > 3000) { // Wait 3 seconds
+                if (timeSinceLastChange > 3000) { // Wait 3 seconds
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
                     this.setRandomTarget(gridWidth, gridHeight);
@@ -168,16 +175,16 @@ export class NPC {
         ctx.fillStyle = '#FFF';
         ctx.textAlign = 'center';
         ctx.fillText(`${this.name} (Lvl ${this.levelSystem.level})`, centerX/scale + this.position.x, centerY/scale + this.position.y - this.size);
-        
+
         // Draw XP bar
         const barWidth = 30;
         const barHeight = 4;
         const progress = this.levelSystem.getProgress();
-        
+
         // Background
         ctx.fillStyle = '#333';
         ctx.fillRect(centerX/scale + this.position.x - barWidth/2, centerY/scale + this.position.y - this.size + 5, barWidth, barHeight);
-        
+
         // Progress
         ctx.fillStyle = '#4CAF50';
         ctx.fillRect(centerX/scale + this.position.x - barWidth/2, centerY/scale + this.position.y - this.size + 5, barWidth * (progress/100), barHeight);
