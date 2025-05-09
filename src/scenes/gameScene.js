@@ -289,6 +289,11 @@ export class GameScene extends Scene {
     }
 
     drawIsometricGrid(ctx, centerX, centerY, scale) {
+        if (this.tileManager) {
+            this.tileManager.draw(ctx, centerX, centerY, scale);
+        }
+        
+        // Desenhar grid por cima dos tiles (opcional)
         const gridSize = this.gridSize * scale;
         const gridWidth = this.gridWidth;
         const gridHeight = this.gridHeight;
