@@ -5,7 +5,6 @@ import { SettingsScene } from './scenes/settingsScene.js';
 import { GameScene } from './scenes/gameScene.js';
 import { CharacterSelectScene } from './scenes/characterSelectScene.js';
 
-// Dynamic CSS loading based on screen width
 const loadCSS = () => {
     return new Promise((resolve) => {
         const link = document.createElement('link');
@@ -21,13 +20,11 @@ async function init() {
         await loadCSS();
         const sceneManager = new SceneManager();
         
-        // Register scenes
         sceneManager.registerScene('start', new StartScene());
         sceneManager.registerScene('settings', new SettingsScene());
         sceneManager.registerScene('character-select', new CharacterSelectScene());
         sceneManager.registerScene('game', new GameScene());
         
-        // Start with the start scene
         sceneManager.changeScene('start');
     } catch (error) {
         console.error('Error initializing game:', error);
