@@ -47,32 +47,32 @@ export class GameScene extends Scene {
                     <button class="settings-button" id="configBtn">⚙️ Settings</button>
                     <button class="settings-button" id="buildBtn">🏠 Build</button>
                 </div>
+            </div>
 
-                <div class="modal-overlay" id="buildModal">
-                    <div class="build-modal">
-                        <h2>Build Structures</h2>
-                        <div class="build-grid">
-                            <button class="build-item" data-type="miner">⛏️ Miner House</button>
-                            <button class="build-item" data-type="farmer">🌱 Farmer House</button>
-                            <button class="build-item" data-type="fisherman">🎣 Fisherman House</button>
-                            <button class="build-item" data-type="lumberjack">🪓 Lumberjack House</button>
-                        </div>
-                        <button class="button" id="buildCloseBtn">Close</button>
+            <div class="modal-overlay" id="buildModal">
+                <div class="build-modal">
+                    <h2>Build Structures</h2>
+                    <div class="build-grid">
+                        <button class="build-item" data-type="miner">⛏️ Miner House</button>
+                        <button class="build-item" data-type="farmer">🌱 Farmer House</button>
+                        <button class="build-item" data-type="fisherman">🎣 Fisherman House</button>
+                        <button class="build-item" data-type="lumberjack">🪓 Lumberjack House</button>
                     </div>
+                    <button class="button" id="buildCloseBtn">Close</button>
                 </div>
+            </div>
 
-                <div class="modal-overlay" id="configModal">
-                    <div class="settings-modal">
-                        <h2>Game Settings</h2>
-                        <div class="settings-content">
-                            <div class="setting-item">
-                                <label>Camera Speed:</label>
-                                <input type="range" id="cameraSpeedRange" min="1" max="10" value="5">
-                                <span id="cameraSpeedValue">5</span>
-                            </div>
+            <div class="modal-overlay" id="configModal">
+                <div class="settings-modal">
+                    <h2>Game Settings</h2>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <label>Camera Speed:</label>
+                            <input type="range" id="cameraSpeedRange" min="1" max="10" value="5">
+                            <span id="cameraSpeedValue">5</span>
                         </div>
-                        <button class="button" id="configCloseBtn">Close</button>
                     </div>
+                    <button class="button" id="configCloseBtn">Close</button>
                 </div>
             </div>
         `;

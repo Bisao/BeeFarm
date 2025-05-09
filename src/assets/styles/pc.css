@@ -199,35 +199,32 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     display: none;
-    justify-content: center;
     align-items: center;
-    z-index: 1;
+    justify-content: center;
+    z-index: 1000;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: auto;
+    transition: all 0.3s ease;
+    pointer-events: none;
 }
 
 .modal-overlay.visible {
     opacity: 1;
+    pointer-events: auto;
+    display: flex;
 }
 
-.settings-modal, .build-modal {
-    background: #2a2a2a;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transform: scale(0.9);
-    opacity: 0;
-    transition: all 0.3s ease;
-    margin: auto;
+.build-modal, .settings-modal {
+    background: rgba(42, 42, 42, 0.95);
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
 }
 
-.settings-modal.visible {
+.modal-overlay.visible .build-modal,
+.modal-overlay.visible .settings-modal {
     transform: scale(1);
-    opacity: 1;
 }
 
 .setting-item {
@@ -291,22 +288,22 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
 .build-item {
+    padding: 10px;
     background: #4CAF50;
     border: none;
-    padding: 15px;
     color: white;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
     transition: transform 0.2s;
 }
 
 .build-item:hover {
     transform: scale(1.05);
+    background: #45a049;
 }
 
 .tile-highlight {
