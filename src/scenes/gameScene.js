@@ -1,3 +1,4 @@
+
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
@@ -5,7 +6,6 @@ import { TreeManager } from '../core/treeManager.js';
 import { StructureManager } from '../core/structures/structureManager.js';
 import { CameraManager } from '../core/CameraManager.js';
 import { TouchHandler } from '../utils/TouchHandler.js';
-import { House } from '../core/structures/house.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -16,6 +16,10 @@ export class GameScene extends Scene {
         this.gridHeight = 50;
         this.selectedStructure = null;
         this.highlightTile = null;
+        this.canvas = null;
+        this.ctx = null;
+        this.camera = null;
+        this.touchHandler = null;
 
         // Initialize managers
         this.treeManager = new TreeManager();
@@ -95,7 +99,6 @@ export class GameScene extends Scene {
         const buildCloseBtn = document.getElementById('buildCloseBtn');
         const buildItems = document.querySelectorAll('.build-item');
 
-        // Build modal handlers
         buildBtn.addEventListener('click', () => {
             buildModal.style.display = 'flex';
             buildModal.classList.add('visible');
@@ -113,7 +116,6 @@ export class GameScene extends Scene {
             });
         });
 
-        // Config modal handlers
         configBtn.addEventListener('click', () => {
             configModal.style.display = 'flex';
             configModal.classList.add('visible');
@@ -185,10 +187,6 @@ export class GameScene extends Scene {
 
     cleanup() {
         this.isRendering = false;
-        const buildItems = document.querySelectorAll('.build-item');
-        buildItems.forEach(item => {
-            item.removeEventListener('click', null);
-        });
     }
 
     exit() {
@@ -209,12 +207,10 @@ export class GameScene extends Scene {
 
         this.drawIsometricGrid(this.ctx, 0, 0, 1);
 
-        // Draw trees
         if (this.treeManager) {
             this.treeManager.draw(this.ctx, 0, 0, 1);
         }
 
-        // Draw NPCs
         if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
             this.maleNPC.draw(this.ctx, 0, 0, 1);
         }
@@ -222,12 +218,10 @@ export class GameScene extends Scene {
             this.femaleNPC.draw(this.ctx, 0, 0, 1);
         }
 
-        // Draw structures
         if (this.structureManager) {
             this.structureManager.draw(this.ctx, 0, 0, 1);
         }
 
-        // Draw highlight tile
         if (this.selectedStructure && this.highlightTile) {
             const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
             const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
