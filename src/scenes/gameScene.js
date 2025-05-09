@@ -1,4 +1,3 @@
-
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
@@ -6,6 +5,7 @@ import { TreeManager } from '../core/treeManager.js';
 import { StructureManager } from '../core/structures/structureManager.js';
 import { CameraManager } from '../core/CameraManager.js';
 import { TouchHandler } from '../utils/TouchHandler.js';
+import { House } from '../core/structures/house.js';
 
 export class GameScene extends Scene {
     constructor() {
@@ -15,16 +15,20 @@ export class GameScene extends Scene {
         this.gridWidth = 50;
         this.gridHeight = 50;
         this.selectedStructure = null;
-        this.previewStructure = null;
         this.highlightTile = null;
 
+        // Initialize managers
         this.treeManager = new TreeManager();
+        this.structureManager = new StructureManager();
+
+        // Generate initial trees
         this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
 
-        this.structureManager = new StructureManager();
+        // Add initial structures
         this.structureManager.addStructure('house', 10, 10);
         this.structureManager.addStructure('house', 15, 15);
 
+        // Initialize NPCs
         this.maleNPC = new MaleNPC(0, 0);
         this.femaleNPC = new FemaleNPC(0, 0);
         this.maleNPC.updateGridPosition(4, 5);
@@ -39,7 +43,7 @@ export class GameScene extends Scene {
                     <button class="settings-button" id="configBtn">⚙️ Settings</button>
                     <button class="settings-button" id="buildBtn">🏠 Build</button>
                 </div>
-                
+
                 <div class="modal-overlay" id="buildModal">
                     <div class="build-modal">
                         <h2>Build Structures</h2>
@@ -70,14 +74,19 @@ export class GameScene extends Scene {
         `;
 
         this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.ctx = this.canvas.getContext('2d');
-        this.isRendering = true;
+
         this.camera = new CameraManager(this.canvas);
         this.touchHandler = new TouchHandler(this.canvas, this.camera);
 
-        // Setup UI elements
+        this.setupEventListeners();
+        this.isRendering = true;
+        requestAnimationFrame(() => this.draw());
+    }
+
+    setupEventListeners() {
         const configBtn = document.getElementById('configBtn');
         const configModal = document.getElementById('configModal');
         const configCloseBtn = document.getElementById('configCloseBtn');
@@ -93,11 +102,8 @@ export class GameScene extends Scene {
         });
 
         buildCloseBtn.addEventListener('click', () => {
-            this.selectedStructure = null;
             buildModal.classList.remove('visible');
-            setTimeout(() => {
-                buildModal.style.display = 'none';
-            }, 300);
+            setTimeout(() => buildModal.style.display = 'none', 300);
         });
 
         buildItems.forEach(item => {
@@ -115,12 +121,9 @@ export class GameScene extends Scene {
 
         configCloseBtn.addEventListener('click', () => {
             configModal.classList.remove('visible');
-            setTimeout(() => {
-                configModal.style.display = 'none';
-            }, 300);
+            setTimeout(() => configModal.style.display = 'none', 300);
         });
 
-        // Mouse controls
         this.canvas.addEventListener('mousedown', (e) => this.camera.handleMouseDown(e));
         this.canvas.addEventListener('mousemove', (e) => {
             this.camera.handleMouseMove(e);
@@ -128,10 +131,11 @@ export class GameScene extends Scene {
                 const rect = this.canvas.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const mouseY = e.clientY - rect.top;
-                
+
                 const gridPos = this.screenToGrid(mouseX, mouseY);
                 if (gridPos) {
-                    const isOccupied = this.structureManager.isPositionOccupied(gridPos.x, gridPos.y);
+                    const isOccupied = this.structureManager.isPositionOccupied(gridPos.x, gridPos.y) ||
+                                     this.treeManager.isPositionOccupied(gridPos.x, gridPos.y);
                     this.highlightTile = {
                         x: gridPos.x,
                         y: gridPos.y,
@@ -140,19 +144,38 @@ export class GameScene extends Scene {
                 }
             }
         });
+
         this.canvas.addEventListener('mouseup', (e) => this.camera.handleMouseUp(e));
         this.canvas.addEventListener('wheel', (e) => this.camera.handleWheel(e));
         this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
         this.canvas.addEventListener('click', (e) => {
             if (this.selectedStructure && this.highlightTile && this.highlightTile.available) {
-                this.structureManager.addStructure(this.selectedStructure, this.highlightTile.x, this.highlightTile.y);
+                this.structureManager.addStructure(
+                    this.selectedStructure,
+                    this.highlightTile.x,
+                    this.highlightTile.y
+                );
                 this.selectedStructure = null;
                 this.highlightTile = null;
             }
         });
+    }
 
-        requestAnimationFrame(() => this.draw());
+    screenToGrid(screenX, screenY) {
+        const centerX = this.canvas.width/2;
+        const centerY = this.canvas.height/2;
+
+        const adjustedX = (screenX - centerX - this.camera.offset.x) / this.camera.scale;
+        const adjustedY = (screenY - centerY - this.camera.offset.y) / this.camera.scale;
+
+        const tileX = Math.floor((2 * adjustedY + adjustedX) / this.gridSize);
+        const tileY = Math.floor((2 * adjustedY - adjustedX) / this.gridSize);
+
+        if (tileX >= 0 && tileX < this.gridWidth && tileY >= 0 && tileY < this.gridHeight) {
+            return { x: tileX, y: tileY };
+        }
+        return null;
     }
 
     update(delta) {
@@ -161,6 +184,7 @@ export class GameScene extends Scene {
     }
 
     cleanup() {
+        this.isRendering = false;
         const buildItems = document.querySelectorAll('.build-item');
         buildItems.forEach(item => {
             item.removeEventListener('click', null);
@@ -169,7 +193,62 @@ export class GameScene extends Scene {
 
     exit() {
         this.cleanup();
-        this.isRendering = false;
+    }
+
+    draw() {
+        if (!this.isRendering) return;
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        const centerX = this.canvas.width/2;
+        const centerY = this.canvas.height/2;
+
+        this.ctx.save();
+        this.ctx.translate(centerX + this.camera.offset.x, centerY + this.camera.offset.y);
+        this.ctx.scale(this.camera.scale, this.camera.scale);
+
+        this.drawIsometricGrid(this.ctx, 0, 0, 1);
+
+        // Draw trees
+        if (this.treeManager) {
+            this.treeManager.draw(this.ctx, 0, 0, 1);
+        }
+
+        // Draw NPCs
+        if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
+            this.maleNPC.draw(this.ctx, 0, 0, 1);
+        }
+        if (this.femaleNPC && typeof this.femaleNPC.draw === 'function') {
+            this.femaleNPC.draw(this.ctx, 0, 0, 1);
+        }
+
+        // Draw structures
+        if (this.structureManager) {
+            this.structureManager.draw(this.ctx, 0, 0, 1);
+        }
+
+        // Draw highlight tile
+        if (this.selectedStructure && this.highlightTile) {
+            const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
+            const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
+
+            this.ctx.fillStyle = this.highlightTile.available ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
+            this.ctx.strokeStyle = this.highlightTile.available ? '#4CAF50' : '#F44336';
+            this.ctx.lineWidth = 2;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(isoX, isoY - this.gridSize/4);
+            this.ctx.lineTo(isoX + this.gridSize/2, isoY);
+            this.ctx.lineTo(isoX, isoY + this.gridSize/4);
+            this.ctx.lineTo(isoX - this.gridSize/2, isoY);
+            this.ctx.closePath();
+
+            this.ctx.fill();
+            this.ctx.stroke();
+        }
+
+        this.ctx.restore();
+        requestAnimationFrame(() => this.draw());
     }
 
     drawIsometricGrid(ctx, centerX, centerY, scale) {
@@ -196,95 +275,5 @@ export class GameScene extends Scene {
                 ctx.stroke();
             }
         }
-    }
-
-    draw() {
-        if (!this.isRendering) return;
-        
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        const centerX = this.canvas.width/2;
-        const centerY = this.canvas.height/2;
-        
-        this.ctx.save();
-        this.ctx.translate(centerX + this.camera.offset.x, centerY + this.camera.offset.y);
-        this.ctx.scale(this.camera.scale, this.camera.scale);
-        
-        this.drawIsometricGrid(this.ctx, 0, 0, 1);
-        
-        this.treeManager.trees.forEach(tree => {
-            this.drawTree(this.ctx, tree, 0, 0, 1);
-        });
-        
-        if (this.maleNPC && typeof this.maleNPC.draw === 'function') {
-            this.maleNPC.draw(this.ctx, 0, 0, 1);
-        }
-        if (this.femaleNPC && typeof this.femaleNPC.draw === 'function') {
-            this.femaleNPC.draw(this.ctx, 0, 0, 1);
-        }
-        
-        if (this.structureManager && typeof this.structureManager.draw === 'function') {
-            this.structureManager.draw(this.ctx, 0, 0, 1);
-        }
-        
-        if (this.selectedStructure && this.highlightTile) {
-            const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
-            const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
-            
-            this.ctx.fillStyle = this.highlightTile.available ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
-            this.ctx.strokeStyle = this.highlightTile.available ? '#4CAF50' : '#F44336';
-            this.ctx.lineWidth = 2;
-            
-            this.ctx.beginPath();
-            this.ctx.moveTo(isoX, isoY - this.gridSize/4);
-            this.ctx.lineTo(isoX + this.gridSize/2, isoY);
-            this.ctx.lineTo(isoX, isoY + this.gridSize/4);
-            this.ctx.lineTo(isoX - this.gridSize/2, isoY);
-            this.ctx.closePath();
-            
-            this.ctx.fill();
-            this.ctx.stroke();
-        }
-
-        this.ctx.restore();
-        requestAnimationFrame(() => this.draw());
-    }
-
-    drawTree(ctx, tree, centerX, centerY, scale) {
-        const isoX = (tree.x - tree.y) * this.gridSize / 2;
-        const isoY = (tree.x + tree.y) * this.gridSize / 4;
-        const img = this.treeManager.treeImages[tree.type];
-
-        if (img && img.complete && img.naturalHeight !== 0) {
-            const treeWidth = 60 * scale;
-            const treeHeight = 60 * scale;
-            const tileCenter = {
-                x: centerX + isoX * scale,
-                y: centerY + isoY * scale
-            };
-            
-            ctx.drawImage(img, 
-                tileCenter.x - treeWidth/2, 
-                tileCenter.y - treeHeight, 
-                treeWidth, 
-                treeHeight
-            );
-        }
-    }
-
-    screenToGrid(screenX, screenY) {
-        const centerX = this.canvas.width/2;
-        const centerY = this.canvas.height/2;
-        
-        const adjustedX = (screenX - centerX - this.camera.offset.x) / this.camera.scale;
-        const adjustedY = (screenY - centerY - this.camera.offset.y) / this.camera.scale;
-        
-        const tileX = Math.floor((2 * adjustedY + adjustedX) / this.gridSize);
-        const tileY = Math.floor((2 * adjustedY - adjustedX) / this.gridSize);
-        
-        if (tileX >= 0 && tileX < this.gridWidth && tileY >= 0 && tileY < this.gridHeight) {
-            return { x: tileX, y: tileY };
-        }
-        return null;
     }
 }
