@@ -15,8 +15,8 @@ export class GameScene extends Scene {
         this.performance = new Performance();
         this.fps = 0;
         this.gridSize = 50;
-        this.gridWidth = 50;
-        this.gridHeight = 50;
+        this.gridWidth = 10;
+        this.gridHeight = 10;
         this.characterType = null;
         this.selectedStructure = null;
         this.highlightTile = null;
