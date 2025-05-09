@@ -1,4 +1,3 @@
-
 export class UI {
     static createSettingsModal() {
         return `
@@ -8,8 +7,17 @@ export class UI {
                     <div class="settings-content">
                         <div class="setting-item">
                             <label>Grid Size:</label>
-                            <input type="range" id="gridSizeRange" min="30" max="70" value="50">
-                            <span id="gridSizeValue">50</span>
+                            <input 
+                type="range" 
+                id="gridSizeRange" 
+                min="30" 
+                max="70" 
+                value="50"
+                aria-label="Ajustar tamanho da grade"
+                aria-valuemin="30"
+                aria-valuemax="70"
+                aria-valuenow="50">
+            <span id="gridSizeValue" role="status" aria-live="polite">50</span>
                         </div>
                         <div class="setting-item">
                             <label>Camera Speed:</label>
