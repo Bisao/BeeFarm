@@ -7,13 +7,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-
 app.use(express.static('.'));
 
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(5000, '0.0.0.0', () => {
-  console.log('Server running at http://0.0.0.0:5000');
+app.listen(3000, '0.0.0.0', () => {
+  console.log('Server running at http://0.0.0.0:3000');
 });
