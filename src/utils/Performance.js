@@ -1,3 +1,4 @@
+
 export class Performance {
     constructor() {
         this.lastFrameTime = 0;
@@ -11,29 +12,57 @@ export class Performance {
         this.useRAF = true;
         this.offscreenCanvas = new OffscreenCanvas(800, 600);
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
-        this.gcInterval = setInterval(() => this.garbageCollect(), 30000);
+        this.imageCache = new Map();
         this.weakRefs = new WeakMap();
         this.resourceCache = new Map();
         this.lastGC = performance.now();
+        this.gcThreshold = 30000;
+        this.renderQueue = [];
+        
+        // Iniciar garbage collection automático
+        setInterval(() => this.garbageCollect(), this.gcThreshold);
     }
 
     garbageCollect() {
         const now = performance.now();
-        if (now - this.lastGC < 30000) return; // Evita GC muito frequente
+        if (now - this.lastGC < this.gcThreshold) return;
 
-        // Limpa recursos não utilizados
+        // Limpar cache de imagens não utilizadas
+        for (const [key, value] of this.imageCache.entries()) {
+            if (!value.lastUsed || now - value.lastUsed > 60000) {
+                this.imageCache.delete(key);
+            }
+        }
+
+        // Limpar recursos não utilizados
         for (const [key, value] of this.resourceCache.entries()) {
             if (!value.lastUsed || now - value.lastUsed > 60000) {
                 this.resourceCache.delete(key);
             }
         }
 
-        // Limpa o contexto offscreen se necessário
+        // Limpar contexto offscreen
         if (this.offscreenCtx) {
             this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
         }
 
         this.lastGC = now;
+    }
+
+    cacheImage(key, image) {
+        this.imageCache.set(key, {
+            image,
+            lastUsed: performance.now()
+        });
+    }
+
+    getCachedImage(key) {
+        const cached = this.imageCache.get(key);
+        if (cached) {
+            cached.lastUsed = performance.now();
+            return cached.image;
+        }
+        return null;
     }
 
     calculateAverageFrameTime() {
@@ -43,9 +72,9 @@ export class Performance {
     adjustPerformance() {
         const avgFrameTime = this.calculateAverageFrameTime();
         if (avgFrameTime > this.frameInterval * 1.2) {
-            this.frameInterval = 1000 / 30; // Reduzir para 30 FPS se necessário
+            this.frameInterval = 1000 / 30;
         } else if (avgFrameTime < this.frameInterval * 0.8) {
-            this.frameInterval = 1000 / 60; // Voltar para 60 FPS se possível
+            this.frameInterval = 1000 / 60;
         }
     }
 
@@ -73,58 +102,22 @@ export class Performance {
 
     endFrame() {
         this.isRendering = false;
+        this.renderQueue = [];
     }
 
-    requestRender(callback) {
-        if (!this.isRendering) {
-            let lastTime = performance.now();
-            let frames = 0;
-            
-            const wrappedCallback = (timestamp) => {
-                const deltaTime = timestamp - lastTime;
-                frames++;
-                
-                if (deltaTime >= 1000) {
-                    this.currentFPS = frames;
-                    frames = 0;
-                    lastTime = timestamp;
-                    this.garbageCollect();
-                }
-                
-                if (this.shouldRender(timestamp)) {
-                    try {
-                        this.startFrame(timestamp);
-                        callback();
-                    } catch (error) {
-                        console.error('Render error:', error);
-                    } finally {
-                        this.endFrame();
-                        this.adjustPerformance();
-                    }
-                }
-                
-                if (!this.stopped) {
-                    requestAnimationFrame(wrappedCallback);
-                }
-            };
-            requestAnimationFrame(wrappedCallback);
-        }
+    queueForRendering(object, priority = 0) {
+        this.renderQueue.push({ object, priority });
+        this.renderQueue.sort((a, b) => b.priority - a.priority);
     }
 
-    garbageCollect() {
-        if (this.resourceCache) {
-            const now = performance.now();
-            for (const [key, value] of this.resourceCache.entries()) {
-                if (!value.lastUsed || now - value.lastUsed > 30000) {
-                    this.resourceCache.delete(key);
-                }
+    processRenderQueue(ctx) {
+        for (const item of this.renderQueue) {
+            try {
+                item.object.draw(ctx);
+            } catch (error) {
+                console.error('Render error:', error);
             }
         }
-    }
-
-    stop() {
-        this.stopped = true;
-        this.garbageCollect();
     }
 
     getFPS() {
