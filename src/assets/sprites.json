@@ -1,0 +1,35 @@
+
+{
+  "structures": {
+    "houses": {
+      "miner": {
+        "left": "structures/houses/miner-left.png",
+        "right": "structures/houses/miner-right.png"
+      },
+      "farmer": {
+        "left": "structures/houses/farmer-left.png",
+        "right": "structures/houses/farmer-right.png"
+      },
+      "fisherman": {
+        "left": "structures/houses/fisherman-left.png",
+        "right": "structures/houses/fisherman-right.png"
+      },
+      "lumberjack": {
+        "left": "structures/houses/lumberjack-left.png",
+        "right": "structures/houses/lumberjack-right.png"
+      }
+    }
+  },
+  "tiles": {
+    "grass": {
+      "base": "tiles/grass.png",
+      "variant1": "tiles/grass-1.png",
+      "flowers1": "tiles/grass-flowers-1.png",
+      "flowers2": "tiles/grass-flowers-2.png"
+    }
+  },
+  "trees": {
+    "pine": "trees/pine.png",
+    "simple": "trees/simple.png"
+  }
+}
