@@ -47,12 +47,15 @@ export class House extends Structure {
         const isoY = (this.x + this.y) * 50 / 4;
         
         if (this.image.complete) {
+            const houseWidth = 80;
+            const houseHeight = 80;
+            
             ctx.drawImage(
                 this.image,
-                centerX/scale + isoX - this.size/2,
-                centerY/scale + isoY - this.size/2,
-                this.size,
-                this.size
+                centerX/scale + isoX - houseWidth/2,
+                centerY/scale + isoY - houseHeight/2,
+                houseWidth,
+                houseHeight
             );
         }
 

@@ -59,9 +59,9 @@ export class TreeManager {
             ctx.drawImage(
                 img,
                 tileCenter.x - treeWidth/2,
-                tileCenter.y - treeHeight/2,
-                treeWidth,
-                treeHeight
+                tileCenter.y - treeHeight,  // Deslocamento vertical para melhor posicionamento
+                treeWidth * 1.2,  // Aumenta um pouco a largura
+                treeHeight * 1.4  // Aumenta um pouco a altura
             );
         }
     }

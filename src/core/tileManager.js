@@ -40,7 +40,7 @@ export class TileManager {
     }
 
     draw(ctx, centerX, centerY, scale) {
-        const tileSize = 50 * scale; // Tamanho do tile
+        const tileSize = 50 * scale;
 
         for (let y = 0; y < this.tileGrid.length; y++) {
             for (let x = 0; x < this.tileGrid[y].length; x++) {
@@ -51,31 +51,16 @@ export class TileManager {
                 const img = this.tileImages[tileType];
 
                 if (img.complete) {
-                    // Desenhar o tile isométrico
-                    ctx.save();
-                    ctx.translate(centerX + isoX, centerY + isoY);
+                    const tileWidth = tileSize;
+                    const tileHeight = tileSize / 2;
                     
-                    // Criar o caminho do diamante isométrico
-                    ctx.beginPath();
-                    ctx.moveTo(0, -tileSize/4);
-                    ctx.lineTo(tileSize/2, 0);
-                    ctx.lineTo(0, tileSize/4);
-                    ctx.lineTo(-tileSize/2, 0);
-                    ctx.closePath();
-                    
-                    // Recortar a imagem no formato do diamante
-                    ctx.clip();
-                    
-                    // Desenhar a imagem ajustada ao tamanho do tile
                     ctx.drawImage(
                         img,
-                        -tileSize/2,
-                        -tileSize/4,
-                        tileSize,
-                        tileSize/2
+                        centerX + isoX - tileWidth/2,
+                        centerY + isoY - tileHeight/2,
+                        tileWidth,
+                        tileHeight
                     );
-                    
-                    ctx.restore();
                 }
             }
         }
