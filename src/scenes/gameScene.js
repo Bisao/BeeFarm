@@ -100,12 +100,17 @@ export class GameScene extends Scene {
         const buildItems = document.querySelectorAll('.build-item');
 
         buildBtn.addEventListener('click', () => {
-            buildModal.classList.add('visible');
+            buildModal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                buildModal.classList.add('visible');
+            });
         });
 
         buildCloseBtn.addEventListener('click', () => {
             buildModal.classList.remove('visible');
-            setTimeout(() => buildModal.style.display = 'none', 300);
+            setTimeout(() => {
+                buildModal.style.display = 'none';
+            }, 300);
         });
 
         buildItems.forEach(item => {

@@ -147,6 +147,12 @@ body {
 }
 
 .modal-overlay.visible {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-overlay.visible {
     opacity: 1;
     pointer-events: auto;
     display: flex;
