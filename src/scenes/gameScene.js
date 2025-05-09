@@ -184,6 +184,27 @@ export class GameScene extends Scene {
                 );
                 this.selectedStructure = null;
                 this.highlightTile = null;
+            } else {
+                const rect = this.canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                const gridPos = this.screenToGrid(mouseX, mouseY);
+                
+                if (gridPos) {
+                    // Verificar clique em estruturas
+                    for (const structure of this.structureManager.structures) {
+                        if (structure.x === gridPos.x && structure.y === gridPos.y) {
+                            structure.showDetailsModal();
+                            return;
+                        }
+                        if (structure.npc && 
+                            Math.abs(structure.npc.gridPosition.x - gridPos.x) <= 1 && 
+                            Math.abs(structure.npc.gridPosition.y - gridPos.y) <= 1) {
+                            structure.npc.showDetailsModal();
+                            return;
+                        }
+                    }
+                }
             }
         });
     }

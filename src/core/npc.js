@@ -116,6 +116,25 @@ export class NPC {
         }
     }
 
+    showDetailsModal() {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h2>${this.name}</h2>
+                <div class="npc-details">
+                    <p>Level: ${this.levelSystem.level}</p>
+                    <p>XP: ${Math.floor(this.levelSystem.xp)} / ${Math.floor(this.levelSystem.xpToNextLevel)}</p>
+                    <div class="xp-bar">
+                        <div class="xp-progress" style="width: ${this.levelSystem.getProgress()}%"></div>
+                    </div>
+                </div>
+                <button class="button" onclick="this.parentElement.parentElement.remove()">Close</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
     draw(ctx, centerX, centerY, scale) {
         // Draw dotted path to target
         if (this.isMoving) {

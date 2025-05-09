@@ -42,6 +42,27 @@ export class House extends Structure {
         this.image.src = imagePath[this.type] || imagePath['lumberjack'];
     }
 
+    showDetailsModal() {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h2>${this.type.charAt(0).toUpperCase() + this.type.slice(1)} House</h2>
+                <div class="house-details">
+                    <p>Resident: ${this.npc ? this.npc.name : 'None'}</p>
+                    ${this.npc ? `
+                        <p>Level: ${this.npc.levelSystem.level}</p>
+                        <div class="xp-bar">
+                            <div class="xp-progress" style="width: ${this.npc.levelSystem.getProgress()}%"></div>
+                        </div>
+                    ` : ''}
+                </div>
+                <button class="button" onclick="this.parentElement.parentElement.remove()">Close</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
     draw(ctx, centerX, centerY, scale) {
         const isoX = (this.x - this.y) * 50 / 2;
         const isoY = (this.x + this.y) * 50 / 4;
