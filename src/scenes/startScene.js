@@ -23,10 +23,10 @@ export class StartScene extends Scene {
     }
 
     async startGame() {
-        this.manager.changeScene('character-select');
+        try {
+            this.manager.changeScene('character-select');
         } catch (error) {
             console.error('Failed to load game assets:', error);
-            // Show error message and retry button
             this.container.innerHTML = `
                 <div class="error-screen">
                     <h2>Failed to load game</h2>
