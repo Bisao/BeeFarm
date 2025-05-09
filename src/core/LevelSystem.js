@@ -1,4 +1,3 @@
-
 class LevelSystem {
     constructor() {
         this.level = 1;
