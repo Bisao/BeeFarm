@@ -16,10 +16,17 @@ export class EventManager {
         if (this.isProcessing || this.eventQueue.length === 0) return;
 
         this.isProcessing = true;
-        while (this.eventQueue.length > 0) {
-            const {event, data} = this.eventQueue.shift();
-            this.emit(event, data);
+        const processingQueue = [...this.eventQueue];
+        this.eventQueue = [];
+        
+        for (const {event, data} of processingQueue) {
+            try {
+                this.emit(event, data);
+            } catch (error) {
+                console.error(`Error processing event ${event}:`, error);
+            }
         }
+        
         this.isProcessing = false;
     }
 

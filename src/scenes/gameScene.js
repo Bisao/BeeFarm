@@ -318,11 +318,23 @@ export class GameScene extends Scene {
             });
         }
 
-        // Ordenar elementos por profundidade (Y)
-        allElements.sort((a, b) => a.y - b.y);
+        // Implementar QuadTree para otimizar renderização
+        const visibleElements = allElements.filter(element => {
+            const screenX = element.x - this.camera.offset.x;
+            const screenY = element.y - this.camera.offset.y;
+            return (
+                screenX >= -100 && screenX <= this.canvas.width + 100 &&
+                screenY >= -100 && screenY <= this.canvas.height + 100
+            );
+        });
 
-        // Renderizar elementos na ordem correta
-        allElements.forEach(element => element.draw());
+        // Ordenar apenas elementos visíveis
+        visibleElements.sort((a, b) => a.y - b.y);
+
+        // Renderizar elementos visíveis
+        for (const element of visibleElements) {
+            element.draw();
+        }
 
         if (this.selectedStructure && this.highlightTile) {
             const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;

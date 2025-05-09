@@ -7,7 +7,18 @@ export class ObjectPool {
     }
 
     acquire() {
-        return this.pool.pop() || this.createFn();
+        let obj = this.pool.pop();
+        if (!obj) {
+            obj = this.createFn();
+            obj.pooled = true;
+            obj.lastUsed = Date.now();
+        }
+        return obj;
+    }
+
+    clean() {
+        const now = Date.now();
+        this.pool = this.pool.filter(obj => now - obj.lastUsed < 30000);
     }
 
     release(object) {

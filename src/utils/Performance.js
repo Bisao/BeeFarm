@@ -77,14 +77,29 @@ export class Performance {
 
     requestRender(callback) {
         if (!this.isRendering) {
-            requestAnimationFrame((timestamp) => {
+            const wrappedCallback = (timestamp) => {
                 if (this.shouldRender(timestamp)) {
-                    this.startFrame(timestamp);
-                    callback();
-                    this.endFrame();
+                    try {
+                        this.startFrame(timestamp);
+                        callback();
+                    } catch (error) {
+                        console.error('Render error:', error);
+                    } finally {
+                        this.endFrame();
+                        this.adjustPerformance();
+                    }
                 }
-            });
+                if (!this.stopped) {
+                    requestAnimationFrame(wrappedCallback);
+                }
+            };
+            requestAnimationFrame(wrappedCallback);
         }
+    }
+
+    stop() {
+        this.stopped = true;
+        this.garbageCollect();
     }
 
     getFPS() {
