@@ -26,10 +26,10 @@ export class TreeManager {
         this.trees = [];
         this.occupiedPositions.clear();
         
-        // Calcula área total e define densidade de árvores (30-50% da área)
+        // Calcula área total e define densidade de árvores (10-20% da área)
         const totalArea = gridWidth * gridHeight;
-        const minDensity = 0.3;
-        const maxDensity = 0.5;
+        const minDensity = 0.1;
+        const maxDensity = 0.2;
         const targetDensity = minDensity + Math.random() * (maxDensity - minDensity);
         const targetTrees = Math.floor(totalArea * targetDensity);
         
