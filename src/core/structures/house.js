@@ -1,5 +1,8 @@
 
 import { Structure } from './baseStructure.js';
+import { MaleNPC } from '../maleNPC.js';
+import { FemaleNPC } from '../femaleNPC.js';
+import { NameGenerator } from '../../utils/NameGenerator.js';
 
 export class House extends Structure {
     constructor(x, y, type = 'lumberjack') {
@@ -8,7 +11,24 @@ export class House extends Structure {
         this.size = 80;
         this.image = new Image();
         this.direction = 'left';
+        this.npc = null;
         this.updateImage();
+        this.createNPC();
+    }
+
+    createNPC() {
+        const gender = Math.random() < 0.5 ? 'male' : 'female';
+        const name = NameGenerator.generateName(gender);
+        
+        if (gender === 'male') {
+            this.npc = new MaleNPC(this.x, this.y);
+        } else {
+            this.npc = new FemaleNPC(this.x, this.y);
+        }
+        
+        this.npc.name = name;
+        this.npc.updateGridPosition(this.x, this.y + 1); // Move one tile down
+        this.npc.house = this;
     }
 
     updateImage() {
@@ -33,6 +53,10 @@ export class House extends Structure {
                 this.size,
                 this.size
             );
+        }
+
+        if (this.npc) {
+            this.npc.draw(ctx, centerX, centerY, scale);
         }
     }
 }

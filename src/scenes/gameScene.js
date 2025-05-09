@@ -201,8 +201,11 @@ export class GameScene extends Scene {
     }
 
     update(delta) {
-        this.maleNPC.update(this.gridWidth, this.gridHeight);
-        this.femaleNPC.update(this.gridWidth, this.gridHeight);
+        this.structureManager.structures.forEach(structure => {
+            if (structure.npc) {
+                structure.npc.update(this.gridWidth, this.gridHeight);
+            }
+        });
     }
 
     cleanup() {

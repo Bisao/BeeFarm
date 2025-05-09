@@ -1,9 +1,10 @@
 
 export class NPC {
-    constructor(x, y) {
+    constructor(x, y, name) {
         this.position = { x, y };
         this.gridPosition = { x: 0, y: 0 };
         this.targetPosition = null;
+        this.name = name;
         this.color = '#FFD700';
         this.size = 20;
         this.speed = 0.8;
@@ -138,5 +139,11 @@ export class NPC {
         ctx.fill();
         ctx.strokeStyle = '#000';
         ctx.stroke();
+
+        // Draw name
+        ctx.font = '12px Arial';
+        ctx.fillStyle = '#FFF';
+        ctx.textAlign = 'center';
+        ctx.fillText(this.name, centerX/scale + this.position.x, centerY/scale + this.position.y - this.size);
     }
 }
