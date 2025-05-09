@@ -3,6 +3,7 @@ import { SceneManager } from './core/sceneManager.js';
 import { StartScene } from './scenes/startScene.js';
 import { SettingsScene } from './scenes/settingsScene.js';
 import { GameScene } from './scenes/gameScene.js';
+import { CharacterSelectScene } from './scenes/characterSelectScene.js';
 
 // Dynamic CSS loading based on screen width
 const loadCSS = () => {
