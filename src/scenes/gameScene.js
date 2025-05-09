@@ -2,10 +2,10 @@
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
+import { Scene } from '../core/baseScene.js';
 import { TreeManager } from '../core/treeManager.js';
 import { StructureManager } from '../core/structures/structureManager.js';
 import { CameraManager } from '../core/CameraManager.js';
-import { Scene } from '../core/baseScene.js';
 import { TouchHandler } from '../utils/TouchHandler.js';
 import { Performance } from '../utils/Performance.js';
 
