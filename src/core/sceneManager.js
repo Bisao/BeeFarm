@@ -29,14 +29,23 @@ export class SceneManager {
             return;
         }
 
-        if (this.currentScene) {
-            this.currentScene.exit();
-            this.history.push(this.currentScene);
+        if (!this.gameState || !this.assetCache) {
+            console.error('Game state or asset cache not initialized');
+            return;
         }
 
-        this.currentScene = this.scenes.get(name);
-        this.currentScene.enter();
-        requestAnimationFrame(this.animate);
+        try {
+            if (this.currentScene) {
+                this.currentScene.exit();
+                this.history.push(this.currentScene);
+            }
+
+            this.currentScene = this.scenes.get(name);
+            this.currentScene.enter();
+            requestAnimationFrame(this.animate);
+        } catch (error) {
+            console.error('Error changing scene:', error);
+        }
     }
 
     back() {
