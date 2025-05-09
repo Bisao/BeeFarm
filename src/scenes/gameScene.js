@@ -57,31 +57,34 @@ export class GameScene extends Scene {
             
             this.characterType = this.manager.gameState.characterType || 'default';
             this.container.innerHTML = `
-            <canvas id="gameCanvas"></canvas>
-            <div class="game-ui">
-                <button id="configBtn" class="ui-button">⚙️</button>
-                <button id="buildBtn" class="ui-button">🏗️</button>
-            </div>
-        `;
+                <canvas id="gameCanvas"></canvas>
+                <div class="game-ui">
+                    <button id="configBtn" class="ui-button">⚙️</button>
+                    <button id="buildBtn" class="ui-button">🏗️</button>
+                </div>
+            `;
 
-        this.canvas = document.getElementById('gameCanvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+            this.canvas = document.getElementById('gameCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
 
-        this.camera = new CameraManager(this.canvas);
-        this.touchHandler = new TouchHandler(this.canvas, this.camera);
+            this.camera = new CameraManager(this.canvas);
+            this.touchHandler = new TouchHandler(this.canvas, this.camera);
 
-        // Generate initial trees
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+            // Generate initial trees
+            this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
 
-        // Add initial structures
-        this.structureManager.addStructure('house', 10, 10);
-        this.structureManager.addStructure('house', 15, 15);
+            // Add initial structures
+            this.structureManager.addStructure('house', 10, 10);
+            this.structureManager.addStructure('house', 15, 15);
 
-        this.setupEventListeners();
-        this.isRendering = true;
-        requestAnimationFrame(this.draw);
+            this.setupEventListeners();
+            this.isRendering = true;
+            requestAnimationFrame(this.draw);
+        } catch (error) {
+            this.handleError(error, 'GameScene.enter');
+        }
     }
 
     draw() {
