@@ -100,7 +100,6 @@ export class GameScene extends Scene {
         const buildItems = document.querySelectorAll('.build-item');
 
         buildBtn.addEventListener('click', () => {
-            buildModal.style.display = 'flex';
             buildModal.classList.add('visible');
         });
 

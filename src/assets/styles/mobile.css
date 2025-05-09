@@ -142,7 +142,14 @@ body {
     align-items: center;
     z-index: var(--z-modal);
     opacity: 0;
-    transition: opacity var(--transition-speed) var(--transition-timing);
+    pointer-events: none;
+    transition: all var(--transition-speed) var(--transition-timing);
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+    display: flex;
 }
 
 .settings-modal {
