@@ -295,26 +295,43 @@ export class GameScene extends Scene {
 
         this.drawIsometricGrid(this.ctx, 0, 0, 1);
 
-        // Ordenar elementos por posição Y para renderização correta
+        const viewportBounds = {
+            left: -this.camera.offset.x - 100,
+            right: -this.camera.offset.x + this.canvas.width + 100,
+            top: -this.camera.offset.y - 100,
+            bottom: -this.camera.offset.y + this.canvas.height + 100
+        };
+
         const allElements = [];
 
-        // Adicionar árvores
+        // Adicionar apenas elementos visíveis
         if (this.treeManager) {
             this.treeManager.trees.forEach(tree => {
-                allElements.push({
-                    y: (tree.x + tree.y) * 50 / 4,
-                    draw: () => this.treeManager.drawSingle(this.ctx, 0, 0, 1, tree)
-                });
+                const screenX = (tree.x - tree.y) * 50 / 2;
+                const screenY = (tree.x + tree.y) * 50 / 4;
+                
+                if (screenX >= viewportBounds.left && screenX <= viewportBounds.right &&
+                    screenY >= viewportBounds.top && screenY <= viewportBounds.bottom) {
+                    allElements.push({
+                        y: screenY,
+                        draw: () => this.treeManager.drawSingle(this.ctx, 0, 0, 1, tree)
+                    });
+                }
             });
         }
 
-        // Adicionar estruturas e NPCs
         if (this.structureManager) {
             this.structureManager.structures.forEach(structure => {
-                allElements.push({
-                    y: (structure.x + structure.y) * 50 / 4,
-                    draw: () => structure.draw(this.ctx, 0, 0, 1)
-                });
+                const screenX = (structure.x - structure.y) * 50 / 2;
+                const screenY = (structure.x + structure.y) * 50 / 4;
+                
+                if (screenX >= viewportBounds.left && screenX <= viewportBounds.right &&
+                    screenY >= viewportBounds.top && screenY <= viewportBounds.bottom) {
+                    allElements.push({
+                        y: screenY,
+                        draw: () => structure.draw(this.ctx, 0, 0, 1)
+                    });
+                }
             });
         }
 
