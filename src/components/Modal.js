@@ -1,13 +1,30 @@
 
-export class Modal {
+import { BaseComponent } from './BaseComponent.js';
+
+export class Modal extends BaseComponent {
     static createModal(id, title, content, onClose) {
-        return `
-            <div class="modal-overlay" id="${id}">
-                <div class="modal-content">
-                    <h2>${title}</h2>
-                    <div class="modal-body">${content}</div>
-                    <button class="button" id="${id}CloseBtn" aria-label="Close ${title}">Close</button>
-                </div>
-            </div>`;
+        const modal = this.createElement('div', 'modal-overlay', { id });
+        const modalContent = this.createElement('div', 'modal-content');
+        
+        const titleElement = this.createElement('h2');
+        titleElement.textContent = title;
+        
+        const body = this.createElement('div', 'modal-body');
+        body.innerHTML = content;
+        
+        const closeButton = this.createButton('Close', '', () => {
+            modal.classList.remove('visible');
+            setTimeout(() => {
+                modal.remove();
+                if (onClose) onClose();
+            }, 300);
+        });
+        closeButton.setAttribute('aria-label', `Close ${title}`);
+        closeButton.id = `${id}CloseBtn`;
+
+        modalContent.append(titleElement, body, closeButton);
+        modal.appendChild(modalContent);
+        
+        return modal;
     }
 }
