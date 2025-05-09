@@ -81,8 +81,9 @@ export class NPC {
     }
 
     update(gridWidth, gridHeight) {
-        // Otimizar verificação de tempo
-        const currentTime = Date.now();
+        if (!this.isVisible) return; // Não atualizar NPCs fora da tela
+        
+        const currentTime = performance.now(); // Mais preciso que Date.now()
         const timeSinceLastChange = currentTime - this.lastStateChange;
 
         // Cache de posição atual

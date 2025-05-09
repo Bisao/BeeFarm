@@ -7,6 +7,8 @@ export class Performance {
         this.frameCount = 0;
         this.lastFPSUpdate = 0;
         this.currentFPS = 0;
+        this.memoryUsage = [];
+        this.garbageCollectThreshold = 1000; // Limpar cache a cada 1000 frames
         this.frameDeltas = new Float32Array(60); // Buffer circular para médias
         this.frameDeltaIndex = 0;
         this.useRAF = true; // Usar requestAnimationFrame
