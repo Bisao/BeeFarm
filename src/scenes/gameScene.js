@@ -30,7 +30,7 @@ export class GameScene extends Scene {
         this.structureManager = new StructureManager();
 
         // Generate initial trees
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 400);
+        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 100);
 
         // Add initial structures
         this.structureManager.addStructure('house', 10, 10);
