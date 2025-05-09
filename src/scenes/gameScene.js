@@ -49,8 +49,17 @@ export class GameScene extends Scene {
         
         // Center camera on house
         if (this.camera) {
-            this.camera.offset.x = -centerX * this.gridSize;
-            this.camera.offset.y = -centerY * this.gridSize / 2;
+            const screenCenterX = window.innerWidth / 2;
+            const screenCenterY = window.innerHeight / 2;
+            
+            // Calcula a posição isométrica da casa
+            const houseIsoX = (centerX - centerY) * this.gridSize / 2;
+            const houseIsoY = (centerX + centerY) * this.gridSize / 4;
+            
+            // Ajusta a câmera para centralizar na casa
+            this.camera.offset.x = -houseIsoX;
+            this.camera.offset.y = -houseIsoY + 100; // Adiciona um pequeno offset vertical para melhor visualização
+            this.camera.scale = 1.2; // Aplica um zoom inicial suave
         }
         this.container.innerHTML = `
             <canvas id="gameCanvas"></canvas>
