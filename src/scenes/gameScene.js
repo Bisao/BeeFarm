@@ -137,18 +137,9 @@ export class GameScene extends Scene {
                         y: gridPos.y,
                         available: !isOccupied
                     };
-                    
-                    // Create preview structure
-                    if (!this.previewStructure || this.previewStructure.type !== this.selectedStructure) {
-                        this.previewStructure = new House(gridPos.x, gridPos.y, this.selectedStructure);
-                    } else {
-                        this.previewStructure.x = gridPos.x;
-                        this.previewStructure.y = gridPos.y;
-                    }
                 }
             }
         });
-</old_str>
         this.canvas.addEventListener('mouseup', (e) => this.camera.handleMouseUp(e));
         this.canvas.addEventListener('wheel', (e) => this.camera.handleWheel(e));
         this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -170,7 +161,6 @@ export class GameScene extends Scene {
     }
 
     cleanup() {
-        // Cleanup event listeners
         const buildItems = document.querySelectorAll('.build-item');
         buildItems.forEach(item => {
             item.removeEventListener('click', null);
@@ -237,12 +227,10 @@ export class GameScene extends Scene {
             this.structureManager.draw(this.ctx, 0, 0, 1);
         }
         
-        // Draw tile highlight and preview
         if (this.selectedStructure && this.highlightTile) {
             const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
             const isoY = (this.highlightTile.x + this.highlightTile.y) * this.gridSize / 4;
             
-            // Draw highlight
             this.ctx.fillStyle = this.highlightTile.available ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
             this.ctx.strokeStyle = this.highlightTile.available ? '#4CAF50' : '#F44336';
             this.ctx.lineWidth = 2;
@@ -256,13 +244,6 @@ export class GameScene extends Scene {
             
             this.ctx.fill();
             this.ctx.stroke();
-
-            // Draw preview structure with transparency
-            if (this.previewStructure && this.highlightTile.available) {
-                this.ctx.globalAlpha = 0.6;
-                this.previewStructure.draw(this.ctx, 0, 0, 1);
-                this.ctx.globalAlpha = 1.0;
-            }
         }
 
         this.ctx.restore();
