@@ -19,6 +19,10 @@ const loadCSS = () => {
 
 async function init() {
     try {
+        if (!document.getElementById('game-container')) {
+            throw new Error('Container do jogo não encontrado');
+        }
+        
         const assetCache = new AssetCache();
         const gameState = new GameState();
         
