@@ -4,6 +4,8 @@ import { StartScene } from './scenes/startScene.js';
 import { SettingsScene } from './scenes/settingsScene.js';
 import { GameScene } from './scenes/gameScene.js';
 import { CharacterSelectScene } from './scenes/characterSelectScene.js';
+import { AssetCache } from './utils/AssetCache.js';
+import { GameState } from './core/GameState.js';
 
 const loadCSS = () => {
     return new Promise((resolve) => {

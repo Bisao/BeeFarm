@@ -1,40 +1,30 @@
-
 export class AssetCache {
     constructor() {
         this.cache = new Map();
-        this.loading = new Map();
     }
 
-    async loadImage(url) {
+    async preloadAssets(assetUrls) {
+        const loadPromises = assetUrls.map(url => this.loadAsset(url));
+        return Promise.all(loadPromises);
+    }
+
+    async loadAsset(url) {
         if (this.cache.has(url)) {
             return this.cache.get(url);
         }
 
-        if (this.loading.has(url)) {
-            return this.loading.get(url);
-        }
-
+        const image = new Image();
         const loadPromise = new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => {
-                this.cache.set(url, img);
-                this.loading.delete(url);
-                resolve(img);
-            };
-            img.onerror = reject;
-            img.src = url;
+            image.onload = () => resolve(image);
+            image.onerror = reject;
         });
 
-        this.loading.set(url, loadPromise);
+        image.src = url;
+        this.cache.set(url, image);
         return loadPromise;
     }
 
-    preloadAssets(urls) {
-        return Promise.all(urls.map(url => this.loadImage(url)));
-    }
-
-    clear() {
-        this.cache.clear();
-        this.loading.clear();
+    getAsset(url) {
+        return this.cache.get(url);
     }
 }
