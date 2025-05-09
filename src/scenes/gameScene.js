@@ -187,6 +187,26 @@ export class GameScene extends Scene {
 
     cleanup() {
         this.isRendering = false;
+        
+        // Remove event listeners
+        const configBtn = document.getElementById('configBtn');
+        const buildBtn = document.getElementById('buildBtn');
+        const configCloseBtn = document.getElementById('configCloseBtn');
+        const buildCloseBtn = document.getElementById('buildCloseBtn');
+        
+        if (configBtn) configBtn.removeEventListener('click', this.handleConfigClick);
+        if (buildBtn) buildBtn.removeEventListener('click', this.handleBuildClick);
+        if (configCloseBtn) configCloseBtn.removeEventListener('click', this.handleConfigClose);
+        if (buildCloseBtn) buildCloseBtn.removeEventListener('click', this.handleBuildClose);
+        
+        if (this.canvas) {
+            this.canvas.removeEventListener('mousedown', this.handleMouseDown);
+            this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+            this.canvas.removeEventListener('mouseup', this.handleMouseUp);
+            this.canvas.removeEventListener('wheel', this.handleWheel);
+            this.canvas.removeEventListener('contextmenu', this.handleContextMenu);
+            this.canvas.removeEventListener('click', this.handleClick);
+        }
     }
 
     exit() {

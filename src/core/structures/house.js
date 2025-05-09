@@ -13,10 +13,10 @@ export class House extends Structure {
 
     updateImage() {
         const imagePath = {
-            'miner': `src/assets/images/structures/⛏️ MinerHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`,
-            'farmer': `src/assets/images/structures/🌱 FarmerHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`,
-            'fisherman': `src/assets/images/structures/🎣 FisherManHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`,
-            'lumberjack': `src/assets/images/structures/🪓 LumberJackHouse${this.direction === 'left' ? 'Left' : 'Rigt'}.PNG`
+            'miner': `src/assets/images/structures/⛏️ MinerHouse${this.direction === 'left' ? 'Left' : 'Right'}.PNG`,
+            'farmer': `src/assets/images/structures/🌱 FarmerHouse${this.direction === 'left' ? 'Left' : 'Right'}.PNG`,
+            'fisherman': `src/assets/images/structures/🎣 FisherManHouse${this.direction === 'left' ? 'Left' : 'Right'}.PNG`,
+            'lumberjack': `src/assets/images/structures/🪓 LumberJackHouse${this.direction === 'left' ? 'Left' : 'Right'}.PNG`
         };
         this.image.src = imagePath[this.type] || imagePath['lumberjack'];
     }
