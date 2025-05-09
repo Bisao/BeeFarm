@@ -6,11 +6,14 @@ import { TreeManager } from '../core/treeManager.js';
 import { StructureManager } from '../core/structures/structureManager.js';
 import { CameraManager } from '../core/CameraManager.js';
 import { TouchHandler } from '../utils/TouchHandler.js';
+import { Performance } from '../utils/Performance.js';
 
 export class GameScene extends Scene {
     constructor() {
         super();
         this.container = document.getElementById('game-container');
+        this.performance = new Performance();
+        this.fps = 0;
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
@@ -239,7 +242,18 @@ export class GameScene extends Scene {
     draw() {
         if (!this.isRendering) return;
 
+        // Calcular FPS
+        this.fps = Math.round(1000 / (performance.now() - this.performance.lastFrameTime));
+        this.performance.lastFrameTime = performance.now();
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Desenhar FPS
+        this.ctx.save();
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '20px Arial';
+        this.ctx.fillText(`FPS: ${this.fps}`, 10, this.canvas.height / 2);
+        this.ctx.restore();
 
         const centerX = this.canvas.width/2;
         const centerY = this.canvas.height/2;
