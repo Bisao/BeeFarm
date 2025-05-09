@@ -2,10 +2,10 @@
 export class TileManager {
     constructor() {
         this.tileImages = {
-            grass: this.loadImage('/src/assets/images/tiles/Grass.png'),
-            grassFlower1: this.loadImage('/src/assets/images/tiles/Grass_1.png'),
-            grassFlower2: this.loadImage('/src/assets/images/tiles/Grass_2_Flowers.png'),
-            grassFlower3: this.loadImage('/src/assets/images/tiles/Grass_3_Flowers.png')
+            grass: this.loadImage('/src/assets/images/tiles/Tile_Grass.png'),
+            grassFlower1: this.loadImage('/src/assets/images/tiles/Tile_Grass_1.png'),
+            grassFlower2: this.loadImage('/src/assets/images/tiles/Tile_Grass_2_Flowers.png'),
+            grassFlower3: this.loadImage('/src/assets/images/tiles/Tile_Grass_3_Flowers.png')
         };
         this.tileGrid = [];
         this.initializeGrid();
