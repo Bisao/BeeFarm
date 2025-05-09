@@ -14,6 +14,7 @@ export class NPC {
         this.house = null;
         this.state = 'idle'; // idle, walking, visiting
         this.lastStateChange = Date.now();
+        this.levelSystem = new LevelSystem();
     }
 
     updateGridPosition(x, y) {
@@ -106,6 +107,8 @@ export class NPC {
                     } else {
                         this.position.x += this.direction.x * this.speed;
                         this.position.y += this.direction.y * this.speed;
+                        // Ganhar XP ao se mover
+                        this.levelSystem.addXP(0.1);
                     }
                 }
                 break;
@@ -140,10 +143,23 @@ export class NPC {
         ctx.strokeStyle = '#000';
         ctx.stroke();
 
-        // Draw name
+        // Draw name and level
         ctx.font = '12px Arial';
         ctx.fillStyle = '#FFF';
         ctx.textAlign = 'center';
-        ctx.fillText(this.name, centerX/scale + this.position.x, centerY/scale + this.position.y - this.size);
+        ctx.fillText(`${this.name} (Lvl ${this.levelSystem.level})`, centerX/scale + this.position.x, centerY/scale + this.position.y - this.size);
+        
+        // Draw XP bar
+        const barWidth = 30;
+        const barHeight = 4;
+        const progress = this.levelSystem.getProgress();
+        
+        // Background
+        ctx.fillStyle = '#333';
+        ctx.fillRect(centerX/scale + this.position.x - barWidth/2, centerY/scale + this.position.y - this.size + 5, barWidth, barHeight);
+        
+        // Progress
+        ctx.fillStyle = '#4CAF50';
+        ctx.fillRect(centerX/scale + this.position.x - barWidth/2, centerY/scale + this.position.y - this.size + 5, barWidth * (progress/100), barHeight);
     }
 }
