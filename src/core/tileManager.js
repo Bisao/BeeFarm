@@ -41,9 +41,24 @@ export class TileManager {
 
     draw(ctx, centerX, centerY, scale) {
         const tileSize = 50 * scale;
+        const screenWidth = ctx.canvas.width;
+        const screenHeight = ctx.canvas.height;
+        
+        // Calcular área visível
+        const visibleTilesX = Math.ceil(screenWidth / (tileSize / 2)) + 2;
+        const visibleTilesY = Math.ceil(screenHeight / (tileSize / 4)) + 2;
+        
+        // Calcular limites de renderização
+        const centerTileX = Math.floor(centerX / (tileSize / 2));
+        const centerTileY = Math.floor(centerY / (tileSize / 4));
+        
+        const startX = Math.max(0, centerTileX - visibleTilesX);
+        const startY = Math.max(0, centerTileY - visibleTilesY);
+        const endX = Math.min(this.tileGrid[0].length, centerTileX + visibleTilesX);
+        const endY = Math.min(this.tileGrid.length, centerTileY + visibleTilesY);
 
-        for (let y = 0; y < this.tileGrid.length; y++) {
-            for (let x = 0; x < this.tileGrid[y].length; x++) {
+        for (let y = startY; y < endY; y++) {
+            for (let x = startX; x < endX; x++) {
                 const isoX = (x - y) * tileSize / 2;
                 const isoY = (x + y) * tileSize / 4;
                 

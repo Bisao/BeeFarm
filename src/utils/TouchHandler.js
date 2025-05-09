@@ -1,4 +1,3 @@
-
 export class TouchHandler {
     constructor(canvas, camera) {
         this.canvas = canvas;
@@ -10,7 +9,7 @@ export class TouchHandler {
         this.touchStartTime = 0;
         this.longPressDelay = 500;
         this.touchTimeout = null;
-        
+
         this.setupEventListeners();
     }
 
@@ -39,22 +38,34 @@ export class TouchHandler {
         }
     }
 
-    handleTouchMove(e) {
-        e.preventDefault();
-        if (e.touches.length === 1 && this.isDragging) {
-            const dx = e.touches[0].clientX - this.lastPos.x;
-            const dy = e.touches[0].clientY - this.lastPos.y;
-            this.camera.updateOffset(dx, dy);
-            this.lastPos = {
-                x: e.touches[0].clientX,
-                y: e.touches[0].clientY
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
             };
-        } else if (e.touches.length === 2) {
-            const currentDistance = this.getPinchDistance(e.touches);
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    handleTouchMove = this.debounce((event) => {
+        if (this.isDragging) {
+            const touch = event.touches[0];
+            const deltaX = touch.clientX - this.lastPos.x;
+            const deltaY = touch.clientY - this.lastPos.y;
+            this.camera.updateOffset(deltaX, deltaY);
+            this.lastPos = {
+                x: touch.clientX,
+                y: touch.clientY
+            };
+        } else if (event.touches.length === 2) {
+            const currentDistance = this.getPinchDistance(event.touches);
             const newScale = this.initialScale * (currentDistance / this.initialPinchDistance);
             this.camera.updateScale(newScale, this.canvas.width / 2, this.canvas.height / 2);
         }
-    }
+    }, 10);
 
     handleTouchEnd(e) {
         e.preventDefault();
