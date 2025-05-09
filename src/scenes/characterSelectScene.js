@@ -81,9 +81,15 @@ export class CharacterSelectScene extends Scene {
 
             await new Promise(resolve => setTimeout(resolve, 2000));
             this.manager.changeScene('game');
-            } else {
-                throw new Error('Game manager not properly initialized');
-            }
+        } catch (error) {
+            console.error('Error selecting character:', error);
+            this.container.innerHTML = `
+                <div class="error-screen">
+                    <h2>Error selecting character</h2>
+                    <button class="button" onclick="location.reload()">Retry</button>
+                </div>
+            `;
+        }
         } catch (error) {
             console.error('Failed to load character:', error);
             this.container.innerHTML = `
