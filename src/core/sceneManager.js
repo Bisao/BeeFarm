@@ -18,8 +18,6 @@ export class SceneManager {
             this.gameState = gameState;
             this.assetCache = assetCache;
             
-            // Ensure assets are loaded
-            await this.assetCache.preloadAssets();
             return true;
         } catch (error) {
             console.error('Error initializing scene manager:', error);
