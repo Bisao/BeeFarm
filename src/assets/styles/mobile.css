@@ -36,13 +36,36 @@ body {
 }
 
 .settings-modal, .build-modal {
-    background: var(--background-light);
+    background: var(--modal-bg);
     padding: 20px;
     border-radius: 8px;
     width: 90%;
     max-width: 300px;
     transform: scale(0.95);
     transition: transform 0.3s ease;
+    opacity: 1;
+    color: var(--text);
+}
+
+.build-modal h2 {
+    color: var(--text);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.build-item {
+    background: var(--primary);
+    color: var(--text);
+    padding: 15px;
+    margin: 5px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-md);
+    transition: background 0.2s;
+}
+
+.build-item:hover {
+    background: var(--primary-dark);
 }
 
 .modal-overlay.visible .settings-modal,
