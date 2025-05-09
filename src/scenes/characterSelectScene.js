@@ -1,7 +1,7 @@
 
 import { Scene } from '../core/baseScene.js';
 
-export export class CharacterSelectScene extends Scene {
+export class CharacterSelectScene extends Scene {
     constructor() {
         super();
         this.container = document.getElementById('game-container');

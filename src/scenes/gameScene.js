@@ -8,7 +8,7 @@ import { CameraManager } from '../core/CameraManager.js';
 import { TouchHandler } from '../utils/TouchHandler.js';
 import { Performance } from '../utils/Performance.js';
 
-export export class GameScene extends Scene {
+export class GameScene extends Scene {
     constructor() {
         super();
         this.container = document.getElementById('game-container');
