@@ -1,5 +1,7 @@
 
-export class NPC {
+export import { LevelSystem } from './LevelSystem.js';
+
+class NPC {
     constructor(x, y, name) {
         this.position = { x, y };
         this.gridPosition = { x: 0, y: 0 };

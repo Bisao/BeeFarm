@@ -1,5 +1,5 @@
 
-export class LevelSystem {
+export export class LevelSystem {
     constructor() {
         this.level = 1;
         this.xp = 0;
