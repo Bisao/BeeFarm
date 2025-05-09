@@ -1,15 +1,17 @@
-
 export class Performance {
     constructor() {
         this.lastFrameTime = 0;
         this.frameInterval = 1000 / 60;
         this.isRendering = false;
         this.frameCount = 0;
-        this.lastFPSUpdate = 0;
+        this.lastFPSUpdate = performance.now();
         this.currentFPS = 0;
-        this.frameDeltas = new Float32Array(60); // Buffer circular para médias
+        this.frameDeltas = new Float32Array(60);
         this.frameDeltaIndex = 0;
-        this.useRAF = true; // Usar requestAnimationFrame
+        this.useRAF = true;
+        this.offscreenCanvas = new OffscreenCanvas(800, 600);
+        this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+        this.gcInterval = setInterval(() => this.garbageCollect(), 30000);
     }
 
     calculateAverageFrameTime() {

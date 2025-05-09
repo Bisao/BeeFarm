@@ -24,9 +24,22 @@ export class EventManager {
     }
 
     emit(event, data) {
-        if (this.events.has(event)) {
-            this.events.get(event).forEach(callback => callback(data));
+        const callbacks = this.events.get(event);
+        if (!callbacks) return;
+        
+        for (const callback of callbacks) {
+            try {
+                if (callback.active !== false) {
+                    callback(data);
+                }
+            } catch (error) {
+                console.error(`Error in event ${event}:`, error);
+                callback.active = false;
+            }
         }
+        
+        // Limpar callbacks inativos
+        this.events.set(event, callbacks.filter(cb => cb.active !== false));
     }
 
     off(event, callback) {

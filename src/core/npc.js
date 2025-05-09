@@ -81,9 +81,8 @@ export class NPC {
     }
 
     update(gridWidth, gridHeight) {
-        // Otimizar verificação de tempo
-        const currentTime = Date.now();
-        const timeSinceLastChange = currentTime - this.lastStateChange;
+        if (!this.isInViewport()) return;
+        const currentTime = performance.now();
 
         // Cache de posição atual
         const currentPos = {
@@ -93,7 +92,7 @@ export class NPC {
 
         switch (this.state) {
             case 'idle':
-                if (timeSinceLastChange > 3000) { // Wait 3 seconds
+                if (currentTime - this.lastStateChange > 3000) { // Wait 3 seconds
                     this.state = 'walking';
                     this.lastStateChange = currentTime;
                     this.setRandomTarget(gridWidth, gridHeight);
@@ -188,5 +187,15 @@ export class NPC {
         // Progress
         ctx.fillStyle = '#4CAF50';
         ctx.fillRect(centerX/scale + this.position.x - barWidth/2, centerY/scale + this.position.y - this.size + 5, barWidth * (progress/100), barHeight);
+    }
+
+    // Implementa a verificação se o NPC está dentro da viewport
+    isInViewport() {
+        // Implemente a lógica para determinar se o NPC está visível na tela
+        // Isso pode envolver verificar se a posição do NPC está dentro dos limites da tela
+        // e levar em consideração a posição da câmera e o zoom.
+
+        // Por enquanto, vamos retornar true para todos os NPCs
+        return true;
     }
 }
