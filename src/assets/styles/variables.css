@@ -1,18 +1,13 @@
-
 :root {
   /* Colors */
   --primary: #4CAF50;
   --primary-dark: #45a049;
-  --primary-light: #81c784;
   --background: #1a1a1a;
-  --background-light: #2a2a2a;
-  --background-lighter: #3a3a3a;
+  --modal-bg: #2a2a2a;
   --text: white;
-  --text-muted: #a0a0a0;
-  --error: #ff4444;
-  --success: #4caf50;
-  --warning: #ff9800;
-  
+  --background-light: rgba(42, 42, 42, 0.95);
+  --background-lighter: rgba(255, 255, 255, 0.05);
+
   /* Sizes */
   --header-height: 50px;
   --modal-width: 300px;
@@ -22,22 +17,22 @@
   --spacing-sm: 10px;
   --spacing-md: 15px;
   --spacing-lg: 20px;
-  
+
   /* Transitions */
   --transition-speed: 0.3s;
   --transition-timing: ease;
-  
+
   /* Z-indexes */
   --z-modal: 1000;
   --z-overlay: 999;
   --z-header: 100;
   --z-game: 1;
-  
+
   /* Shadows */
   --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
   --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
   --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-  
+
   /* Typography */
   --font-family: Arial, system-ui, -apple-system, sans-serif;
   --font-size-sm: 14px;
