@@ -22,29 +22,29 @@ export class Performance {
         // Bind methods
         this.garbageCollect = this.garbageCollect.bind(this);
         
-        // Start garbage collection interval
-        this.gcInterval = setInterval(this.garbageCollect, this.gcThreshold);
+        // Iniciar garbage collection automático
+        this.gcInterval = setInterval(() => this.garbageCollect(), this.gcThreshold);
     }
 
     garbageCollect() {
         const now = performance.now();
         if (now - this.lastGC < this.gcThreshold) return;
 
-        // Clean image cache
+        // Limpar cache de imagens não utilizadas
         for (const [key, value] of this.imageCache.entries()) {
             if (!value.lastUsed || now - value.lastUsed > 60000) {
                 this.imageCache.delete(key);
             }
         }
 
-        // Clean resource cache
+        // Limpar recursos não utilizados
         for (const [key, value] of this.resourceCache.entries()) {
             if (!value.lastUsed || now - value.lastUsed > 60000) {
                 this.resourceCache.delete(key);
             }
         }
 
-        // Clean offscreen context
+        // Limpar contexto offscreen
         if (this.offscreenCtx) {
             this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
         }
