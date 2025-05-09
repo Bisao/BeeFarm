@@ -2,7 +2,6 @@
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
-import { Scene } from '../core/baseScene.js';
 import { TreeManager } from '../core/treeManager.js';
 import { StructureManager } from '../core/structures/structureManager.js';
 import { CameraManager } from '../core/CameraManager.js';
@@ -203,7 +202,7 @@ export class GameScene extends Scene {
 
     update(delta) {
         this.maleNPC.update(this.gridWidth, this.gridHeight);
-        this.femaleNPC.update(this.gridWidth, this.gridHeight);s.gridHeight);
+        this.femaleNPC.update(this.gridWidth, this.gridHeight);
     }
 
     cleanup() {
