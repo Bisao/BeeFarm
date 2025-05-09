@@ -22,6 +22,15 @@ async function init() {
         const assetCache = new AssetCache();
         const gameState = new GameState();
         
+        // Initialize game state
+        gameState.update({
+            player: null,
+            resources: {},
+            structures: [],
+            npcs: [],
+            settings: {}
+        });
+        
         // Preload assets
         await Promise.all([
             loadCSS(),
@@ -34,7 +43,7 @@ async function init() {
         ]);
 
         const sceneManager = new SceneManager();
-        sceneManager.init(gameState, assetCache);
+        await sceneManager.init(gameState, assetCache);
         
         sceneManager.registerScene('start', new StartScene());
         sceneManager.registerScene('settings', new SettingsScene());
