@@ -89,12 +89,15 @@ body {
     cursor: pointer;
     background: var(--primary);
     color: var(--text);
-    border: none;
+    border: 4px solid #fff;
     border-radius: var(--border-radius);
     transition: all var(--transition-speed) var(--transition-timing);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 0 #d14d4d;
     position: relative;
     overflow: hidden;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .button:hover {

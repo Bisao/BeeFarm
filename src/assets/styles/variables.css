@@ -1,18 +1,18 @@
 :root {
   /* Colors */
-  --primary: #4CAF50;
-  --primary-dark: #45a049;
-  --background: #1a1a1a;
-  --modal-bg: #2a2a2a;
-  --text: white;
-  --background-light: rgba(42, 42, 42, 0.95);
-  --background-lighter: rgba(255, 255, 255, 0.05);
+  --primary: #FF6B6B;
+  --primary-dark: #FF5252;
+  --background: #4A4E69;
+  --modal-bg: #9A8C98;
+  --text: #F2E9E4;
+  --background-light: rgba(74, 78, 105, 0.95);
+  --background-lighter: rgba(255, 255, 255, 0.1);
 
   /* Sizes */
-  --header-height: 50px;
-  --modal-width: 300px;
+  --header-height: 60px;
+  --modal-width: 320px;
   --button-padding: 15px 30px;
-  --border-radius: 8px;
+  --border-radius: 20px;
   --spacing-xs: 5px;
   --spacing-sm: 10px;
   --spacing-md: 15px;
