@@ -42,31 +42,33 @@ export class TreeManager {
         }
     }
 
+    drawSingle(ctx, centerX, centerY, scale, tree) {
+        const isoX = (tree.x - tree.y) * 50 / 2;
+        const isoY = (tree.x + tree.y) * 50 / 4;
+        const img = this.treeImages[tree.type];
+        
+        if (img.complete) {
+            const treeWidth = 60;
+            const treeHeight = 60;
+            
+            const tileCenter = {
+                x: centerX/scale + isoX,
+                y: centerY/scale + isoY
+            };
+            
+            ctx.drawImage(
+                img,
+                tileCenter.x - treeWidth/2,
+                tileCenter.y - treeHeight/2,
+                treeWidth,
+                treeHeight
+            );
+        }
+    }
+
     draw(ctx, centerX, centerY, scale) {
         for (const tree of this.trees) {
-            const isoX = (tree.x - tree.y) * 50 / 2;
-            const isoY = (tree.x + tree.y) * 50 / 4;
-            const img = this.treeImages[tree.type];
-            
-            if (img.complete) {
-                // Scale trees to fit grid cells (40x40 pixels)
-                const treeWidth = 60;
-                const treeHeight = 60;
-                
-                // Center the tree on the tile
-                const tileCenter = {
-                    x: centerX/scale + isoX,
-                    y: centerY/scale + isoY
-                };
-                
-                ctx.drawImage(
-                    img,
-                    tileCenter.x - treeWidth/2,
-                    tileCenter.y - treeHeight/2,
-                    treeWidth,
-                    treeHeight
-                );
-            }
+            this.drawSingle(ctx, centerX, centerY, scale, tree);
         }
     }
 }

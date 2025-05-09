@@ -27,7 +27,8 @@ export class House extends Structure {
         }
         
         this.npc.name = name;
-        this.npc.updateGridPosition(this.x, this.y + 1); // Move one tile down
+        // Posicionar NPC ligeiramente à frente da casa
+        this.npc.updateGridPosition(this.x, this.y + 0.5);
         this.npc.house = this;
     }
 

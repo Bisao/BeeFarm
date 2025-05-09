@@ -276,15 +276,34 @@ export class GameScene extends Scene {
 
         this.drawIsometricGrid(this.ctx, 0, 0, 1);
 
+        // Ordenar elementos por posição Y para renderização correta
+        const allElements = [];
+        
+        // Adicionar árvores
         if (this.treeManager) {
-            this.treeManager.draw(this.ctx, 0, 0, 1);
+            this.treeManager.trees.forEach(tree => {
+                allElements.push({
+                    y: (tree.x + tree.y) * 50 / 4,
+                    draw: () => this.treeManager.drawSingle(this.ctx, 0, 0, 1, tree)
+                });
+            });
         }
 
-        // NPCs are drawn by their respective houses
-
+        // Adicionar estruturas e NPCs
         if (this.structureManager) {
-            this.structureManager.draw(this.ctx, 0, 0, 1);
+            this.structureManager.structures.forEach(structure => {
+                allElements.push({
+                    y: (structure.x + structure.y) * 50 / 4,
+                    draw: () => structure.draw(this.ctx, 0, 0, 1)
+                });
+            });
         }
+
+        // Ordenar elementos por profundidade (Y)
+        allElements.sort((a, b) => a.y - b.y);
+
+        // Renderizar elementos na ordem correta
+        allElements.forEach(element => element.draw());
 
         if (this.selectedStructure && this.highlightTile) {
             const isoX = (this.highlightTile.x - this.highlightTile.y) * this.gridSize / 2;
