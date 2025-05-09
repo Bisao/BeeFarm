@@ -40,20 +40,9 @@ export class TileManager {
     }
 
     draw(ctx, centerX, centerY, scale) {
-        if (!this.tileSize || this.tileSize !== 50 * scale) {
-            this.tileSize = 50 * scale;
-            this.tileHalfWidth = this.tileSize / 2;
-            this.tileQuarterHeight = this.tileSize / 4;
-        }
-        
+        const tileSize = 50 * scale;
         const screenWidth = ctx.canvas.width;
         const screenHeight = ctx.canvas.height;
-        
-        // Usar um buffer offscreen para renderização
-        if (!this.offscreenCanvas) {
-            this.offscreenCanvas = new OffscreenCanvas(screenWidth, screenHeight);
-            this.offscreenCtx = this.offscreenCanvas.getContext('2d');
-        }
         
         // Cache de cálculos frequentes
         const tileHalfWidth = tileSize / 2;

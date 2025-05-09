@@ -24,16 +24,8 @@ export class EventManager {
     }
 
     emit(event, data) {
-        const callbacks = this.events.get(event);
-        if (callbacks) {
-            // Usar for...of é mais eficiente que forEach
-            for (const callback of callbacks) {
-                try {
-                    callback(data);
-                } catch (error) {
-                    console.error(`Error in event ${event}:`, error);
-                }
-            }
+        if (this.events.has(event)) {
+            this.events.get(event).forEach(callback => callback(data));
         }
     }
 
