@@ -30,4 +30,8 @@ export class LevelSystem {
     getXPToNextLevel() {
         return this.xpToNextLevel;
     }
+
+    getProgress() {
+        return (this.xp / this.xpToNextLevel) * 100;
+    }
 }
