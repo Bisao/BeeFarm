@@ -77,7 +77,20 @@ export class Performance {
 
     requestRender(callback) {
         if (!this.isRendering) {
+            let lastTime = performance.now();
+            let frames = 0;
+            
             const wrappedCallback = (timestamp) => {
+                const deltaTime = timestamp - lastTime;
+                frames++;
+                
+                if (deltaTime >= 1000) {
+                    this.currentFPS = frames;
+                    frames = 0;
+                    lastTime = timestamp;
+                    this.garbageCollect();
+                }
+                
                 if (this.shouldRender(timestamp)) {
                     try {
                         this.startFrame(timestamp);
@@ -89,11 +102,23 @@ export class Performance {
                         this.adjustPerformance();
                     }
                 }
+                
                 if (!this.stopped) {
                     requestAnimationFrame(wrappedCallback);
                 }
             };
             requestAnimationFrame(wrappedCallback);
+        }
+    }
+
+    garbageCollect() {
+        if (this.resourceCache) {
+            const now = performance.now();
+            for (const [key, value] of this.resourceCache.entries()) {
+                if (!value.lastUsed || now - value.lastUsed > 30000) {
+                    this.resourceCache.delete(key);
+                }
+            }
         }
     }
 

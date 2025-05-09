@@ -318,13 +318,17 @@ export class GameScene extends Scene {
             });
         }
 
-        // Implementar QuadTree para otimizar renderização
+        // Otimizar culling com viewport dinâmico
+        const viewportMargin = Math.max(100, this.camera.speed * 2);
         const visibleElements = allElements.filter(element => {
-            const screenX = element.x - this.camera.offset.x;
-            const screenY = element.y - this.camera.offset.y;
+            if (!element || !element.x) return false;
+            const screenX = (element.x - this.camera.offset.x) * this.camera.zoom;
+            const screenY = (element.y - this.camera.offset.y) * this.camera.zoom;
             return (
-                screenX >= -100 && screenX <= this.canvas.width + 100 &&
-                screenY >= -100 && screenY <= this.canvas.height + 100
+                screenX >= -viewportMargin && 
+                screenX <= this.canvas.width + viewportMargin &&
+                screenY >= -viewportMargin && 
+                screenY <= this.canvas.height + viewportMargin
             );
         });
 

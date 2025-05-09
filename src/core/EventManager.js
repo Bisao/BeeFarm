@@ -16,7 +16,10 @@ export class EventManager {
         if (this.isProcessing || this.eventQueue.length === 0) return;
 
         this.isProcessing = true;
-        const processingQueue = [...this.eventQueue];
+        const currentTime = performance.now();
+        const processingQueue = this.eventQueue.filter(event => 
+            !event.expireTime || currentTime < event.expireTime
+        );
         this.eventQueue = [];
         
         for (const {event, data} of processingQueue) {
