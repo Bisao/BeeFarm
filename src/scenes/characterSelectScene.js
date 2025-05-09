@@ -55,19 +55,26 @@ export class CharacterSelectScene extends Scene {
     }
 
     async selectCharacter(type) {
-        this.selectedCharacter = type;
-        
-        const loadingSize = window.innerWidth <= 768 ? '200px' : '300px';
-        this.container.innerHTML = `
-            <div class="loading-screen" style="width: ${loadingSize};">
-                <h2>Loading Game...</h2>
-                <div class="progress-bar"></div>
-                <p class="loading-tip">Preparing your adventure...</p>
-            </div>
-        `;
+        try {
+            this.selectedCharacter = type;
+            
+            const loadingSize = window.innerWidth <= 768 ? '200px' : '300px';
+            this.container.innerHTML = `
+                <div class="loading-screen" style="width: ${loadingSize};">
+                    <h2>Loading Game...</h2>
+                    <div class="progress-bar"></div>
+                    <p class="loading-tip">Preparing your adventure...</p>
+                </div>
+            `;
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        this.manager.changeScene('game', { characterType: type });
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            if (this.manager && this.manager.gameState) {
+                this.manager.gameState.characterType = type;
+                this.manager.changeScene('game');
+            } else {
+                throw new Error('Game manager not properly initialized');
+            }
     }
 
     exit() {

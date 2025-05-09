@@ -35,6 +35,11 @@ export class GameScene extends Scene {
     }
 
     enter() {
+        if (!this.manager || !this.manager.gameState) {
+            throw new Error('Game state not initialized');
+        }
+        
+        this.characterType = this.manager.gameState.characterType;
         this.container.innerHTML = `
             <canvas id="gameCanvas"></canvas>
             <div class="game-ui">
