@@ -1,37 +1,43 @@
 
 export class TileManager {
     constructor() {
-        this.tileImages = {
-            grass: this.loadImage('src/assets/images/tiles/Tile_Grass.png'),
-            grassFlower1: this.loadImage('src/assets/images/tiles/Tile_Grass_1.png'),
-            grassFlower2: this.loadImage('src/assets/images/tiles/Tile_Grass_2_Flowers.png'),
-            grassFlower3: this.loadImage('src/assets/images/tiles/Tile_Grass_3_Flowers.png')
-        };
+        this.tileCache = new Map();
         this.tileGrid = [];
+        this.offscreenCanvas = new OffscreenCanvas(800, 600);
+        this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+        this.lastViewport = null;
         this.initializeGrid();
     }
 
-    loadImage(src) {
+    async loadImage(src) {
+        if (this.tileCache.has(src)) {
+            return this.tileCache.get(src);
+        }
+
         const img = new Image();
         img.src = src;
+        await new Promise(resolve => img.onload = resolve);
+        this.tileCache.set(src, img);
         return img;
     }
 
     initializeGrid() {
+        const tiles = ['grass', 'grassFlower1', 'grassFlower2', 'grassFlower3'];
+        const weights = [0.7, 0.1, 0.1, 0.1];
+        
         for (let y = 0; y < 50; y++) {
             this.tileGrid[y] = [];
             for (let x = 0; x < 50; x++) {
                 const random = Math.random();
-                let selectedTile;
+                let acc = 0;
+                let selectedTile = tiles[0];
                 
-                if (random < 0.7) {
-                    selectedTile = 'grass';
-                } else if (random < 0.8) {
-                    selectedTile = 'grassFlower1';
-                } else if (random < 0.9) {
-                    selectedTile = 'grassFlower2';
-                } else {
-                    selectedTile = 'grassFlower3';
+                for (let i = 0; i < weights.length; i++) {
+                    acc += weights[i];
+                    if (random < acc) {
+                        selectedTile = tiles[i];
+                        break;
+                    }
                 }
                 
                 this.tileGrid[y][x] = selectedTile;
@@ -44,28 +50,30 @@ export class TileManager {
         const screenWidth = ctx.canvas.width;
         const screenHeight = ctx.canvas.height;
         
-        // Cache de cálculos frequentes
-        const tileHalfWidth = tileSize / 2;
-        const tileQuarterHeight = tileSize / 4;
+        const visibleTilesX = Math.ceil(screenWidth / (tileSize / 2)) + 2;
+        const visibleTilesY = Math.ceil(screenHeight / (tileSize / 4)) + 2;
         
-        // Calcular área visível com buffer reduzido
-        const visibleTilesX = Math.ceil(screenWidth / tileHalfWidth) + 1;
-        const visibleTilesY = Math.ceil(screenHeight / tileQuarterHeight) + 1;
+        const centerTileX = Math.floor(centerX / (tileSize / 2));
+        const centerTileY = Math.floor(centerY / (tileSize / 4));
         
-        // Otimizar cálculos de posição central
-        const centerTileX = Math.floor(centerX / tileHalfWidth);
-        const centerTileY = Math.floor(centerY / tileQuarterHeight);
+        const viewportKey = `${centerTileX},${centerTileY},${scale}`;
         
-        // Pré-calcular limites
+        if (this.lastViewport !== viewportKey) {
+            this.updateOffscreenCanvas(centerTileX, centerTileY, scale, visibleTilesX, visibleTilesY);
+            this.lastViewport = viewportKey;
+        }
+        
+        ctx.drawImage(this.offscreenCanvas, 0, 0);
+    }
+
+    updateOffscreenCanvas(centerTileX, centerTileY, scale, visibleTilesX, visibleTilesY) {
+        const tileSize = 50 * scale;
         const startX = Math.max(0, centerTileX - Math.floor(visibleTilesX / 2));
         const startY = Math.max(0, centerTileY - Math.floor(visibleTilesY / 2));
         const endX = Math.min(this.tileGrid[0].length, startX + visibleTilesX);
         const endY = Math.min(this.tileGrid.length, startY + visibleTilesY);
-        
-        const startX = Math.max(0, centerTileX - visibleTilesX);
-        const startY = Math.max(0, centerTileY - visibleTilesY);
-        const endX = Math.min(this.tileGrid[0].length, centerTileX + visibleTilesX);
-        const endY = Math.min(this.tileGrid.length, centerTileY + visibleTilesY);
+
+        this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
 
         for (let y = startY; y < endY; y++) {
             for (let x = startX; x < endX; x++) {
@@ -73,18 +81,15 @@ export class TileManager {
                 const isoY = (x + y) * tileSize / 4;
                 
                 const tileType = this.tileGrid[y][x];
-                const img = this.tileImages[tileType];
+                const img = this.tileCache.get(tileType);
 
-                if (img.complete) {
-                    const tileWidth = tileSize;
-                    const tileHeight = tileSize / 2;
-                    
-                    ctx.drawImage(
+                if (img?.complete) {
+                    this.offscreenCtx.drawImage(
                         img,
-                        centerX + isoX - tileWidth/2,
-                        centerY + isoY - tileHeight/2,
-                        tileWidth,
-                        tileHeight
+                        isoX - tileSize/2,
+                        isoY - tileSize/2,
+                        tileSize,
+                        tileSize/2
                     );
                 }
             }

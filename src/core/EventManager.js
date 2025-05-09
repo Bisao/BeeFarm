@@ -1,8 +1,11 @@
+
 export class EventManager {
     constructor() {
         this.events = new Map();
         this.eventQueue = [];
         this.isProcessing = false;
+        this.gcInterval = 60000; // 60 seconds
+        this.lastGC = performance.now();
     }
 
     subscribe(event, callback) {
@@ -10,6 +13,7 @@ export class EventManager {
             this.events.set(event, new Set());
         }
         this.events.get(event).add(callback);
+        return () => this.off(event, callback);
     }
 
     processEventQueue() {
@@ -17,64 +21,67 @@ export class EventManager {
 
         this.isProcessing = true;
         const currentTime = performance.now();
-        let i = this.eventQueue.length;
         
-        while (i--) {
-            const event = this.eventQueue[i];
+        // Process garbage collection
+        if (currentTime - this.lastGC > this.gcInterval) {
+            this.cleanupInactiveCallbacks();
+            this.lastGC = currentTime;
+        }
+
+        // Process events in batches
+        const batchSize = Math.min(50, this.eventQueue.length);
+        const batch = this.eventQueue.splice(0, batchSize);
+
+        for (const event of batch) {
             if (!event.expireTime || currentTime < event.expireTime) {
-                try {
-                    this.emit(event.event, event.data);
-                } catch (error) {
-                    console.error(`Error processing event ${event.event}:`, error);
-                }
+                this.emit(event.event, event.data);
             }
         }
-        
-        this.eventQueue = [];
-        
-        for (const {event, data} of processingQueue) {
-            try {
-                this.emit(event, data);
-            } catch (error) {
-                console.error(`Error processing event ${event}:`, error);
-            }
-        }
-        
+
         this.isProcessing = false;
+        
+        // Process remaining queue if needed
+        if (this.eventQueue.length > 0) {
+            requestAnimationFrame(() => this.processEventQueue());
+        }
     }
 
     emit(event, data) {
         const callbacks = this.events.get(event);
         if (!callbacks) return;
-        
+
         for (const callback of callbacks) {
-            try {
-                if (callback.active !== false) {
+            if (callback.active !== false) {
+                try {
                     callback(data);
+                } catch (error) {
+                    console.error(`Error in event ${event}:`, error);
+                    callback.active = false;
                 }
-            } catch (error) {
-                console.error(`Error in event ${event}:`, error);
-                callback.active = false;
             }
         }
-        
-        // Limpar callbacks inativos
-        this.events.set(event, callbacks.filter(cb => cb.active !== false));
+    }
+
+    cleanupInactiveCallbacks() {
+        for (const [event, callbacks] of this.events.entries()) {
+            const activeCallbacks = new Set(
+                Array.from(callbacks).filter(cb => cb.active !== false)
+            );
+            if (activeCallbacks.size === 0) {
+                this.events.delete(event);
+            } else {
+                this.events.set(event, activeCallbacks);
+            }
+        }
     }
 
     off(event, callback) {
-        if (this.events.has(event)) {
-            this.events.set(
-                event,
-                [...this.events.get(event)].filter(cb => cb !== callback)
-            );
+        const callbacks = this.events.get(event);
+        if (callbacks) {
+            callbacks.delete(callback);
+            if (callbacks.size === 0) {
+                this.events.delete(event);
+            }
         }
-    }
-
-    on(event, callback) {
-        if (!this.events.has(event)) {
-            this.events.set(event, []);
-        }
-        this.events.get(event).push(callback);
     }
 }
