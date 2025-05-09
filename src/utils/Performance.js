@@ -12,6 +12,28 @@ export class Performance {
         this.offscreenCanvas = new OffscreenCanvas(800, 600);
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
         this.gcInterval = setInterval(() => this.garbageCollect(), 30000);
+        this.weakRefs = new WeakMap();
+        this.resourceCache = new Map();
+        this.lastGC = performance.now();
+    }
+
+    garbageCollect() {
+        const now = performance.now();
+        if (now - this.lastGC < 30000) return; // Evita GC muito frequente
+
+        // Limpa recursos não utilizados
+        for (const [key, value] of this.resourceCache.entries()) {
+            if (!value.lastUsed || now - value.lastUsed > 60000) {
+                this.resourceCache.delete(key);
+            }
+        }
+
+        // Limpa o contexto offscreen se necessário
+        if (this.offscreenCtx) {
+            this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
+        }
+
+        this.lastGC = now;
     }
 
     calculateAverageFrameTime() {

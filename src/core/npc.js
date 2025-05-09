@@ -191,11 +191,21 @@ export class NPC {
 
     // Implementa a verificação se o NPC está dentro da viewport
     isInViewport() {
-        // Implemente a lógica para determinar se o NPC está visível na tela
-        // Isso pode envolver verificar se a posição do NPC está dentro dos limites da tela
-        // e levar em consideração a posição da câmera e o zoom.
+        const canvas = document.getElementById('gameCanvas');
+        if (!canvas) return false;
 
-        // Por enquanto, vamos retornar true para todos os NPCs
-        return true;
+        const viewportWidth = canvas.width;
+        const viewportHeight = canvas.height;
+        const margin = 100; // Margem extra para suavizar transições
+
+        const screenX = (this.position.x - this.position.y) * 50 / 2;
+        const screenY = (this.position.x + this.position.y) * 50 / 4;
+
+        return (
+            screenX + margin >= -viewportWidth/2 &&
+            screenX - margin <= viewportWidth/2 &&
+            screenY + margin >= -viewportHeight/2 &&
+            screenY - margin <= viewportHeight/2
+        );
     }
 }
