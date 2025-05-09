@@ -2,10 +2,10 @@
 export class TileManager {
     constructor() {
         this.tileImages = {
-            dirt: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_fef9b075.jpg'),
-            grass: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_651eca85.jpg'),
-            flowerGrass: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_aa0c7511.jpg'),
-            water: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_eb54dcd7.jpg')
+            grassFlower1: this.loadImage('/src/assets/images/tiles/grass_flower1.png'),
+            grassFlower2: this.loadImage('/src/assets/images/tiles/grass_flower2.png'),
+            grass1: this.loadImage('/src/assets/images/tiles/grass1.png'),
+            grass2: this.loadImage('/src/assets/images/tiles/grass2.png')
         };
     }
 
