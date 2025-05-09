@@ -34,11 +34,6 @@ export class GameScene extends Scene {
         this.setupEventListeners = this.setupEventListeners.bind(this);
     }
 
-    constructor() {
-        super();
-        this.container = document.getElementById('game-container');
-    }
-
     enter() {
         try {
             if (!this.manager || !this.manager.gameState) {
