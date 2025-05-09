@@ -1,3 +1,31 @@
+@import './variables.css';
+
+/* Prevent text size adjustment after orientation changes in iOS */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    overflow: hidden;
+    font-family: Arial, system-ui, -apple-system, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+@media (max-width: 320px) {
+    .button {
+        padding: 15px;
+        font-size: 16px;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+    .settings-modal {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+}
+
 #game-container {
     position: fixed;
     top: 0;

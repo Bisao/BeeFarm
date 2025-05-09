@@ -1,0 +1,21 @@
+
+:root {
+  /* Colors */
+  --primary: #4CAF50;
+  --primary-dark: #45a049;
+  --background: #1a1a1a;
+  --modal-bg: #2a2a2a;
+  --text: white;
+  
+  /* Sizes */
+  --header-height: 50px;
+  --modal-width: 300px;
+  --button-padding: 15px 30px;
+  
+  /* Transitions */
+  --transition-speed: 0.3s;
+  
+  /* Z-indexes */
+  --z-modal: 1000;
+  --z-overlay: 999;
+}
