@@ -18,30 +18,33 @@ export class Performance {
         this.lastGC = performance.now();
         this.gcThreshold = 30000;
         this.renderQueue = [];
+
+        // Bind methods
+        this.garbageCollect = this.garbageCollect.bind(this);
         
-        // Iniciar garbage collection automático
-        setInterval(() => this.garbageCollect(), this.gcThreshold);
+        // Start garbage collection interval
+        this.gcInterval = setInterval(this.garbageCollect, this.gcThreshold);
     }
 
     garbageCollect() {
         const now = performance.now();
         if (now - this.lastGC < this.gcThreshold) return;
 
-        // Limpar cache de imagens não utilizadas
+        // Clean image cache
         for (const [key, value] of this.imageCache.entries()) {
             if (!value.lastUsed || now - value.lastUsed > 60000) {
                 this.imageCache.delete(key);
             }
         }
 
-        // Limpar recursos não utilizados
+        // Clean resource cache
         for (const [key, value] of this.resourceCache.entries()) {
             if (!value.lastUsed || now - value.lastUsed > 60000) {
                 this.resourceCache.delete(key);
             }
         }
 
-        // Limpar contexto offscreen
+        // Clean offscreen context
         if (this.offscreenCtx) {
             this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
         }
@@ -122,5 +125,11 @@ export class Performance {
 
     getFPS() {
         return this.currentFPS;
+    }
+
+    destroy() {
+        if (this.gcInterval) {
+            clearInterval(this.gcInterval);
+        }
     }
 }
