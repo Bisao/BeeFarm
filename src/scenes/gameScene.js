@@ -263,18 +263,8 @@ export class GameScene extends Scene {
         if (!this.isRendering) return;
 
         // Calcular FPS
-        this.fps = Math.round(1000 / (performance.now() - this.performance.lastFrameTime));
-        this.performance.lastFrameTime = performance.now();
-
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Desenhar FPS
-        this.ctx.save();
-        this.ctx.fillStyle = 'white';
-        this.ctx.font = '20px Arial';
-        this.ctx.fillText(`FPS: ${this.fps}`, 10, this.canvas.height / 2);
-        this.ctx.restore();
-
+        
         const centerX = this.canvas.width/2;
         const centerY = this.canvas.height/2;
 
