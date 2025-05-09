@@ -17,6 +17,7 @@ export class GameScene extends Scene {
         this.gridSize = 50;
         this.gridWidth = 50;
         this.gridHeight = 50;
+        this.characterType = null;
         this.selectedStructure = null;
         this.highlightTile = null;
         this.canvas = null;
@@ -42,7 +43,19 @@ export class GameScene extends Scene {
         this.femaleNPC.updateGridPosition(6, 5);
     }
 
-    enter() {
+    enter(params = {}) {
+        this.characterType = params.characterType || 'farmer';
+        
+        // Place character's house in the center
+        const centerX = Math.floor(this.gridWidth / 2);
+        const centerY = Math.floor(this.gridHeight / 2);
+        this.structureManager.addStructure(this.characterType, centerX, centerY);
+        
+        // Center camera on house
+        if (this.camera) {
+            this.camera.offset.x = -centerX * this.gridSize;
+            this.camera.offset.y = -centerY * this.gridSize / 2;
+        }
         this.container.innerHTML = `
             <canvas id="gameCanvas"></canvas>
             <div class="game-ui">

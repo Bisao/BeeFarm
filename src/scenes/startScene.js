@@ -23,19 +23,7 @@ export class StartScene extends Scene {
     }
 
     async startGame() {
-        // Show loading screen with better feedback
-        this.container.innerHTML = `
-            <div class="loading-screen">
-                <h2>Carregando recursos...</h2>
-                <div class="progress-bar"></div>
-                <p class="loading-tip">Preparando o mundo do jogo...</p>
-            </div>
-        `;
-
-        try {
-            // Simulate asset loading (replace with actual asset loading)
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            this.manager.changeScene('game');
+        this.manager.changeScene('character-select');
         } catch (error) {
             console.error('Failed to load game assets:', error);
             // Show error message and retry button
