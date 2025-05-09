@@ -1,7 +1,7 @@
 
 export class ErrorHandler {
     static handleError(error, context) {
-        console.error(`Error in ${context}:`, error.message || error);
+        console.error(`Error in ${context}:`, error);
         
         if (error instanceof TypeError) {
             return 'Ocorreu um erro ao processar os dados';

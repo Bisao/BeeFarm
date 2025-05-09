@@ -6,23 +6,6 @@ export class SceneManager {
         this.history = [];
         this.lastUpdate = performance.now();
         this.animate = this.animate.bind(this);
-        this.gameState = null;
-        this.assetCache = null;
-    }
-
-    async init(gameState, assetCache) {
-        try {
-            if (!gameState || !assetCache) {
-                throw new Error('GameState and AssetCache must be provided');
-            }
-            this.gameState = gameState;
-            this.assetCache = assetCache;
-            
-            return true;
-        } catch (error) {
-            console.error('Error initializing scene manager:', error);
-            throw error;
-        }
     }
 
     registerScene(name, scene) {
@@ -36,23 +19,14 @@ export class SceneManager {
             return;
         }
 
-        if (!this.gameState || !this.assetCache) {
-            console.error('Game state or asset cache not initialized');
-            return;
+        if (this.currentScene) {
+            this.currentScene.exit();
+            this.history.push(this.currentScene);
         }
 
-        try {
-            if (this.currentScene) {
-                this.currentScene.exit();
-                this.history.push(this.currentScene);
-            }
-
-            this.currentScene = this.scenes.get(name);
-            this.currentScene.enter();
-            requestAnimationFrame(this.animate);
-        } catch (error) {
-            console.error('Error changing scene:', error);
-        }
+        this.currentScene = this.scenes.get(name);
+        this.currentScene.enter();
+        requestAnimationFrame(this.animate);
     }
 
     back() {

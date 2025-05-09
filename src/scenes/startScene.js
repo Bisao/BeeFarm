@@ -24,11 +24,7 @@ export class StartScene extends Scene {
 
     async startGame() {
         try {
-            if (this.manager && this.manager.gameState) {
-                this.manager.changeScene('character-select');
-            } else {
-                throw new Error('Game manager not properly initialized');
-            }
+            this.manager.changeScene('character-select');
         } catch (error) {
             console.error('Failed to load game assets:', error);
             this.container.innerHTML = `

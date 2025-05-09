@@ -1,3 +1,4 @@
+
 import { Scene } from '../core/baseScene.js';
 
 export class CharacterSelectScene extends Scene {
@@ -44,36 +45,29 @@ export class CharacterSelectScene extends Scene {
                         <h3>Fisherman</h3>
                     </div>
                 </div>
-            </div>`;
+            </div>
+        `;
 
-        const cards = this.container.querySelectorAll('.character-card');
+        const cards = document.querySelectorAll('.character-card');
         cards.forEach(card => {
-            card.addEventListener('click', async () => {
-                try {
-                    if (this.manager && this.manager.gameState) {
-                        this.manager.gameState.characterType = card.dataset.type;
-                        this.container.innerHTML = `
-                            <div class="loading-screen">
-                                <h2>Loading ${card.dataset.type}...</h2>
-                                <div class="progress-bar"></div>
-                            </div>`;
-
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        this.manager.changeScene('game');
-                    } else {
-                        throw new Error('Game manager not properly initialized');
-                    }
-                } catch (error) {
-                    console.error('Failed to load character:', error);
-                    this.container.innerHTML = `
-                        <div class="error-screen">
-                            <h2>Failed to load character</h2>
-                            <p>${error.message}</p>
-                            <button class="button" onclick="location.reload()">Retry</button>
-                        </div>`;
-                }
-            });
+            card.addEventListener('click', () => this.selectCharacter(card.dataset.type));
         });
+    }
+
+    async selectCharacter(type) {
+        this.selectedCharacter = type;
+        
+        const loadingSize = window.innerWidth <= 768 ? '200px' : '300px';
+        this.container.innerHTML = `
+            <div class="loading-screen" style="width: ${loadingSize};">
+                <h2>Loading Game...</h2>
+                <div class="progress-bar"></div>
+                <p class="loading-tip">Preparing your adventure...</p>
+            </div>
+        `;
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        this.manager.changeScene('game', { characterType: type });
     }
 
     exit() {
