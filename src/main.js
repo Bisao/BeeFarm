@@ -17,8 +17,20 @@ const loadCSS = () => {
 
 async function init() {
     try {
-        await loadCSS();
-        const sceneManager = new SceneManager();
+        const assetCache = new AssetCache();
+        const gameState = new GameState();
+        
+        // Preload assets
+        await Promise.all([
+            loadCSS(),
+            assetCache.preloadAssets([
+                '/src/assets/images/structures/house.png',
+                '/src/assets/images/tiles/Tile_Grass.png'
+                // Add other assets here
+            ])
+        ]);
+
+        const sceneManager = new SceneManager(gameState, assetCache);
         
         sceneManager.registerScene('start', new StartScene());
         sceneManager.registerScene('settings', new SettingsScene());

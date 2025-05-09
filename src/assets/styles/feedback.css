@@ -1,0 +1,31 @@
+
+.feedback {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    z-index: 1000;
+    animation: slidein 0.3s ease-out;
+}
+
+.feedback.info { background-color: #2196F3; }
+.feedback.success { background-color: #4CAF50; }
+.feedback.error { background-color: #F44336; }
+
+.feedback.fade-out {
+    animation: fadeout 0.5s ease-out forwards;
+}
+
+@keyframes slidein {
+    from { transform: translate(-50%, 100%); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@keyframes fadeout {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
