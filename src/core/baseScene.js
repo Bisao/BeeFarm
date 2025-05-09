@@ -4,7 +4,7 @@ export class Scene {
         this.manager = null;
     }
 
-    enter() {}
+    enter(params) {}
     exit() {}
     update(delta) {}
     draw() {}
