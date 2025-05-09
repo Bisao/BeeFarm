@@ -1,4 +1,3 @@
-
 import { Scene } from '../core/baseScene.js';
 import { MaleNPC } from '../core/maleNPC.js';
 import { FemaleNPC } from '../core/femaleNPC.js';
@@ -27,12 +26,12 @@ export class GameScene extends Scene {
 
         // Initialize managers
         this.treeManager = new TreeManager();
-        this.structureManager = new StructureManager();
 
-        // Generate initial trees
-        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight, 100);
+        // Generate initial trees with random density
+        this.treeManager.generateRandomTrees(this.gridWidth, this.gridHeight);
 
         // Add initial structures
+        this.structureManager = new StructureManager();
         this.structureManager.addStructure('house', 10, 10);
         this.structureManager.addStructure('house', 15, 15);
 
@@ -41,21 +40,21 @@ export class GameScene extends Scene {
 
     enter(params = {}) {
         this.characterType = params.characterType || 'farmer';
-        
+
         // Place character's house in the center
         const centerX = Math.floor(this.gridWidth / 2);
         const centerY = Math.floor(this.gridHeight / 2);
         this.structureManager.addStructure(this.characterType, centerX, centerY);
-        
+
         // Center camera on house
         if (this.camera) {
             const screenCenterX = window.innerWidth / 2;
             const screenCenterY = window.innerHeight / 2;
-            
+
             // Calcula a posição isométrica da casa
             const houseIsoX = (centerX - centerY) * this.gridSize / 2;
             const houseIsoY = (centerX + centerY) * this.gridSize / 4;
-            
+
             // Ajusta a câmera para centralizar na casa
             this.camera.offset.x = -houseIsoX;
             this.camera.offset.y = -houseIsoY + 100; // Adiciona um pequeno offset vertical para melhor visualização
@@ -215,7 +214,7 @@ export class GameScene extends Scene {
 
     cleanup() {
         this.isRendering = false;
-        
+
         // Store bound event handlers
         this.boundHandlers = {
             configClick: () => this.handleConfigClick(),
@@ -229,7 +228,7 @@ export class GameScene extends Scene {
             contextMenu: (e) => e.preventDefault(),
             click: (e) => this.handleClick(e)
         };
-        
+
         // Remove UI event listeners
         const elements = {
             configBtn: document.getElementById('configBtn'),
@@ -237,14 +236,14 @@ export class GameScene extends Scene {
             configCloseBtn: document.getElementById('configCloseBtn'),
             buildCloseBtn: document.getElementById('buildCloseBtn')
         };
-        
+
         Object.entries(elements).forEach(([key, element]) => {
             if (element) {
                 const handler = this.boundHandlers[key.replace('Btn', '').toLowerCase() + 'Click'];
                 if (handler) element.removeEventListener('click', handler);
             }
         });
-        
+
         // Remove canvas event listeners
         if (this.canvas) {
             this.canvas.removeEventListener('mousedown', this.boundHandlers.mouseDown);
@@ -287,7 +286,7 @@ export class GameScene extends Scene {
 
         // Ordenar elementos por posição Y para renderização correta
         const allElements = [];
-        
+
         // Adicionar árvores
         if (this.treeManager) {
             this.treeManager.trees.forEach(tree => {
@@ -341,7 +340,7 @@ export class GameScene extends Scene {
         if (this.tileManager) {
             this.tileManager.draw(ctx, centerX, centerY, scale);
         }
-        
+
         // Desenhar grid por cima dos tiles (opcional)
         const gridSize = this.gridSize * scale;
         const gridWidth = this.gridWidth;

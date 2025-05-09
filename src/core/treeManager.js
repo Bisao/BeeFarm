@@ -22,13 +22,21 @@ export class TreeManager {
         return img;
     }
 
-    generateRandomTrees(gridWidth, gridHeight, count) {
+    generateRandomTrees(gridWidth, gridHeight) {
         this.trees = [];
         this.occupiedPositions.clear();
+        
+        // Calcula área total e define densidade de árvores (30-50% da área)
+        const totalArea = gridWidth * gridHeight;
+        const minDensity = 0.3;
+        const maxDensity = 0.5;
+        const targetDensity = minDensity + Math.random() * (maxDensity - minDensity);
+        const targetTrees = Math.floor(totalArea * targetDensity);
+        
         let attempts = 0;
-        const maxAttempts = count * 10;
+        const maxAttempts = totalArea * 2;
 
-        while (this.trees.length < count && attempts < maxAttempts) {
+        while (this.trees.length < targetTrees && attempts < maxAttempts) {
             const x = Math.floor(Math.random() * gridWidth);
             const y = Math.floor(Math.random() * gridHeight);
 
