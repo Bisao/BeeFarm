@@ -41,14 +41,15 @@ body {
 
 .settings-modal, .build-modal {
     background: var(--modal-bg);
-    padding: 20px;
-    border-radius: 8px;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
     width: 90%;
     max-width: 300px;
     transform: scale(0.95);
-    transition: transform 0.3s ease;
+    transition: all var(--transition-speed) var(--transition-timing);
     opacity: 1;
     color: var(--text);
+    box-shadow: var(--shadow-lg);
 }
 
 .build-modal h2 {
