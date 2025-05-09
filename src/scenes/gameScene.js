@@ -34,13 +34,19 @@ export class GameScene extends Scene {
         this.setupEventListeners = this.setupEventListeners.bind(this);
     }
 
+    constructor() {
+        super();
+        this.container = document.getElementById('game-container');
+    }
+
     enter() {
-        if (!this.manager || !this.manager.gameState) {
-            throw new Error('Game state not initialized');
-        }
-        
-        this.characterType = this.manager.gameState.characterType;
-        this.container.innerHTML = `
+        try {
+            if (!this.manager || !this.manager.gameState) {
+                throw new Error('Game state not initialized');
+            }
+            
+            this.characterType = this.manager.gameState.characterType || 'default';
+            this.container.innerHTML = `
             <canvas id="gameCanvas"></canvas>
             <div class="game-ui">
                 <button id="configBtn" class="ui-button">⚙️</button>

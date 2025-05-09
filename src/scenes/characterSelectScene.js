@@ -67,11 +67,20 @@ export class CharacterSelectScene extends Scene {
                 </div>
             `;
 
+            if (!this.manager || !this.manager.gameState) {
+                throw new Error('Game manager not properly initialized');
+            }
+
+            this.manager.gameState.update({
+                characterType: type,
+                player: {
+                    type: type,
+                    position: { x: 0, y: 0 }
+                }
+            });
+
             await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            if (this.manager && this.manager.gameState) {
-                this.manager.gameState.characterType = type;
-                this.manager.changeScene('game');
+            this.manager.changeScene('game');
             } else {
                 throw new Error('Game manager not properly initialized');
             }
