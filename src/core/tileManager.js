@@ -2,10 +2,10 @@
 export class TileManager {
     constructor() {
         this.tileImages = {
-            tile1: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_651eca85.jpg'),
-            tile2: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_aa0c7511.jpg'),
-            tile3: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_eb54dcd7.jpg'),
-            tile4: this.loadImage('/src/assets/images/tiles/WhatsApp Image 2025-05-05 at 01.02.24_fef9b075.jpg')
+            grass: this.loadImage('/src/assets/images/tiles/Grass.png'),
+            grassFlower1: this.loadImage('/src/assets/images/tiles/Grass_1.png'),
+            grassFlower2: this.loadImage('/src/assets/images/tiles/Grass_2_Flowers.png'),
+            grassFlower3: this.loadImage('/src/assets/images/tiles/Grass_3_Flowers.png')
         };
         this.tileGrid = [];
         this.initializeGrid();
@@ -18,12 +18,23 @@ export class TileManager {
     }
 
     initializeGrid() {
-        const tileTypes = Object.keys(this.tileImages);
         for (let y = 0; y < 50; y++) {
             this.tileGrid[y] = [];
             for (let x = 0; x < 50; x++) {
-                const randomTile = tileTypes[Math.floor(Math.random() * tileTypes.length)];
-                this.tileGrid[y][x] = randomTile;
+                const random = Math.random();
+                let selectedTile;
+                
+                if (random < 0.7) {
+                    selectedTile = 'grass';
+                } else if (random < 0.8) {
+                    selectedTile = 'grassFlower1';
+                } else if (random < 0.9) {
+                    selectedTile = 'grassFlower2';
+                } else {
+                    selectedTile = 'grassFlower3';
+                }
+                
+                this.tileGrid[y][x] = selectedTile;
             }
         }
     }
